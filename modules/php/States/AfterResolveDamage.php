@@ -7,6 +7,7 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 
 class AfterResolveDamage extends GameState {
     public function __construct(protected Game $game)
@@ -21,7 +22,7 @@ class AfterResolveDamage extends GameState {
     public function onEnteringState(int $activePlayerId): void {
         $intervention = $this->game->getDamageIntervention();
 
-        $freezeRayEvolutions = $this->game->getEvolutionsOfType($activePlayerId, \FREEZE_RAY_EVOLUTION);
+        $freezeRayEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, \FREEZE_RAY_EVOLUTION, true, false);
         $freezeRayEvolution = Arrays::find($freezeRayEvolutions, fn($evolution) => $evolution->ownerId == $activePlayerId);
         if ($freezeRayEvolution !== null) {
             $woundDamagesByFreezeRayOwner = array_values(array_filter(
@@ -32,9 +33,11 @@ class AfterResolveDamage extends GameState {
             $woundedPlayersByFreezeRayOwner = array_values(array_filter($woundedPlayersByFreezeRayOwner, fn($playerId) => $this->game->inTokyo($playerId)));
 
             if (count($woundedPlayersByFreezeRayOwner) === 1) {
-                $this->game->giveFreezeRay($activePlayerId, $woundedPlayersByFreezeRayOwner[0], $freezeRayEvolution);
+                /** @disregard */
+                $freezeRayEvolution->giveFreezeRay(new Context($this->game), $activePlayerId, $woundedPlayersByFreezeRayOwner[0]);
             } elseif (count($woundedPlayersByFreezeRayOwner) > 1) {
-                $this->game->freezeRayChooseOpponentQuestion($activePlayerId, $woundedPlayersByFreezeRayOwner, $freezeRayEvolution);
+                /** @disregard */
+                $freezeRayEvolution->freezeRayChooseOpponentQuestion(new Context($this->game, $activePlayerId), $woundedPlayersByFreezeRayOwner, $freezeRayEvolution);
                 return;
             }
         }

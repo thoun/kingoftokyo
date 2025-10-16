@@ -7,20 +7,18 @@ require_once(__DIR__.'/../Objects/question.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerUpExpansion;
 use KOT\Objects\Question;
 
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait EvolutionCardsUtilTrait {
+    public PowerUpExpansion $powerUpExpansion;
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
-
-    function getEvolutionCardById(int $id) {
-        return $this->powerUpExpansion->evolutionCards->getItemById($id);
-    }
 
     function getEvolutionCardsByLocation(string $location, ?int $location_arg = null, ?int $type = null) {
         $cards = $this->powerUpExpansion->evolutionCards->getItemsInLocation($location, $location_arg, true, sortByField: 'location_arg');
@@ -40,24 +38,6 @@ trait EvolutionCardsUtilTrait {
 
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
         return $this->powerUpExpansion->evolutionCards->getItemsInLocation("deck$playerId", null, true, $number, sortByField: 'location_arg');
-    }
-
-    function pickEvolutionCards(int $playerId, int $number = 2) {
-        $remainingInDeck = $this->powerUpExpansion->evolutionCards->countItemsInLocation('deck'.$playerId);
-        if ($remainingInDeck >= $number) {
-            return $this->getEvolutionCardsOnDeckTop($playerId, $number);
-        } else {
-            $cards = $this->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
-
-            $this->powerUpExpansion->evolutionCards->moveAllItemsInLocation('discard'.$playerId, 'deck'.$playerId);
-            $this->powerUpExpansion->evolutionCards->shuffle('deck'.$playerId);
-
-            $cards = array_merge(
-                $cards,
-                $this->getEvolutionCardsOnDeckTop($playerId, $number - $remainingInDeck)
-            );
-            return $cards;
-        }
     }
 
     function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null, $fromPlayerId = null) {
@@ -333,41 +313,6 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function drawEvolution(int $playerId) {
-        $card = $this->pickEvolutionCards($playerId, 1)[0];
-
-        $this->powerUpExpansion->evolutionCards->moveItem($card, 'hand', $playerId);
-
-        $this->notifNewEvolutionCard($playerId, $card);
-
-        $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
-    }
-
-    function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
-        $card = $this->getEvolutionCardById($evolutionId);
-
-        $this->powerUpExpansion->evolutionCards->moveItem($card, 'hand', $playerId);
-
-        $this->notifNewEvolutionCard($playerId, $card);
-
-        $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
-    }
-
-    function getHighlightedEvolutions(array $stepCardsTypes) {
-        $cards = [];
-
-        foreach ($stepCardsTypes as $stepCardsType) {
-            $stepCards = $this->getEvolutionCardsByType($stepCardsType);
-            foreach ($stepCards as $stepCard) {
-                if ($stepCard->location == 'hand') {
-                    $cards[] = $stepCard;
-                }
-            }
-        }
-
-        return $cards;
-    }
-
     function applyGiveSymbolQuestion(int $playerId, EvolutionCard $card, array $otherPlayers, array $symbols) {
 
         if (count($otherPlayers) == 0) {
@@ -573,30 +518,13 @@ trait EvolutionCardsUtilTrait {
 
         $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
         $this->powerUpExpansion->evolutionCards->moveItem($evolution, 'table', $toPlayerId);
-        $movedEvolution = $this->getEvolutionCardById($evolution->id); // so we relaad location
+        $movedEvolution = $this->powerUpExpansion->evolutionCards->getItemById($evolution->id); // so we relaad location
         $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
 
         if ($evolution->id == $this->getMimickedEvolutionId()) {
             $this->notify->all("setMimicEvolutionToken", '', [
                 'card' => $movedEvolution,
             ]);
-        }
-    }
-
-    function giveFreezeRay(int $fromPlayerId, int $toPlayerId, EvolutionCard $evolution) {
-        $ownerId = $evolution->ownerId;
-        if ($ownerId == $fromPlayerId) {
-            $this->giveEvolution($fromPlayerId, $toPlayerId, $evolution);
-        }
-    }
-
-    function giveBackFreezeRay(int $activePlayerId, EvolutionCard $evolution) {
-        $ownerId = $evolution->ownerId;
-        if ($ownerId != $activePlayerId) {
-            $this->giveEvolution($activePlayerId, $ownerId, $evolution);
-
-            // reset freeze ray disabled symbol
-            $this->setEvolutionTokens($ownerId, $evolution, 0, true);
         }
     }
 
@@ -608,7 +536,7 @@ trait EvolutionCardsUtilTrait {
     function addSuperiorAlienTechnologyToken(int $playerId, int $cardId) {
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
 
-        if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
+        if (count($cardsIds) >= 3 * count($this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, false))) {
             throw new \BgaUserException('You can only have 3 cards with tokens.');
         }
 
@@ -699,45 +627,5 @@ trait EvolutionCardsUtilTrait {
             }
         }
         return false;
-    }
-
-    function electricCarrotQuestion(array $smashedPlayersIds) {
-        $question = new Question(
-            'ElectricCarrot',
-            clienttranslate('Smashed players can give 1[Energy] or lose 1 extra [Heart]'),
-            clienttranslate('${you} can give 1[Energy] or lose 1 extra [Heart]'),
-            $smashedPlayersIds,
-            ST_AFTER_RESOLVE_DAMAGE,
-            []
-        );
-
-        $this->addStackedState();
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive($smashedPlayersIds, 'next', true);
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    function freezeRayChooseOpponentQuestion(int $playerId, array $smashedPlayersIds, EvolutionCard $card) {
-        $question = new Question(
-            'FreezeRayChooseOpponent',
-            clienttranslate('${player_name} must choose an opponent to give ${card_name} to'),
-            clienttranslate('${you} must choose an opponent to give ${card_name} to'),
-            [$playerId],
-            ST_AFTER_ANSWER_QUESTION,
-            [ 
-                'playerId' => $playerId,
-                '_args' => [ 
-                    'player_name' => $this->getPlayerNameById($playerId),
-                    'card_name' => 3000 + $card->type,
-                ],
-                'card' => $card,
-                'smashedPlayersIds' => $smashedPlayersIds,
-            ]
-        );
-
-        $this->addStackedState();
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 }

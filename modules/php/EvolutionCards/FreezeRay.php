@@ -34,4 +34,45 @@ class FreezeRay extends EvolutionCard
             }
     }
 
+    function freezeRayChooseOpponentQuestion(Context $context, array $smashedPlayersIds) {
+        $question = new Question(
+            'FreezeRayChooseOpponent',
+            clienttranslate('${player_name} must choose an opponent to give ${card_name} to'),
+            clienttranslate('${you} must choose an opponent to give ${card_name} to'),
+            [$context->currentPlayerId],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'playerId' => $context->currentPlayerId,
+                '_args' => [ 
+                    'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
+                    'card_name' => 3000 + $this->type,
+                ],
+                'card' => $this,
+                'smashedPlayersIds' => $smashedPlayersIds,
+            ]
+        );
+
+        $context->game->addStackedState();
+        $context->game->setQuestion($question);
+        $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);
+        $context->game->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function giveFreezeRay(Context $context, int $fromPlayerId, int $toPlayerId) {
+        $ownerId = $this->ownerId;
+        if ($ownerId == $fromPlayerId) {
+            $context->game->giveEvolution($fromPlayerId, $toPlayerId, $this);
+        }
+    }
+
+    function giveBackFreezeRay(Context $context) {
+        $ownerId = $this->ownerId;
+        if ($ownerId != $context->currentPlayerId) {
+            $context->game->giveEvolution($context->currentPlayerId, $ownerId, $this);
+
+            // reset freeze ray disabled symbol
+            $context->game->setEvolutionTokens($ownerId, $this, 0, true);
+        }
+    }
+
 }

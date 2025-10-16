@@ -38,7 +38,7 @@ class ChooseInitialCard extends GameState {
         if ($chooseEvolution) {
             $args['_private'] = [
                 $activePlayerId => [
-                    'evolutions' => $this->game->pickEvolutionCards($activePlayerId),
+                    'evolutions' => $this->game->powerUpExpansion->pickEvolutionCards($activePlayerId),
                 ]
             ];
         }

@@ -7,7 +7,7 @@ class EnergyDevourer extends EvolutionCard
 {
     public function __construct()
     {
-        $this->evolutionType = TEMPORARY;
+        $this->evolutionType = PERMANENT;
     }
 
     // TODOMB

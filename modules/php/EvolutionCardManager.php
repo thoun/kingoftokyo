@@ -207,7 +207,7 @@ class EvolutionCardManager extends ItemManager {
     /**
      * @return EvolutionCard[]
      */
-    function getPlayerRealByLocation(int $playerId, string $location) {        
+    function getPlayerRealByLocation(int $playerId, string $location): array {        
         $evolutions = $this->getItemsInLocation($location, $playerId, true, sortByField: 'location_arg');
         return $evolutions;
     }
@@ -237,7 +237,7 @@ class EvolutionCardManager extends ItemManager {
      * 
      * @return EvolutionCard[]
      */
-    function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand, bool $virtualFirst = false) {
+    function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand, bool $virtualFirst = false): array {
         $evolutions = $this->getPlayerReal($playerId, $fromTable, $fromHand);
         if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
             $evolutions = Arrays::filter($evolutions, fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] != 1);
@@ -270,7 +270,7 @@ class EvolutionCardManager extends ItemManager {
      * 
      * @return EvolutionCard[]
      */
-    function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand, bool $virtualFirst = false) {
+    function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand, bool $virtualFirst = false): array {
         $evolutions = $this->getPlayerVirtual($playerId, $fromTable, $fromHand, $virtualFirst);
         return Arrays::filter($evolutions, fn($evolution) => $evolution->type === $type);
     }

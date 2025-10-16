@@ -26,7 +26,7 @@ class BeforeResolveDiceMulti extends GameState {
 
         $highlighted = [];
         if ($isPowerUpExpansion) {
-            $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE);
+            $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE);
         }
 
         return [

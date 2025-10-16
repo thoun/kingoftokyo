@@ -8,6 +8,8 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_START_TURN;
 
 class BeforeStartTurn extends GameState {
@@ -25,18 +27,20 @@ class BeforeStartTurn extends GameState {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
         $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_START_TURN);
+        $consumableEvolutions = $this->game->mindbugExpansion->getConsumableEvolutions($activePlayerId, MINDBUG_KEYWORDS_START_TURN);
 
         $highlighted = [];
         $couldPlayEvolution = false;
         if ($isPowerUpExpansion) {
-            $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_START);
+            $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_START);
             $couldPlayEvolution = count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_START)) > 0;
         }
 
         return [
             'highlighted' => $highlighted,
             'consumableCards' => $consumableCards,
-            'canPlayConsumable' => count($consumableCards) > 0,
+            'consumableEvolutions' => $consumableEvolutions,
+            'canPlayConsumable' => count($consumableCards) > 0 || count($consumableEvolutions) > 0,
             'couldPlayEvolution' => $couldPlayEvolution,
         ];
     }
@@ -88,6 +92,11 @@ class BeforeStartTurn extends GameState {
     #[PossibleAction]
     public function actActivateConsumable(int $id, string $keyword, int $activePlayerId) {
         $this->game->mindbugExpansion->activateConsumable($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_START_TURN);
+    }
+
+    #[PossibleAction]
+    public function actActivateConsumableEvolution(int $id, string $keyword, int $activePlayerId) {
+        $this->game->mindbugExpansion->activateConsumableEvolution($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_START_TURN);
     }
 
     public function zombie(int $playerId) {

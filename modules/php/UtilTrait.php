@@ -349,7 +349,7 @@ trait UtilTrait {
             if (count($evolutions) > 0) {
                 foreach($evolutions as $evolution) {
                     if ($evolution->tokens > 0) {
-                        $this->getEvolutionFromDiscard($playerId, $evolution->id);
+                        $this->powerUpExpansion->getEvolutionFromDiscard($playerId, $evolution->id);
                     }
                 }
             }

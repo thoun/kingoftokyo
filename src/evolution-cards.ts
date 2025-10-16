@@ -15,6 +15,8 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
                 if (card.tokens > 0) {
                     this.placeTokensOnCard(card);
                 }
+
+                div.insertAdjacentHTML('beforeend', `<div id="evolution-${card.id}-keyword-buttons" class="evolution-keyword-buttons"></div>`)
             },
             setupBackDiv: (card: EvolutionCard, div: HTMLElement) => {
                 div.style.backgroundPositionX = `0%`;

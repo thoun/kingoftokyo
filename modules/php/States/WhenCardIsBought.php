@@ -24,10 +24,10 @@ class WhenCardIsBought extends GameState {
         );
     }
 
-    public function getArgs(int $activePlayerId): array {
+    public function getArgs(): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
-        $highlighted = $isPowerUpExpansion ? $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) : [];
+        $highlighted = $isPowerUpExpansion ? $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) : [];
 
         return [
             'highlighted' => $highlighted,

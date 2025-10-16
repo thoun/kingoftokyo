@@ -49,6 +49,7 @@ interface EvolutionCard {
     tokens: number;
     location: string;
     location_arg: number;
+    mindbugKeywords?: string[];
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
@@ -313,6 +314,7 @@ interface EnteringStepEvolutionArgs {
 
 interface EnteringMindbugKeywordStateArgs extends EnteringStepEvolutionArgs {
     consumableCards: Card[];
+    consumableEvolutions: EvolutionCard[];
     canPlayConsumable: boolean;
 }
 
@@ -352,6 +354,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     gammaBreathCardIds: number[];
     hasTailSweep: boolean;
     hasTinyTail: boolean;
+    hasEnergyDevourer: boolean;
     hasYinYang: boolean;
     hasBiofuel: boolean;
     hasShrinky: boolean;
@@ -480,6 +483,7 @@ interface EnteringCancelDamageArgs extends EnteringMindbugKeywordStateArgs {
     replaceHeartByEnergyCost: { [energy: number]: number }; // key is the energy spent, value is the heart cost
     canPlayConsumable: boolean;
     consumableCards: Card[];
+    consumableEvolutions: EvolutionCard[];
 }
 
 interface EnteringLeaveTokyoArgs {

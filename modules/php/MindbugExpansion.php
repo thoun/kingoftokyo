@@ -143,6 +143,18 @@ class MindbugExpansion {
     }
 
     /**
+     * @return EvolutionCard[]
+     */
+    public function getConsumableEvolutions(int $playerId, ?array $keywords): array {
+        $playerEvolutionsInHand = $this->game->powerUpExpansion->evolutionCards->getPlayerReal($playerId, false, true);
+        $consumableEvolutions = Arrays::filter($playerEvolutionsInHand, fn($evolution) => $evolution->mindbugKeywords !== null);
+        if ($keywords !== null) {
+            $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, $keywords)));
+        }
+        return $consumableEvolutions;
+    }
+
+    /**
      * @return Damage[]
      */
     public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords): array {
@@ -154,6 +166,33 @@ class MindbugExpansion {
         if (!in_array($keyword, $card->mindbugKeywords)) {
             throw new \BgaUserException("This card doesn't have the keyword $keyword");
         }
+
+        switch ($keyword) {
+            case HUNTER: $this->activateHunter($playerId, $card); break;
+            case SNEAKY: $this->activateSneaky($playerId, $card); break;
+            case POISON: return $this->activatePoison($playerId, $card);
+            case TOUGH: return $this->activateTough($playerId, $card);
+            case FRENZY: $this->activateFrenzy($playerId, $card); break;
+            default: throw new \BgaSystemException("Invalid keyword");
+        }
+        return [];
+    }
+
+    /**
+     * @return Damage[]
+     */
+    public function activateConsumableEvolution(int $id, string $keyword, int $playerId, array $keywords): array {
+        $playerEvolutionsInHand = $this->game->powerUpExpansion->evolutionCards->getPlayerReal($playerId, false, true);
+        $consumableEvolutions = Arrays::filter($playerEvolutionsInHand, fn($evolution) => $evolution->mindbugKeywords !== null);
+        $card = Arrays::find($consumableEvolutions, fn($c) => $c->id === $id);
+        if (!$card) {
+            throw new \BgaUserException(clienttranslate('You cannot activate this keyword at this moment of the game'));
+        }
+        if (!in_array($keyword, $card->mindbugKeywords)) {
+            throw new \BgaUserException("This card doesn't have the keyword $keyword");
+        }
+
+        $this->game->playEvolutionToTable($playerId, $card);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
@@ -196,9 +235,11 @@ class MindbugExpansion {
         return Arrays::filter($activatedFrenzyCards, fn($activatedFrenzy) => $activatedFrenzy->activePlayerId === $playerId);
     }
 
-    private function activateHunter(int $playerId, PowerCard $card): void {
+    private function activateHunter(int $playerId, PowerCard | EvolutionCard $card): void {
         $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, []);
-        $activatedHunterCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
+        $activatedHunterCards[] = $card instanceof EvolutionCard ?
+            new ActivatedConsumableKeyword($playerId, evolutionId: $card->id) :
+            new ActivatedConsumableKeyword($playerId, cardId: $card->id);
         $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
 
         $question = new Question(
@@ -209,7 +250,7 @@ class MindbugExpansion {
             -1,
             [
                 'playerIds' => $this->game->getOtherPlayersIds($playerId),
-                'card_name' => $card->type,
+                'card_name' => $card instanceof EvolutionCard ? 3000 + $card->type : $card->type,
             ]
         );
         $this->game->setQuestion($question);
@@ -218,9 +259,11 @@ class MindbugExpansion {
         $this->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    private function activateSneaky(int $playerId, PowerCard $card): void {
+    private function activateSneaky(int $playerId, PowerCard | EvolutionCard $card): void {
         $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, []);
-        $activatedSneakyCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
+        $activatedSneakyCards[] = $card instanceof EvolutionCard ?
+            new ActivatedConsumableKeyword($playerId, evolutionId: $card->id) :
+            new ActivatedConsumableKeyword($playerId, cardId: $card->id);
         $this->game->globals->set(ACTIVATED_SNEAKY_CARDS, $activatedSneakyCards);
 
         if (method_exists($card, 'immediateEffect')) {
@@ -232,7 +275,7 @@ class MindbugExpansion {
     /**
      * @return Damage[]
      */
-    private function activatePoison(int $playerId, PowerCard $card): array {
+    private function activatePoison(int $playerId, PowerCard | EvolutionCard $card): array {
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
@@ -254,7 +297,7 @@ class MindbugExpansion {
     /**
      * @return Damage[]
      */
-    private function activateTough(int $playerId, PowerCard $card): array {
+    private function activateTough(int $playerId, PowerCard | EvolutionCard $card): array {
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
@@ -270,10 +313,12 @@ class MindbugExpansion {
         return $damages;
     }
 
-    private function activateFrenzy(int $playerId, PowerCard $card): void {
+    private function activateFrenzy(int $playerId, PowerCard | EvolutionCard $card): void {
         $activatedFrenzyCards = $this->game->globals->get(ACTIVATED_FRENZY_CARDS, []);
         if (empty($activatedFrenzyCards)) {
-            $activatedFrenzyCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
+            $activatedFrenzyCards[] = $card instanceof EvolutionCard ?
+            new ActivatedConsumableKeyword($playerId, evolutionId: $card->id) :
+            new ActivatedConsumableKeyword($playerId, cardId: $card->id);
         } else {
             throw new \BgaSystemException('Already a frenzy turn awaiting');
         }

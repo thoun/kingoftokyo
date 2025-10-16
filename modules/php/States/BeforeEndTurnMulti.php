@@ -41,7 +41,7 @@ class BeforeEndTurnMulti extends GameState {
         $canPlayConsumable = count($consumableCards) > 0;
         
         if ($isPowerUpExpansion) {
-            $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_END);
+            $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_END);
 
             $players = $this->game->getPlayers();
             foreach ($players as $player) {
@@ -71,6 +71,7 @@ class BeforeEndTurnMulti extends GameState {
             'highlighted' => $highlighted,
             '_private' => $privatePlayers,
             'consumableCards' => $consumableCards,
+            'consumableEvolutions' => []/* TODOMB $consumableEvolutions*/,
             'canPlayConsumable' => $canPlayConsumable,
             'couldPlayEvolution' => $couldPlayEvolution,
             '_no_notify' => !$canPlayConsumable && !$couldPlayEvolution,

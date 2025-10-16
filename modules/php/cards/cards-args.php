@@ -382,6 +382,7 @@ trait CardsArgTrait {
                 'skipMeansDeath' => $damageToCancelToSurvive > 0,
                 'canDoAction' => $canDoAction,
                 'consumableCards' => $consumableCards,
+                'consumableEvolutions' => []/* TODOMB $consumableEvolutions*/,
                 'canPlayConsumable' => $canPlayConsumable,
             ];
         } else {

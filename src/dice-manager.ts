@@ -76,7 +76,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -148,9 +148,9 @@ class DiceManager {
         const divId = `dice${dieId}`;
         const div = document.getElementById(divId);
         if (div) {
-            dojo.removeClass(div, `dice${div.dataset.diceValue}`);
+            dojo.removeClass(div as any, `dice${div.dataset.diceValue}`);
             div.dataset.diceValue = ''+toValue;
-            dojo.addClass(div, `dice${toValue}`);
+            dojo.addClass(div as any, `dice${toValue}`);
             const list = div.getElementsByTagName('ol')[0];
             list.dataset.rollType = roll ? 'odd' : 'change';
             if (roll) {
@@ -163,7 +163,7 @@ class DiceManager {
                 if (die.value !== 4 && toValue === 4) {
                     dojo.place('<div class="icon forbidden"></div>', divId);
                 } else if (die.value === 4 && toValue !== 4) {
-                    Array.from(div.getElementsByClassName('forbidden')).forEach((elem: HTMLElement) => dojo.destroy(elem));
+                    Array.from(div.getElementsByClassName('forbidden')).forEach((elem: HTMLElement) => dojo.destroy(elem as any));
                 }
             }
             list.dataset.roll = ''+toValue;
@@ -307,19 +307,19 @@ class DiceManager {
             const tempOrigin = document.getElementById(tempOriginId);
             tempOrigin.appendChild(dieDiv);
 
-            dojo.animateProperty({
+            (dojo as any).animateProperty({
                 node: tempDestinationId,
                 properties: {
                     width: dieDiv.clientHeight,
                 }
             }).play();
-            dojo.animateProperty({
+            (dojo as any).animateProperty({
                 node: tempOriginId,
                 properties: {
                     width: 0,
                 }
             }).play();
-            dojo.animateProperty({
+            (dojo as any).animateProperty({
                 node: dieDivId,
                 properties: {
                     marginLeft: -13
@@ -330,8 +330,8 @@ class DiceManager {
                 if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
                     destination.append(tempDestination.childNodes[0]);
                 }
-                dojo.destroy(tempDestination);
-                dojo.destroy(tempOrigin);
+                dojo.destroy(tempDestination as any);
+                dojo.destroy(tempOrigin as any);
             });
         }
 
@@ -447,7 +447,7 @@ class DiceManager {
             this.game.rerollOrDiscardDie(die.id);
         } else if (this.action === 'rerollDice') {
             if (die.type < 2) {
-                dojo.toggleClass(this.getDieDiv(die), 'die-selected');
+                this.getDieDiv(die)?.classList.toggle('die-selected');
                 const selectedDieIndex = this.selectedDice.findIndex(d => d.id == die.id);
                 if (selectedDieIndex !== -1) {
                     this.selectedDice.splice(selectedDieIndex, 1);
@@ -466,7 +466,7 @@ class DiceManager {
     }
     
     public removeSelection() {
-        this.selectedDice.forEach(die => dojo.removeClass(this.getDieDiv(die), 'die-selected'));
+        this.selectedDice.forEach(die => this.getDieDiv(die)?.classList.remove('die-selected'));
         this.selectedDice = [];
     }
 
@@ -542,6 +542,7 @@ class DiceManager {
             const gammaBreathButtonId = `${bubbleActionButtonsId}-gammaBreath`;
             const tailSweepButtonId = `${bubbleActionButtonsId}-tailSweep`;
             const tinyTailButtonId = `${bubbleActionButtonsId}-tinyTail`;
+            const energyDevourerButtonId = `${bubbleActionButtonsId}-energyDevourer`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
             const biofuelButtonId = `${bubbleActionButtonsId}-biofuel`;
@@ -615,6 +616,18 @@ class DiceManager {
                             dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(184, 'text-only')}</strong>` }),
                             () => {
                                 this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
+                    if (args.hasEnergyDevourer) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            energyDevourerButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(632, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3632);
                                 this.toggleBubbleChangeDie(die);
                             },
                             true
@@ -702,6 +715,15 @@ class DiceManager {
                         if (args.hasTinyTail && die.value != 1) {
                             dojo.toggleClass(tinyTailButtonId, 'disabled', value != 1);
                         }
+                        if (args.hasEnergyDevourer && die.value == 4) {
+                            const couldUseEnergyDevourer = value == 6;
+                            dojo.toggleClass(energyDevourerButtonId, 'disabled', !couldUseEnergyDevourer || this.game.getPlayerEnergy(args.playerId) < 1);
+                            if (couldUseEnergyDevourer) {
+                                document.getElementById(energyDevourerButtonId).dataset.enableAtEnergy = '1';
+                            } else {
+                                document.getElementById(energyDevourerButtonId).removeAttribute('data-enable-at-energy');
+                            }
+                        }
                         if (args.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
                         }
@@ -746,6 +768,9 @@ class DiceManager {
                     }
                     if (args.hasTinyTail) {
                         dojo.addClass(tinyTailButtonId, 'disabled');
+                    }
+                    if (args.hasEnergyDevourer) {
+                        dojo.addClass(energyDevourerButtonId, 'disabled');
                     }
                     if (args.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId, 'disabled');

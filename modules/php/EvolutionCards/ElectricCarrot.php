@@ -13,4 +13,20 @@ class ElectricCarrot extends EvolutionCard {
         $this->evolutionType = PERMANENT;
     }
 
+    function electricCarrotQuestion(Context $context, array $smashedPlayersIds) {
+        $question = new Question(
+            'ElectricCarrot',
+            clienttranslate('Smashed players can give 1[Energy] or lose 1 extra [Heart]'),
+            clienttranslate('${you} can give 1[Energy] or lose 1 extra [Heart]'),
+            $smashedPlayersIds,
+            ST_AFTER_RESOLVE_DAMAGE,
+            []
+        );
+
+        $context->game->addStackedState();
+        $context->game->setQuestion($question);
+        $context->game->gamestate->setPlayersMultiactive($smashedPlayersIds, 'next', true);
+        $context->game->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
 }

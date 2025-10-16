@@ -165,6 +165,15 @@ class ChangeDie extends GameState {
                 $this->game->playEvolutionToTable($currentPlayerId, $tinyTailCard);
             }
             $this->game->setUsedCard(3000 + $tinyTailCard->id);
+        } else if ($cardType == 3000 + \ENERGY_DEVOURER_EVOLUTION) {
+            $energyDevourerCards = $this->game->getEvolutionsOfType($currentPlayerId, \ENERGY_DEVOURER_EVOLUTION, true, true);
+            $energyDevourerCard = Arrays::find($energyDevourerCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $energyDevourerCards[0];
+
+            if ($energyDevourerCard->location === 'hand') {
+                $this->game->playEvolutionToTable($currentPlayerId, $energyDevourerCard);
+            }
+            $this->game->setUsedCard(3000 + $energyDevourerCard->id);
+            $this->game->applyLoseEnergyIgnoreCards($currentPlayerId, 1, 0);
         } else if ($cardType != \CLOWN_CARD) {
             throw new \BgaUserException('Invalid card to change die');
         }

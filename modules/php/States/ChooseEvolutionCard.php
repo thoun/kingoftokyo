@@ -26,7 +26,7 @@ class ChooseEvolutionCard extends GameState {
         return [
             '_private' => [
                 $activePlayerId => [
-                    'evolutions' => $this->game->pickEvolutionCards($activePlayerId),
+                    'evolutions' => $this->game->powerUpExpansion->pickEvolutionCards($activePlayerId),
                 ],
             ],
         ];
@@ -41,7 +41,7 @@ class ChooseEvolutionCard extends GameState {
     }
 
     public function zombie(int $playerId) {
-        $cards = $this->game->pickEvolutionCards($playerId);
+        $cards = $this->game->powerUpExpansion->pickEvolutionCards($playerId);
         if (!empty($cards)) {
             $zombieChoice = $this->getRandomZombieChoice(Arrays::pluck($cards, 'id'));
             return $this->actChooseEvolutionCard($zombieChoice, $playerId);

@@ -430,7 +430,17 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                             this.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
                         );
                     }
-                })
+                });
+
+                args.consumableEvolutions.forEach(evolution => {
+                    const div = document.getElementById(`evolution-${evolution.id}-keyword-buttons`);
+                    if (div) {
+                        div.innerHTML = '';
+                        evolution.mindbugKeywords.forEach(keyword => 
+                            this.statusBar.addActionButton(_(keyword), (e: MouseEvent) => { this.onConsumableEvolutionKeywordClick(evolution, keyword); e.stopPropagation() }, { destination: div })
+                        );
+                    }
+                });
             }
         }
     }
@@ -1971,6 +1981,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     public onConsumableKeywordClick(card: Card, keyword: string) {
         this.bgaPerformAction('actActivateConsumable', { id: card.id, keyword });
+    }
+
+    public onConsumableEvolutionKeywordClick(evolution: EvolutionCard, keyword: string) {
+        this.bgaPerformAction('actActivateConsumableEvolution', { id: evolution.id, keyword });
     }
 
     public onVisibleCardClick(stock: CardStock<Card>, card: Card, from: number = 0, warningChecked: boolean = false) { // from : player id

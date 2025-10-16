@@ -431,9 +431,10 @@ trait DiceUtilTrait {
         if ($isPowerUpExpansion) {
 
             // Electric Carrot
-            $electricCarrot = $inTokyo && count($smashedPlayersIds) > 0 && $this->countEvolutionOfType($playerId, ELECTRIC_CARROT_EVOLUTION) > 0;
-            if ($electricCarrot && $this->getGlobalVariable(ELECTRIC_CARROT_CHOICES, true) === null) {
-                $this->electricCarrotQuestion($smashedPlayersIds);
+            $electricCarrotEvolutions = $inTokyo && count($smashedPlayersIds) > 0 ? $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, ELECTRIC_CARROT_EVOLUTION, true, false) : [];
+            if (count($electricCarrotEvolutions) > 0 && $this->getGlobalVariable(ELECTRIC_CARROT_CHOICES, true) === null) {
+                /** @disregard */
+                $electricCarrotEvolutions[0]->electricCarrotQuestion(new Context($this), $smashedPlayersIds);
                 return;
             }
 
@@ -679,36 +680,47 @@ trait DiceUtilTrait {
         }
 
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-        $playerEvolutions = $isPowerUpExpansion ? $this->powerUpExpansion->evolutionCards->getPlayerVirtual($playerId, true, true) : [];
+        $playerEvolutions = [];
         // Gamma Breath & Tail Sweep
         $gammaBreathCardIds = [];
         $hasTailSweep = false;
         $hasTinyTail = false;
+        $hasEnergyDevourer = false;
+        $hasSaurianAdaptability = false;
+        $hasYinYang = false;
         if ($isPowerUpExpansion) {
+            $playerEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtual($playerId, true, true, true);
             $usedCards = $this->getUsedCard();
             $gammaBreathCards = Arrays::filter($playerEvolutions, fn($evolution) => $evolution->type === GAMMA_BREATH_EVOLUTION && !in_array(3000 + $evolution->id, $usedCards));
             $gammaBreathCardIds = Arrays::pluck($gammaBreathCards, 'id');
 
-            $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
+            $tailSweepCards = Arrays::filter($playerEvolutions, fn($evolution) => $evolution->type === TAIL_SWEEP_EVOLUTION);
             if (count($tailSweepCards) > 0) {
                 $usedCards = $this->getUsedCard();
                 $availableTailSweep = array_values(array_filter($tailSweepCards, fn($tailSweepCard) => !in_array(3000 + $tailSweepCard->id, $usedCards)));
                 $hasTailSweep = count($availableTailSweep) > 0;
             }
 
-            $tinyTailCards = $this->getEvolutionsOfType($playerId, TINY_TAIL_EVOLUTION, true, true);
+            $tinyTailCards = Arrays::filter($playerEvolutions, fn($evolution) => $evolution->type === TINY_TAIL_EVOLUTION);
             if (count($tinyTailCards) > 0) {
                 $usedCards = $this->getUsedCard();
                 $availableTinyTail = array_values(array_filter($tinyTailCards, fn($tinyTailCard) => $this->countUsedCard(3000 + $tinyTailCard->id) < 2));
                 $hasTinyTail = count($availableTinyTail) > 0;
             }
+
+            $energyDevourerCards = Arrays::filter($playerEvolutions, fn($evolution) => $evolution->type === ENERGY_DEVOURER_EVOLUTION);
+            if ($potentialEnergy >= 1 && count($energyDevourerCards) > 0) {
+                $usedCards = $this->getUsedCard();
+                $availableEnergyDevourer = array_values(array_filter($energyDevourerCards, fn($energyDevourerCard) => $this->countUsedCard(3000 + $energyDevourerCard->id) < 1));
+                $hasEnergyDevourer = count($availableEnergyDevourer) > 0;
+            }
+
+            // Saurian Adaptability
+            $hasSaurianAdaptability = $this->countEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true) > 0;
+
+            // yin & yang
+            $hasYinYang = $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
         }
-
-        // Saurian Adaptability
-        $hasSaurianAdaptability = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true) > 0;
-
-        // yin & yang
-        $hasYinYang = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
@@ -719,6 +731,7 @@ trait DiceUtilTrait {
             'gammaBreathCardIds' => $gammaBreathCardIds,
             'hasTailSweep' => $hasTailSweep,
             'hasTinyTail' => $hasTinyTail,
+            'hasEnergyDevourer' => $hasEnergyDevourer,
             'hasYinYang' => $hasYinYang,
             'hasBiofuel' => $hasBiofuel,
             'hasShrinky' => $hasShrinky,
@@ -734,6 +747,7 @@ trait DiceUtilTrait {
             || count($cards['gammaBreathCardIds']) > 0
             || $cards['hasTailSweep'] 
             || $cards['hasTinyTail'] 
+            || $cards['hasEnergyDevourer'] 
             || $cards['hasYinYang'] 
             || $cards['hasBiofuel'] 
             || $cards['hasShrinky'];

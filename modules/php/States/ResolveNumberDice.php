@@ -54,11 +54,12 @@ class ResolveNumberDice extends GameState {
             if (count($activatedSneakys) > 0) {
                 $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
                 foreach ($activatedSneakys as $activatedSneaky) {
+                    $card = $activatedSneaky->evolutionId ? $this->game->powerUpExpansion->evolutionCards->getItemById($activatedSneaky->evolutionId) : $this->game->powerCards->getItemById($activatedSneaky->cardId);
+
                     foreach ($otherPlayersIds as $otherPlayerId) {
-                        $this->game->applyLosePoints($otherPlayerId, $gainedPoints, $this->game->powerCards->getItemById($activatedSneaky->cardId));
+                        $this->game->applyLosePoints($otherPlayerId, $gainedPoints, $card);
                     }
 
-                    $card = $this->game->powerCards->getItemById($activatedSneaky->cardId);
                     $newDamages = $card->applyEffect(new Context($this->game, $activePlayerId, keyword: SNEAKY, lostPoints: $gainedPoints));
                     if (gettype($newDamages) === 'array') {
                         $damages = array_merge($damages, $newDamages);

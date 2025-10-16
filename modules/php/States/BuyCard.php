@@ -76,7 +76,7 @@ class BuyCard extends GameState {
             if ($adaptiveTechnologyCard->location === 'hand') {
                 $this->game->powerUpExpansion->applyPlayEvolution($activePlayerId, $adaptiveTechnologyCard);
                 $this->game->applyEvolutionEffects($adaptiveTechnologyCard, $activePlayerId);
-                $adaptiveTechnologyCard = $this->game->getEvolutionCardById($adaptiveTechnologyCard->id);
+                $adaptiveTechnologyCard = $this->game->powerUpExpansion->evolutionCards->getItemById($adaptiveTechnologyCard->id);
             }
             $tokens = $adaptiveTechnologyCard->tokens - 1;
             $this->game->setEvolutionTokens($activePlayerId, $adaptiveTechnologyCard, $tokens);

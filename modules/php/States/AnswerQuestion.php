@@ -85,7 +85,7 @@ class AnswerQuestion extends GameState {
 
     #[PossibleAction]
     public function actGazeOfTheSphinxDrawEvolution(int $activePlayerId) {
-        $this->game->drawEvolution($activePlayerId);
+        $this->game->powerUpExpansion->drawEvolution($activePlayerId);
 
         $this->game->goToState(\ST_RESOLVE_DICE);
     }
@@ -103,7 +103,7 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'id')] int $id,
     ) {
 
-        $card = $this->game->getEvolutionCardById($id);
+        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($id);
 
         $this->game->removeEvolution($activePlayerId, $card);
 
@@ -184,7 +184,7 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'id')] int $mimickedEvolutionId,
         int $currentPlayerId,
     ) {
-        $card = $this->game->getEvolutionCardById($mimickedEvolutionId);
+        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($mimickedEvolutionId);
         if ($this->game->EVOLUTION_CARDS_TYPES[$card->type] != 1) {
             throw new \BgaUserException("You can only mimic Permanent evolutions");
         }
@@ -205,7 +205,7 @@ class AnswerQuestion extends GameState {
     ) {
         $question = $this->game->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->game->getEvolutionCardById($evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($evolutionId);
         $this->game->setEvolutionTokens($activePlayerId, $evolution, $symbol, true);
 
         $this->notify->all('log', clienttranslate('${player_name} chooses that ${die_face} will have no effect this turn'), [
@@ -306,7 +306,7 @@ class AnswerQuestion extends GameState {
 
         $question = $this->game->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->game->getEvolutionCardById($evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($evolutionId);
         $this->game->setEvolutionTokens($activePlayerId, $evolution, 2);
 
         $this->game->setUsedCard(3000 + $evolutionId);
@@ -528,8 +528,9 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'playerId')] int $toPlayerId,
     ) {
         $question = $this->game->getQuestion();
-        $card = $this->game->getEvolutionCardById($question->args->card->id);
-        $this->game->giveFreezeRay($currentPlayerId, $toPlayerId, $card);
+        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->card->id);
+        /** @disregard */
+        $card->giveFreezeRay(new Context($this->game), $currentPlayerId, $toPlayerId);
 
         $this->game->removeStackedStateAndRedirect();
     }

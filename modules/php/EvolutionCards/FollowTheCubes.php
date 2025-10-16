@@ -5,11 +5,14 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 use Bga\Games\KingOfTokyo\Objects\Context;
 
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+
 class FollowTheCubes extends EvolutionCard
 {
     public function __construct()
     {
-        $this->evolutionType = PERMANENT;
+        $this->evolutionType = TEMPORARY;
+        $this->mindbugKeywords = [HUNTER];
     }
 
     public function applyEffect(Context $context) {
@@ -17,5 +20,6 @@ class FollowTheCubes extends EvolutionCard
         if ($targetPlayerEnergy === $context->game->getMaxPlayerEnergy()) {
             // TODOMB add 2 [dieClaw]
         }
+        $context->game->removeEvolution($context->currentPlayerId, $this);
     }
 }

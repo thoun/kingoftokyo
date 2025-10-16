@@ -27,7 +27,7 @@ class BeforeEnteringTokyo extends GameState {
     public function getArgs(int $activePlayerId): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
-        $highlighted = $isPowerUpExpansion && $this->game->tokyoHasFreeSpot() ? $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
+        $highlighted = $isPowerUpExpansion && $this->game->tokyoHasFreeSpot() ? $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
 
         $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
 

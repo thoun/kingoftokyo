@@ -550,13 +550,13 @@ class Game extends \Bga\GameFramework\Table {
 
     #[CheckAction(false)]
     function actPlayEvolution(int $id, int $currentPlayerId): void {
-        $card = $this->getEvolutionCardById($id);
+        $card = $this->powerUpExpansion->evolutionCards->getItemById($id);
 
         if ($card->location != 'hand') {
             throw new \BgaUserException('Evolution card is not in your hand');
         }
 
-        $this->powerUpExpansion->checkCanPlayEvolution($card->type, $currentPlayerId);
+        $this->powerUpExpansion->checkCanPlayEvolution($card, $currentPlayerId);
 
         $this->powerUpExpansion->applyPlayEvolution($currentPlayerId, $card);
 

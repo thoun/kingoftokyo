@@ -25,8 +25,8 @@ class AfterEnteringTokyo extends GameState {
         $player = $this->game->getPlayer($activePlayerId);
 
         $highlighted = $player->location > 0 && $player->turnEnteredTokyo
-            ? $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO)
-            : $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO);
+            ? $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO)
+            : $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO);
 
         return [
             'highlighted' => $highlighted,

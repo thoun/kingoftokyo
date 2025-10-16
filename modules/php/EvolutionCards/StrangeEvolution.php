@@ -7,7 +7,7 @@ class StrangeEvolution extends EvolutionCard
 {
     public function __construct()
     {
-        $this->evolutionType = PERMANENT;
+        $this->evolutionType = TEMPORARY;
     }
 
     // TODOMB

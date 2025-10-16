@@ -3537,6 +3537,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                 if (card.tokens > 0) {
                     _this.placeTokensOnCard(card);
                 }
+                div.insertAdjacentHTML('beforeend', "<div id=\"evolution-".concat(card.id, "-keyword-buttons\" class=\"evolution-keyword-buttons\"></div>"));
             },
             setupBackDiv: function (card, div) {
                 div.style.backgroundPositionX = "0%";
@@ -5135,7 +5136,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -5457,6 +5458,7 @@ var DiceManager = /** @class */ (function () {
         this.addDiceRollClass(die);
     };
     DiceManager.prototype.dieClick = function (die, event) {
+        var _a;
         if (this.action === 'move') {
             this.toggleLockDice(die, event);
         }
@@ -5474,7 +5476,7 @@ var DiceManager = /** @class */ (function () {
         }
         else if (this.action === 'rerollDice') {
             if (die.type < 2) {
-                dojo.toggleClass(this.getDieDiv(die), 'die-selected');
+                (_a = this.getDieDiv(die)) === null || _a === void 0 ? void 0 : _a.classList.toggle('die-selected');
                 var selectedDieIndex = this.selectedDice.findIndex(function (d) { return d.id == die.id; });
                 if (selectedDieIndex !== -1) {
                     this.selectedDice.splice(selectedDieIndex, 1);
@@ -5494,7 +5496,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.removeSelection = function () {
         var _this = this;
-        this.selectedDice.forEach(function (die) { return dojo.removeClass(_this.getDieDiv(die), 'die-selected'); });
+        this.selectedDice.forEach(function (die) { var _a; return (_a = _this.getDieDiv(die)) === null || _a === void 0 ? void 0 : _a.classList.remove('die-selected'); });
         this.selectedDice = [];
     };
     DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
@@ -5566,6 +5568,7 @@ var DiceManager = /** @class */ (function () {
             var gammaBreathButtonId_1 = "".concat(bubbleActionButtonsId, "-gammaBreath");
             var tailSweepButtonId_1 = "".concat(bubbleActionButtonsId, "-tailSweep");
             var tinyTailButtonId_1 = "".concat(bubbleActionButtonsId, "-tinyTail");
+            var energyDevourerButtonId_1 = "".concat(bubbleActionButtonsId, "-energyDevourer");
             var plotTwistButtonId_1 = "".concat(bubbleActionButtonsId, "-plotTwist");
             var stretchyButtonId_1 = "".concat(bubbleActionButtonsId, "-stretchy");
             var biofuelButtonId_1 = "".concat(bubbleActionButtonsId, "-biofuel");
@@ -5607,6 +5610,12 @@ var DiceManager = /** @class */ (function () {
                     if (args_1.hasTinyTail) {
                         this.game.createButton(bubbleActionButtonsId, tinyTailButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(184, 'text-only'), "</strong>") }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
+                            _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
+                    if (args_1.hasEnergyDevourer) {
+                        this.game.createButton(bubbleActionButtonsId, energyDevourerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(632, 'text-only'), "</strong>") }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3632);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
@@ -5662,6 +5671,16 @@ var DiceManager = /** @class */ (function () {
                         if (args_1.hasTinyTail && die.value != 1) {
                             dojo.toggleClass(tinyTailButtonId_1, 'disabled', value != 1);
                         }
+                        if (args_1.hasEnergyDevourer && die.value == 4) {
+                            var couldUseEnergyDevourer = value == 6;
+                            dojo.toggleClass(energyDevourerButtonId_1, 'disabled', !couldUseEnergyDevourer || _this.game.getPlayerEnergy(args_1.playerId) < 1);
+                            if (couldUseEnergyDevourer) {
+                                document.getElementById(energyDevourerButtonId_1).dataset.enableAtEnergy = '1';
+                            }
+                            else {
+                                document.getElementById(energyDevourerButtonId_1).removeAttribute('data-enable-at-energy');
+                            }
+                        }
                         if (args_1.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
                         }
@@ -5705,6 +5724,9 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasTinyTail) {
                         dojo.addClass(tinyTailButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasEnergyDevourer) {
+                        dojo.addClass(energyDevourerButtonId_1, 'disabled');
                     }
                     if (args_1.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId_1, 'disabled');
@@ -6839,6 +6861,15 @@ var KingOfTokyo = /** @class */ (function (_super) {
                         div.innerHTML = '';
                         card.mindbugKeywords.forEach(function (keyword) {
                             return _this.statusBar.addActionButton(_(keyword), function () { return _this.onConsumableKeywordClick(card, keyword); }, { destination: div });
+                        });
+                    }
+                });
+                args.consumableEvolutions.forEach(function (evolution) {
+                    var div = document.getElementById("evolution-".concat(evolution.id, "-keyword-buttons"));
+                    if (div) {
+                        div.innerHTML = '';
+                        evolution.mindbugKeywords.forEach(function (keyword) {
+                            return _this.statusBar.addActionButton(_(keyword), function (e) { _this.onConsumableEvolutionKeywordClick(evolution, keyword); e.stopPropagation(); }, { destination: div });
                         });
                     }
                 });
@@ -8157,6 +8188,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onConsumableKeywordClick = function (card, keyword) {
         this.bgaPerformAction('actActivateConsumable', { id: card.id, keyword: keyword });
+    };
+    KingOfTokyo.prototype.onConsumableEvolutionKeywordClick = function (evolution, keyword) {
+        this.bgaPerformAction('actActivateConsumableEvolution', { id: evolution.id, keyword: keyword });
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, card, from, warningChecked) {
         var _this = this;

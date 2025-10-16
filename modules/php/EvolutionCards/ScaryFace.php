@@ -9,7 +9,7 @@ class ScaryFace extends EvolutionCard
 {
     public function __construct()
     {
-        $this->evolutionType = TEMPORARY;
+        $this->evolutionType = PERMANENT;
     }
 
     public function applyEffect(Context $context) {

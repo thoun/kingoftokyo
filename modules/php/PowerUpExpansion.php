@@ -5,6 +5,7 @@ namespace Bga\Games\KingOfTokyo;
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\Objects\Context;
 
 class PowerUpExpansion {
     public EvolutionCardManager $evolutionCards;
@@ -32,7 +33,7 @@ class PowerUpExpansion {
     }
 
     function applyChooseEvolutionCard(int $playerId, int $id, bool $init): void {
-        $topCards = $this->game->pickEvolutionCards($playerId);
+        $topCards = $this->pickEvolutionCards($playerId);
         $card = Arrays::find($topCards, fn($topCard) => $topCard->id == $id);
         if ($card == null) {
             throw new \BgaUserException('Evolution card not available');
@@ -76,7 +77,9 @@ class PowerUpExpansion {
         return Arrays::some($players, fn($player) => in_array($player->monster % 100, [7, 8]));
     }
 
-    function checkCanPlayEvolution(int $cardType, int $playerId) {
+    function checkCanPlayEvolution(EvolutionCard $evolution, int $playerId) {
+        $evolution->checkCanPlay(new Context($this->game, $playerId));
+        $cardType = $evolution->type;
         $stateId = $this->game->gamestate->getCurrentMainStateId();
 
         if ($stateId < 17) {
@@ -107,68 +110,58 @@ class PowerUpExpansion {
                 throw new \BgaUserException(clienttranslate("You can only play this evolution card when another player is buying a card"));
             }
         }
+    }
 
-        if ($this->game->EVOLUTION_CARDS_TYPES[$cardType] == 3) {
-            throw new \BgaUserException(/*clienttranslateTODOPUHA*/("You can only play this evolution now, you'll be asked to use it when you wound a Monster"));
+    function pickEvolutionCards(int $playerId, int $number = 2) {
+        $remainingInDeck = $this->evolutionCards->countItemsInLocation('deck'.$playerId);
+        if ($remainingInDeck >= $number) {
+            return $this->game->getEvolutionCardsOnDeckTop($playerId, $number);
+        } else {
+            $cards = $this->game->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
+
+            $this->evolutionCards->moveAllItemsInLocation('discard'.$playerId, 'deck'.$playerId);
+            $this->evolutionCards->shuffle('deck'.$playerId);
+
+            $cards = array_merge(
+                $cards,
+                $this->game->getEvolutionCardsOnDeckTop($playerId, $number - $remainingInDeck)
+            );
+            return $cards;
+        }
+    }
+
+    function drawEvolution(int $playerId) {
+        $card = $this->pickEvolutionCards($playerId, 1)[0];
+
+        $this->evolutionCards->moveItem($card, 'hand', $playerId);
+
+        $this->game->notifNewEvolutionCard($playerId, $card);
+
+        $this->game->incStat(1, 'picked'.$this->game->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->game->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
+    }
+
+    function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
+        $card = $this->evolutionCards->getItemById($evolutionId);
+
+        $this->evolutionCards->moveItem($card, 'hand', $playerId);
+
+        $this->game->notifNewEvolutionCard($playerId, $card);
+
+        $this->game->incStat(1, 'picked'.$this->game->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->game->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
+    }
+
+    function getHighlightedEvolutions(array $stepCardsTypes) {
+        $cards = [];
+
+        foreach ($stepCardsTypes as $stepCardsType) {
+            $stepCards = $this->game->getEvolutionCardsByType($stepCardsType);
+            foreach ($stepCards as $stepCard) {
+                if ($stepCard->location == 'hand') {
+                    $cards[] = $stepCard;
+                }
+            }
         }
 
-        switch($cardType) {
-            case NINE_LIVES_EVOLUTION:
-            case SIMIAN_SCAMPER_EVOLUTION:
-            case DETACHABLE_TAIL_EVOLUTION:
-            case RABBIT_S_FOOT_EVOLUTION:
-                throw new \BgaUserException(clienttranslate("You can't play this Evolution now, you'll be asked to use it when you'll take damage"));
-            case SAURIAN_ADAPTABILITY_EVOLUTION:
-                $message = $stateId === ST_PLAYER_CHANGE_DIE ? 
-                    clienttranslate("Click on a die face you want to change") :
-                    clienttranslate("You can't play this Evolution now, you'll be asked to use it when you change your dice result");
-                throw new \BgaUserException($message);
-            case FELINE_MOTOR_EVOLUTION:
-                $startedTurnInTokyo = $this->game->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
-                if (in_array($playerId, $startedTurnInTokyo)) {
-                    throw new \BgaUserException(clienttranslate("You started your turn in Tokyo"));
-                }
-                break;
-            case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
-            case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
-                if (!$this->game->inTokyo($playerId)) {
-                    throw new \BgaUserException(clienttranslate("You can play this Evolution only if you are in Tokyo"));
-                }
-                break;
-            case JUNGLE_FRENZY_EVOLUTION:
-                if ($playerId != intval($this->game->getActivePlayerId())) {
-                    throw new \BgaUserException(clienttranslate("You must play this Evolution during your turn"));
-                }
-                if ($this->game->inTokyo($playerId)) {
-                    throw new \BgaUserException(clienttranslate("You can play this Evolution only if you are not in Tokyo"));
-                }
-                if (!$this->game->isDamageDealtThisTurn($playerId)) {
-                    throw new \BgaUserException(clienttranslate("You didn't deal damage to a player in Tokyo"));
-                }
-                break;
-            case TUNE_UP_EVOLUTION:
-                if ($this->game->inTokyo($playerId)) {
-                    throw new \BgaUserException(clienttranslate("You can play this Evolution only if you are not in Tokyo"));
-                }
-                break;
-            case BLIZZARD_EVOLUTION:
-                if ($playerId != intval($this->game->getActivePlayerId())) {
-                    throw new \BgaUserException(clienttranslate("You must play this Evolution during your turn"));
-                }
-                break;
-            case ICY_REFLECTION_EVOLUTION:
-                $playersIds = $this->game->getPlayersIds();
-                $canPlayIcyReflection = false;
-                foreach($playersIds as $playerId) {
-                    $evolutions = $this->game->getEvolutionCardsByLocation('table', $playerId);
-                    if (Arrays::some($evolutions, fn($evolution) => $evolution->type != ICY_REFLECTION_EVOLUTION && $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] == 1)) {
-                        $canPlayIcyReflection = true; // if there is a permanent evolution card in table
-                    }
-                }
-                if (!$canPlayIcyReflection) {
-                    throw new \BgaUserException(clienttranslate("You can only play this evolution card when there is another permanent Evolution on the table"));
-                }
-                break;
-        }
+        return $cards;
     }
 }

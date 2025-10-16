@@ -6,6 +6,7 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class ResolveEndTurn extends GameState {
@@ -19,9 +20,10 @@ class ResolveEndTurn extends GameState {
 
     function onEnteringState(int $activePlayerId) { 
         if ($this->game->powerUpExpansion->isActive()) {
-            $freezeRayEvolutions = $this->game->getEvolutionsOfType($activePlayerId, FREEZE_RAY_EVOLUTION);
+            $freezeRayEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, FREEZE_RAY_EVOLUTION, true, false);
             foreach ($freezeRayEvolutions as $freezeRayEvolution) {
-                $this->game->giveBackFreezeRay($activePlayerId, $freezeRayEvolution);
+                /** @disregard */
+                $freezeRayEvolution->giveBackFreezeRay(new Context($this->game, $activePlayerId));
             }
         }
 
