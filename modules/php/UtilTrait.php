@@ -1011,7 +1011,8 @@ trait UtilTrait {
             && $this->wickednessTiles->winOnElimination(new Context($this, currentPlayerId: $playerId)) !== null;
 
         if (!$finalRoarWillActivate) {
-            if ($this->powerUpExpansion->isActive()) {
+            $powerUpExpansion = $this->powerUpExpansion->isActive();
+            if ($powerUpExpansion) {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $sonOfKongKikoEvolutions = $this->getEvolutionsOfType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
                     if (count($sonOfKongKikoEvolutions) > 0) {
@@ -1034,6 +1035,18 @@ trait UtilTrait {
             if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
                 // it has a child
                 $this->applyItHasAChild($playerId);
+            }
+
+            if ($powerUpExpansion) {
+                if ($this->getPlayerHealth($playerId) == 0) {
+                    $unstoppableHydraEvolutions = array_merge(
+                        $this->getEvolutionsOfType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_1, true, true),
+                        $this->getEvolutionsOfType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_2, true, true),
+                    );
+                    if (count($unstoppableHydraEvolutions) > 0) {
+                         $unstoppableHydraEvolutions[0]->applyEffect(new Context($this, $playerId));
+                    }
+                }
             }
         }
 
@@ -1363,6 +1376,12 @@ trait UtilTrait {
         }
 
         return $cards;
+    }
+
+    function getPlayersIdsWithMinColumn(string $column) {
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select min(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
+        $dbResults = $this->getCollectionFromDb($sql);
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayersIdsWithMaxColumn(string $column) {

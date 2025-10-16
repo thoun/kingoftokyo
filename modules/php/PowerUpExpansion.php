@@ -130,8 +130,8 @@ class PowerUpExpansion {
         }
     }
 
-    function drawEvolution(int $playerId) {
-        $card = $this->pickEvolutionCards($playerId, 1)[0];
+    function drawEvolution(int $playerId, ?int $fromPlayerId = null) {
+        $card = $this->pickEvolutionCards($fromPlayerId ?? $playerId, 1)[0];
 
         $this->evolutionCards->moveItem($card, 'hand', $playerId);
 

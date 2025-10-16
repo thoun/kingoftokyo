@@ -13,6 +13,9 @@ class UnstoppableHydra extends EvolutionCard
     }
 
     public function applyEffect(Context $context) {
+        $context->game->playEvolutionToTable($context->currentPlayerId, $this, '');
+        $context->game->removeEvolution($context->currentPlayerId, $this, false, 5000);
+
         $context->game->applyGetHealth($context->currentPlayerId, 3, $this, $context->currentPlayerId);
         $context->game->incBaseDice($context->currentPlayerId, -1);
     }

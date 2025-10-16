@@ -246,6 +246,12 @@ class ResolveDice extends GameState {
             }
         }
 
+        $threeTimesAsStrongEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \THREE_TIMES_AS_STRONG_EVOLUTION, true, false);
+        foreach ($threeTimesAsStrongEvolutions as $threeTimesAsStrongEvolution) {
+            /** @disregard */
+            $threeTimesAsStrongEvolution->applyEffect(new Context($this, $playerId));
+        }
+
         $this->game->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->game->setGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, $funnyLookingButDangerousDamages);
         $this->game->setGlobalVariable(FLAMING_AURA_DAMAGES, $flamingAuraDamages);

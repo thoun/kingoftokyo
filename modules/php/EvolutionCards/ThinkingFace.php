@@ -13,9 +13,15 @@ class ThinkingFace extends EvolutionCard
     }
 
     public function applyEffect(Context $context) {
-        if (true) { // TODOMB
+        $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, false, false, false);
+        $diceCounts = $context->game->getRolledDiceCounts($context->currentPlayerId, $dice, false);
+
+        if ($diceCounts[4] === 3) {
             $context->game->applyGetHealth($context->currentPlayerId, 3, $this, $context->currentPlayerId);
-            //$lowest = $context->game->getMinPlayerHealth() TODOMB TOCHECK what in cas of tie?
+            $playersIds = $context->game->getPlayersIdsWithMinColumn('player_health');
+            // TODO let the player chose the one to heal
+            $secondHealId = in_array($context->currentPlayerId, $playersIds) ? $context->currentPlayerId : $playersIds[bga_rand(0, count($playersIds) - 1)];
+            $context->game->applyGetHealth($secondHealId, 1, $this, $context->currentPlayerId);
         }
     }
 }

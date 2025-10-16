@@ -235,6 +235,11 @@ trait DiceUtilTrait {
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
+        $scaryFaceEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \SCARY_FACE_EVOLUTION, true, false);
+        foreach ($scaryFaceEvolutions as $scaryFaceEvolution) {
+            /** @disregard */
+            $scaryFaceEvolution->applyEffect(new Context($this, $playerId));
+        }
 
         // number
         if ($diceCount >= 3) {
@@ -330,6 +335,12 @@ trait DiceUtilTrait {
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) { 
+        $thinkingFaceEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \THINKING_FACE_EVOLUTION, true, false);
+        foreach ($thinkingFaceEvolutions as $thinkingFaceEvolution) {
+            /** @disregard */
+            $thinkingFaceEvolution->applyEffect(new Context($this, $playerId));
+        }
+
         if ($this->powerUpExpansion->isActive()) {
             if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
@@ -369,6 +380,12 @@ trait DiceUtilTrait {
     }
 
     function resolveEnergyDice(int $playerId, int $diceCount) {
+        $hungryFaceEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \HUNGRY_FACE_EVOLUTION, true, false);
+        foreach ($hungryFaceEvolutions as $hungryFaceEvolution) {
+            /** @disregard */
+            $hungryFaceEvolution->applyEffect(new Context($this, $playerId));
+        }
+
         if (!$this->canGainEnergy($playerId)) {
             return;
         }

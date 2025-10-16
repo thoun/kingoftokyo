@@ -588,7 +588,15 @@ class AnswerQuestion extends GameState {
         $this->game->goToState(ST_PLAYER_BEFORE_START_TURN);
     }
 
+    #[PossibleAction]
+    public function actDrawStrangeEvolution(int $targetPlayerId, int $currentPlayerId) {
+        $question = $this->game->getQuestion();
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+
+        $evolution->applyEffect(new Context($this->game, $currentPlayerId, targetPlayerId: $targetPlayerId));
+    }
+
     public function zombie(int $playerId) {
-        // TODO
+        // to be done
     }
 }

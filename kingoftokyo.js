@@ -7850,7 +7850,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onUpdateActionButtonsAnswerQuestion = function (args) {
         var _this = this;
-        var _a;
+        var _a, _b;
         var question = args.question;
         switch (question.code) {
             case 'BambooSupply':
@@ -7976,6 +7976,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'MindbugsOverlord':
                 this.statusBar.addActionButton(_("Declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }); });
                 this.statusBar.addActionButton(_("Don't declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }); });
+                break;
+            case 'StrangeEvolution':
+                (_b = question.args.otherPlayerIds) === null || _b === void 0 ? void 0 : _b.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(_this.getPlayer(targetPlayerId).name, function () { return _this.bgaPerformAction('actDrawStrangeEvolution', { targetPlayerId: targetPlayerId }); }); });
                 break;
         }
     };
