@@ -13,7 +13,7 @@ class FreezeRay extends EvolutionCard
         $this->evolutionType = PERMANENT;
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context): bool {
             $ownerId = $this->ownerId;
             if ($context->currentPlayerId != $ownerId && !$context->game->getPlayer($ownerId)->eliminated) {
                 $question = new Question(
@@ -28,10 +28,11 @@ class FreezeRay extends EvolutionCard
                 $context->game->gamestate->setPlayersMultiactive([$ownerId], 'next', true);
 
                 $context->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
-                return;
+                return true;
             } else {
                 $context->game->setUsedCard(3000 + $this->id);
             }
+            return false;
     }
 
     function freezeRayChooseOpponentQuestion(Context $context, array $smashedPlayersIds) {
