@@ -113,7 +113,7 @@ trait UtilTrait {
         $this->setGlobalVariable(USED_CARDS, $cardsIds);
     }
 
-    function getUsedCard() {
+    function getUsedCard(): array {
         return $this->getGlobalVariable(USED_CARDS, true);
     }
 
@@ -927,7 +927,7 @@ trait UtilTrait {
                     $card = $this->powerCards->getItemById($activatedHunter->cardId);
                     $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
                 }
-                $this->game->globals->delete(ACTIVATED_HUNTER_CARDS);
+                $this->globals->delete(ACTIVATED_HUNTER_CARDS);
             }
         }
     }

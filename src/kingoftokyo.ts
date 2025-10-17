@@ -418,7 +418,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
     }
 
-    private onEnterginMindbugKeywordState(args: EnteringMindbugKeywordStateArgs) {
+    private onEnteringMindbugKeywordState(args: EnteringMindbugKeywordStateArgs) {
         if (this.isCurrentPlayerActive()) {
             if (args.canPlayConsumable) {
 
@@ -445,6 +445,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
     }
 
+    private onLeavingMindbugKeywordState() {
+        if (this.isCurrentPlayerActive()) {
+            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(elem => elem.remove()); // TODOMB test
+        }
+    }
+
     private onEnteringBeforeStartTurn(args: EnteringBeforeStartTurnArgs) {
         if (args.canPlayConsumable && args.couldPlayEvolution) {
             this.statusBar.setTitle(
@@ -463,7 +469,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             );
         }
 
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
     }
     
     private onEnteringStepEvolution(args: EnteringStepEvolutionArgs) {
@@ -492,7 +498,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             );
         }
 
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
 
         if (args._private) {
             Object.keys(args._private).forEach(key => {
@@ -713,7 +719,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             }
         }
 
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
         
         if (isCurrentPlayerActive) {
             if (args.dice && args.rethrow3?.hasCard) {
@@ -975,7 +981,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
                 this.titleBarStock.addCards(treasureArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
                 this.titleBarStock.setSelectionMode('single');
-                this.titleBarStock.onCardClick = (card: Card) => this.playCardDeepDive(card.id);
+                break;
+            case 'ArcaneScepter':
+                const arcaneScepterArgs = question.args as TreasureQuestionArgs;
+                dojo.place(`<div id="title-bar-stock" class="card-in-title-wrapper"></div>`, `maintitlebar_content`);
+                this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCards(arcaneScepterArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
+                this.titleBarStock.setSelectionMode('single');
                 break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode('single');
@@ -1031,6 +1043,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'beforeStartTurn':
                 this.getPlayerTable(this.getPlayerId())?.cards.setSelectionMode('none');
                 this.onLeavingStepEvolution();
+                this.onLeavingMindbugKeywordState();
                 break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
@@ -1197,6 +1210,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'MiraculousCatch':
             case 'DeepDive':
             case 'Treasure':
+            case 'ArcaneScepter':
             case 'SuperiorAlienTechnology':                
                 this.titleBarStock.removeAll();
                 document.getElementById(`title-bar-stock`)?.remove();
@@ -1622,11 +1636,17 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 });
                 break;
             case 'Treasure':
-                const treasureArgsArgs = question.args as TreasureQuestionArgs;
-                treasureArgsArgs.cards.forEach(card => {
+                const treasureArgs = question.args as TreasureQuestionArgs;
+                treasureArgs.cards.forEach(card => {
                     this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bgaPerformAction('actTreasure', { id: card.id }));
                 });
                 this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction('actPassTreasure'), { color: 'secondary' });
+                break;
+            case 'ArcaneScepter':
+                const arcaneScepterArgs = question.args as TreasureQuestionArgs;
+                arcaneScepterArgs.cards.forEach(card => {
+                    this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Take ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bgaPerformAction('actArcaneScepter', { id: card.id }));
+                });
                 break;
             case 'ExoticArms':
                 const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });

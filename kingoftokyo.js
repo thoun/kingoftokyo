@@ -6851,7 +6851,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             }
         }
     };
-    KingOfTokyo.prototype.onEnterginMindbugKeywordState = function (args) {
+    KingOfTokyo.prototype.onEnteringMindbugKeywordState = function (args) {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
             if (args.canPlayConsumable) {
@@ -6876,6 +6876,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
             }
         }
     };
+    KingOfTokyo.prototype.onLeavingMindbugKeywordState = function () {
+        if (this.isCurrentPlayerActive()) {
+            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(function (elem) { return elem.remove(); }); // TODOMB test
+        }
+    };
     KingOfTokyo.prototype.onEnteringBeforeStartTurn = function (args) {
         if (args.canPlayConsumable && args.couldPlayEvolution) {
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'), args);
@@ -6886,7 +6891,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         else if (args.couldPlayEvolution) {
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
         }
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
     };
     KingOfTokyo.prototype.onEnteringStepEvolution = function (args) {
         console.log('onEnteringStepEvolution', args, this.isCurrentPlayerActive());
@@ -6905,7 +6910,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         else if (args.couldPlayEvolution) {
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
         }
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
         if (args._private) {
             Object.keys(args._private).forEach(function (key) {
                 var div = document.getElementById("hand-evolution-cards_item_".concat(key));
@@ -7092,7 +7097,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), args);
             }
         }
-        this.onEnterginMindbugKeywordState(args);
+        this.onEnteringMindbugKeywordState(args);
         if (isCurrentPlayerActive) {
             if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
                 if (document.getElementById('rethrow3camouflage_button')) {
@@ -7322,7 +7327,13 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.titleBarStock = new LineStock(this.cardsManager, document.getElementById('title-bar-stock'));
                 this.titleBarStock.addCards(treasureArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
                 this.titleBarStock.setSelectionMode('single');
-                this.titleBarStock.onCardClick = function (card) { return _this.playCardDeepDive(card.id); };
+                break;
+            case 'ArcaneScepter':
+                var arcaneScepterArgs = question.args;
+                dojo.place("<div id=\"title-bar-stock\" class=\"card-in-title-wrapper\"></div>", "maintitlebar_content");
+                this.titleBarStock = new LineStock(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCards(arcaneScepterArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
+                this.titleBarStock.setSelectionMode('single');
                 break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode('single');
@@ -7369,6 +7380,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'beforeStartTurn':
                 (_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.cards.setSelectionMode('none');
                 this.onLeavingStepEvolution();
+                this.onLeavingMindbugKeywordState();
                 break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
@@ -7527,6 +7539,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'MiraculousCatch':
             case 'DeepDive':
             case 'Treasure':
+            case 'ArcaneScepter':
             case 'SuperiorAlienTechnology':
                 this.titleBarStock.removeAll();
                 (_a = document.getElementById("title-bar-stock")) === null || _a === void 0 ? void 0 : _a.remove();
@@ -7926,11 +7939,17 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 });
                 break;
             case 'Treasure':
-                var treasureArgsArgs = question.args;
-                treasureArgsArgs.cards.forEach(function (card) {
+                var treasureArgs = question.args;
+                treasureArgs.cards.forEach(function (card) {
                     _this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.bgaPerformAction('actTreasure', { id: card.id }); });
                 });
                 this.statusBar.addActionButton(_('Pass'), function () { return _this.bgaPerformAction('actPassTreasure'); }, { color: 'secondary' });
+                break;
+            case 'ArcaneScepter':
+                var arcaneScepterArgs = question.args;
+                arcaneScepterArgs.cards.forEach(function (card) {
+                    _this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Take ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.bgaPerformAction('actArcaneScepter', { id: card.id }); });
+                });
                 break;
             case 'ExoticArms':
                 var useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });

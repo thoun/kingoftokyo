@@ -40,7 +40,7 @@ class MindbugExpansion {
         if (!$this->isActive()) {
             return 0;
         }
-        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION) ?? 0; 
+        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION) ?? 2 /* TODOMB 0*/; 
     }
 
     public function initDb(array $playerIds): void {
@@ -136,6 +136,8 @@ class MindbugExpansion {
     public function getConsumableCards(int $playerId, ?array $keywords): array {
         $playerCards = $this->game->powerCards->getPlayerReal($playerId);
         $consumableCards = Arrays::filter($playerCards, fn($card) => $card->type >= 400 && $card->type < 500);
+        $usedCards = $this->game->getUsedCard();
+        $consumableCards = Arrays::filter($consumableCards, fn($card) => !in_array($card->id, $usedCards));
         if ($keywords !== null) {
             $consumableCards = Arrays::filter($consumableCards, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, $keywords)));
         }
@@ -148,6 +150,8 @@ class MindbugExpansion {
     public function getConsumableEvolutions(int $playerId, ?array $keywords): array {
         $playerEvolutionsInHand = $this->game->powerUpExpansion->evolutionCards->getPlayerReal($playerId, false, true);
         $consumableEvolutions = Arrays::filter($playerEvolutionsInHand, fn($evolution) => $evolution->mindbugKeywords !== null);
+        $usedCards = $this->game->getUsedCard();
+        $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($card) => !in_array(3000 + $card->id, $usedCards));
         if ($keywords !== null) {
             $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, $keywords)));
         }
@@ -166,6 +170,8 @@ class MindbugExpansion {
         if (!in_array($keyword, $card->mindbugKeywords)) {
             throw new \BgaUserException("This card doesn't have the keyword $keyword");
         }
+
+        $this->game->setUsedCard($id);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
@@ -191,6 +197,8 @@ class MindbugExpansion {
         if (!in_array($keyword, $card->mindbugKeywords)) {
             throw new \BgaUserException("This card doesn't have the keyword $keyword");
         }
+
+        $this->game->setUsedCard(3000 + $id);
 
         $this->game->playEvolutionToTable($playerId, $card);
 

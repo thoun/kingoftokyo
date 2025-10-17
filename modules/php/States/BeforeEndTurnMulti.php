@@ -35,7 +35,7 @@ class BeforeEndTurnMulti extends GameState {
         $couldPlayEvolution = false;
 
         $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
-        if (count($consumableCards) > 0 && $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId) !== null) {
+        if (count($consumableCards) > 0 && count($this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId)) > 0) {
             $consumableCards = [];
         }
         $canPlayConsumable = count($consumableCards) > 0;

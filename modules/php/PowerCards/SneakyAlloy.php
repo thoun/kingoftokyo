@@ -11,7 +11,7 @@ class SneakyAlloy extends PowerCard
         $this->mindbugKeywords = [SNEAKY];
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context) { // TODOMB
         $context->game->removeCard($context->currentPlayerId, $this);
     }
 }

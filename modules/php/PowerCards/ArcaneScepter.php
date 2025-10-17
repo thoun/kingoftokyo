@@ -25,7 +25,7 @@ class ArcaneScepter extends PowerCard
             /*TODOMB clienttranslate*/('${actplayer} must take any <CONSUMABLE> card from the discard for free'),
             /*TODOMB clienttranslate*/('${you} must take any <CONSUMABLE> card from the discard for free'),
             [$context->currentPlayerId],
-            $context->stateAfter ?? -1,
+            -1,
             [
                 'cards' => $cards,
             ]

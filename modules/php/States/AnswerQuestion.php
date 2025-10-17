@@ -565,6 +565,20 @@ class AnswerQuestion extends GameState {
     }
 
     #[PossibleAction]
+    public function actArcaneScepter(
+        int $currentPlayerId,
+        int $id,
+    ) {
+        $card = $this->game->powerCards->getItemById($id);
+
+        $this->game->applyPlayCard($currentPlayerId, $card);
+
+        $this->game->setUsedCard($card->id);
+
+        $this->game->goToState(-1);    
+    }
+
+    #[PossibleAction]
     public function actPassTreasure(int $currentPlayerId) {
         $this->game->goToState(-1);
     }
