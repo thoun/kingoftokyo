@@ -1236,8 +1236,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
-                this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
-                this.addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
@@ -1322,8 +1320,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), () => this.changeActivePlayerDieSkip());
                     break;
                 case 'cheerleaderSupport':
-                    this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
-                    this.addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
+                    this.statusBar.addActionButton(formatTextIcons(_("Support (add [diceSmash] )")), () => this.bgaPerformAction('actSupport'));
+                    this.statusBar.addActionButton(_("Don't support"), () => this.bgaPerformAction('actDontSupport'));
                     break;
                 case 'giveGoldenScarab':
                     const argsGiveGoldenScarab = args as EnteringGiveGoldenScarabArgs;
@@ -2849,14 +2847,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     public resolveDice() {
         this.bgaPerformAction('actResolve');
-    }
-
-    public support() {
-        this.bgaPerformAction('actSupport');
-    }
-
-    public dontSupport() {
-        this.bgaPerformAction('actDontSupport');
     }
 
     public discardDie(id: number) {

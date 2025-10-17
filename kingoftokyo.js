@@ -7566,8 +7566,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
-                this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.support(); });
-                this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
@@ -7647,8 +7645,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), function () { return _this.changeActivePlayerDieSkip(); });
                     break;
                 case 'cheerleaderSupport':
-                    this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.support(); });
-                    this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
+                    this.statusBar.addActionButton(formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.bgaPerformAction('actSupport'); });
+                    this.statusBar.addActionButton(_("Don't support"), function () { return _this.bgaPerformAction('actDontSupport'); });
                     break;
                 case 'giveGoldenScarab':
                     var argsGiveGoldenScarab = args;
@@ -8903,12 +8901,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.resolveDice = function () {
         this.bgaPerformAction('actResolve');
-    };
-    KingOfTokyo.prototype.support = function () {
-        this.bgaPerformAction('actSupport');
-    };
-    KingOfTokyo.prototype.dontSupport = function () {
-        this.bgaPerformAction('actDontSupport');
     };
     KingOfTokyo.prototype.discardDie = function (id) {
         this.bgaPerformAction('actDiscardDie', {
