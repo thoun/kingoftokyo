@@ -687,7 +687,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
         if ($bonusMonsters || $this->mindbugExpansion->isActive()) {
-            // TODOMB activate it
+            // TODOMB activate it, but make sure the Evolutions don't show up !
             if (Game::getBgaEnvironment() == 'studio') {                
                 $monsters = [...$monsters, /*61,*/ 62, /*63*/];
             }

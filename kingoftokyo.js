@@ -5136,7 +5136,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSneakyAlloy || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -5575,6 +5575,7 @@ var DiceManager = /** @class */ (function () {
             var shrinkyButtonId_1 = "".concat(bubbleActionButtonsId, "-shrinky");
             var saurianAdaptabilityButtonId_1 = "".concat(bubbleActionButtonsId, "-saurianAdaptability");
             var clownButtonId_1 = "".concat(bubbleActionButtonsId, "-clown");
+            var sneakyAlloyButtonId_1 = "".concat(bubbleActionButtonsId, "-sneakyAlloy");
             var args_1 = this.changeDieArgs;
             if (!this.dieFaceSelectors[die.id]) {
                 this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args_1.canHealWithDice);
@@ -5592,6 +5593,12 @@ var DiceManager = /** @class */ (function () {
                     if (args_1.hasHerdCuller) {
                         this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(22, 'text-only'), "</strong>") }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
+                            _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
+                    if (args_1.hasSneakyAlloy) {
+                        this.game.createButton(bubbleActionButtonsId, sneakyAlloyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(404, 'text-only'), "</strong>") }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 404);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
@@ -5662,6 +5669,9 @@ var DiceManager = /** @class */ (function () {
                         if (args_1.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId_1, 'disabled', value != 1);
                         }
+                        if (args_1.hasSneakyAlloy) {
+                            dojo.toggleClass(sneakyAlloyButtonId_1, 'disabled', die.value != 1);
+                        }
                         if (args_1.gammaBreathCardIds.length && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId_1, 'disabled', value != 6);
                         }
@@ -5715,6 +5725,9 @@ var DiceManager = /** @class */ (function () {
                 else {
                     if (args_1.hasHerdCuller) {
                         dojo.addClass(herdCullerButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasSneakyAlloy) {
+                        dojo.addClass(sneakyAlloyButtonId_1, 'disabled');
                     }
                     if (args_1.gammaBreathCardIds.length) {
                         dojo.addClass(gammaBreathButtonId_1, 'disabled');

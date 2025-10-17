@@ -76,7 +76,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSneakyAlloy || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -549,6 +549,7 @@ class DiceManager {
             const shrinkyButtonId = `${bubbleActionButtonsId}-shrinky`;
             const saurianAdaptabilityButtonId = `${bubbleActionButtonsId}-saurianAdaptability`;
             const clownButtonId = `${bubbleActionButtonsId}-clown`;
+            const sneakyAlloyButtonId = `${bubbleActionButtonsId}-sneakyAlloy`;
 
             const args = this.changeDieArgs;
 
@@ -580,6 +581,18 @@ class DiceManager {
                             dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cardsManager.getCardName(22, 'text-only')}</strong>` }),
                             () => {
                                 this.game.changeDie(die.id, dieFaceSelector.getValue(), 22);
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
+                    if (args.hasSneakyAlloy) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            sneakyAlloyButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cardsManager.getCardName(404, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 404);
                                 this.toggleBubbleChangeDie(die);
                             },
                             true
@@ -706,6 +719,9 @@ class DiceManager {
                         if (args.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId, 'disabled', value != 1);
                         }
+                        if (args.hasSneakyAlloy) {
+                            dojo.toggleClass(sneakyAlloyButtonId, 'disabled', die.value != 1);
+                        }
                         if (args.gammaBreathCardIds.length && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId, 'disabled', value != 6);
                         }
@@ -759,6 +775,9 @@ class DiceManager {
                 } else {
                     if (args.hasHerdCuller) {
                         dojo.addClass(herdCullerButtonId, 'disabled');
+                    }
+                    if (args.hasSneakyAlloy) {
+                        dojo.addClass(sneakyAlloyButtonId, 'disabled');
                     }
                     if (args.gammaBreathCardIds.length) {
                         dojo.addClass(gammaBreathButtonId, 'disabled');

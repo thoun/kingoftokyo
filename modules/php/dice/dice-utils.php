@@ -695,6 +695,14 @@ trait DiceUtilTrait {
                 $hasClown = true;
             }
         }
+        // Sneaky Alloy
+        $hasSneakyAlloy = false;
+        $sneakyAlloyCards = $this->getCardsOfType($playerId, SNEAKY_ALLOY_CARD);
+        if (count($sneakyAlloyCards) > 0) {
+            $usedCards = $this->getUsedCard();
+            $availableSneakyAlloys = array_values(array_filter($sneakyAlloyCards, fn($card) => in_array($card->id, $usedCards))); // using "used card" in reverse
+            $hasSneakyAlloy = count($availableSneakyAlloys) > 0;
+        }
 
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         $playerEvolutions = [];
@@ -744,6 +752,7 @@ trait DiceUtilTrait {
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
             'hasClown' => $hasClown,
+            'hasSneakyAlloy' => $hasSneakyAlloy,
             'hasSaurianAdaptability' => $hasSaurianAdaptability,
             'gammaBreathCardIds' => $gammaBreathCardIds,
             'hasTailSweep' => $hasTailSweep,
@@ -760,6 +769,7 @@ trait DiceUtilTrait {
             || $cards['hasPlotTwist'] 
             || $cards['hasStretchy'] 
             || $cards['hasClown'] 
+            || $cards['hasSneakyAlloy'] 
             || $cards['hasSaurianAdaptability'] 
             || count($cards['gammaBreathCardIds']) > 0
             || $cards['hasTailSweep'] 

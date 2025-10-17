@@ -137,6 +137,20 @@ class ChangeDie extends GameState {
             if ($selectedDie->value != 2) {
                 throw new \BgaUserException('You can only change a 2 die');
             }
+        } else if ($cardType == \SNEAKY_ALLOY_CARD) {
+            $usedCards = $this->game->getUsedCard();
+            $sneakyAlloyCards = $this->game->getCardsOfType($currentPlayerId, \SNEAKY_ALLOY_CARD);
+            $usedCardOnThisTurn = null;
+            foreach ($sneakyAlloyCards as $sneakyAlloyCard) {
+                if (in_array($sneakyAlloyCard->id, $usedCards)) {
+                    $usedCardOnThisTurn = $sneakyAlloyCard->id;
+                }
+            }
+            if ($usedCardOnThisTurn === null) {
+                throw new \BgaUserException('No unused Sneaky Alloy for this player');
+            } else {
+                $this->game->setGlobalVariable(USED_CARDS, Arrays::filter($usedCards, fn($usedId) => $usedId != $sneakyAlloyCard->id)); // using "used card" in reverse
+            }
         } else if ($cardType == 3000 + \SAURIAN_ADAPTABILITY_EVOLUTION) {
             $saurianAdaptabilityCard = $this->game->getEvolutionsOfType($currentPlayerId, \SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
             $this->game->playEvolutionToTable($currentPlayerId, $saurianAdaptabilityCard, '');

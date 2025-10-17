@@ -350,6 +350,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasPlotTwist: boolean;
     hasStretchy: boolean;
     hasClown: boolean;
+    hasSneakyAlloy: boolean;
     hasSaurianAdaptability: boolean;
     gammaBreathCardIds: number[];
     hasTailSweep: boolean;
