@@ -6,7 +6,11 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
+
+use const Bga\Games\KingOfTokyo\ACTIVATED_HUNTER_CARDS;
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
 
 class ResolveSkullDice extends GameState {
     public function __construct(protected Game $game)
@@ -19,6 +23,16 @@ class ResolveSkullDice extends GameState {
     }
 
     public function onEnteringState(int $activePlayerId) {
+        // in case the player rolled no claw, clean for unreliable targeting
+        $activatedHunters = $this->game->mindbugExpansion->getActivatedHunters($activePlayerId);
+        if (count($activatedHunters) > 0) {
+            foreach ($activatedHunters as $activatedHunter) {
+                $card = $this->game->powerCards->getItemById($activatedHunter->cardId);
+                $card->applyEffect(new Context($this->game, $activePlayerId, targetPlayerId: $activatedHunter->targetPlayerId, keyword: HUNTER, lostHearts: 0));
+            }
+            $this->globals->delete(ACTIVATED_HUNTER_CARDS);
+        }
+        
         $pickEvolutionCards = false;
         if ($this->game->powerUpExpansion->isActive()) {
             $dice = $this->game->getPlayerRolledDice($activePlayerId, true, true, false);

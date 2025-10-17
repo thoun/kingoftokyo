@@ -11,7 +11,7 @@ class UnreliableTargeting extends PowerCard
         $this->mindbugKeywords = [HUNTER];
     }
 
-    public function applyEffect(Context $context) { // TODOMB apply even if no claw are resolved
+    public function applyEffect(Context $context) {
         if ($context->game->getPlayer($context->targetPlayerId)->eliminated) {
             $context->game->removeCard($context->currentPlayerId, $this);
         } else {
