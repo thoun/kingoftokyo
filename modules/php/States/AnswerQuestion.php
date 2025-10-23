@@ -12,6 +12,8 @@ use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 class AnswerQuestion extends GameState {
     public function __construct(protected Game $game)
     {
@@ -597,8 +599,16 @@ class AnswerQuestion extends GameState {
 
     #[PossibleAction]
     public function actChooseHunterTarget(int $targetPlayerId, int $currentPlayerId) {
-        $this->game->mindbugExpansion->setHunterTargetId($targetPlayerId);
-        //$this->game->setUsedCard(800 + $card->id);
+        $question = $this->game->getQuestion();
+        if ($question->args->cardId) {
+            $card = $this->game->powerCards->getItemById($question->args->cardId);
+            $this->game->powerCards->setActivatedKeywordTarget($card, $targetPlayerId);
+        } else if ($question->args->evolutionId) {
+            $card = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+            $this->game->powerUpExpansion->evolutionCards->setActivatedKeywordTarget($card, $targetPlayerId);
+        }
+        
+
         $this->game->goToState(ST_PLAYER_BEFORE_START_TURN);
     }
 

@@ -187,7 +187,7 @@ trait EvolutionCardsUtilTrait {
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
         $changeMaxHealth = $card->type == EATER_OF_SOULS_EVOLUTION;
 
-        $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $countMothershipSupportBefore = count($this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, false));
         
         if ($card->type == ICY_REFLECTION_EVOLUTION) { // Mimic
             $changeMaxHealth = $this->getMimickedEvolutionType() == EATER_OF_SOULS_EVOLUTION;
@@ -195,6 +195,8 @@ trait EvolutionCardsUtilTrait {
         } else if ($card->id == $this->getMimickedEvolutionId() && !$ignoreMimicToken) {
             $this->removeMimicEvolutionToken($playerId);
         }
+        $card->activated = null;
+        $this->powerUpExpansion->evolutionCards->updateItem($card, ['activated']);
         $this->powerUpExpansion->evolutionCards->moveItem($card, 'discard'.$playerId);
 
         if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {

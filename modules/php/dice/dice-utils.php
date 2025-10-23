@@ -8,6 +8,7 @@ require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\MindbugExpansion;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerUpExpansion;
@@ -16,11 +17,14 @@ use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait DiceUtilTrait {
     public PowerUpExpansion $powerUpExpansion;
+    public MindbugExpansion $mindbugExpansion;
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
@@ -427,14 +431,14 @@ trait DiceUtilTrait {
         $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
 
         $damages = [];
-        $activatedHunters = $this->mindbugExpansion->getActivatedHunters($playerId);
+        $activatedHunters = $this->mindbugExpansion->getActivatedCards($playerId, HUNTER);
 
         if ($countNovaBreath) {
             $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
             $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
         } else if (count($activatedHunters) > 0) {
             $message = clienttranslate('${player_name} targeted Monster ${player_name2} with ${number} [diceSmash]');
-            $smashedPlayersIds = Arrays::pluck($activatedHunters, 'targetPlayerId');
+            $smashedPlayersIds = Arrays::map($activatedHunters, fn($activatedHunter) => $activatedHunter->activated->targetPlayerId);
         } else {
             $smashTokyo = !$inTokyo;
             $message = $smashTokyo ? 

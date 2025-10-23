@@ -3,14 +3,9 @@ declare(strict_types=1);
 
 namespace Bga\GameFrameworkPrototype\Item;
 
-function array_find(array $array, callable $fn) {
-    foreach ($array as $value) {
-        if($fn($value)) {
-            return $value;
-        }
-    }
-    return null;
-}
+use Bga\GameFramework\Table;
+use Bga\GameFramework\Helpers\Json;
+
 function array_shuffle_bga_rand(array &$array): void {
     $n = count($array);
     for ($i = $n - 1; $i > 0; $i--) {
@@ -30,22 +25,22 @@ class ItemManagerDbService {
 
     public function sqlCreate(string $columns) {
         /** @disregard */
-        \APP_DbObject::DbQuery("CREATE TABLE `{$this->tableName}` ($columns) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
+        Table::DbQuery("CREATE TABLE `{$this->tableName}` ($columns) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
     }
 
     public function sqlInsert(string $columns, string $values) {
         /** @disregard */
-        \APP_DbObject::DbQuery("INSERT INTO `{$this->tableName}` ($columns) VALUES $values");
+        Table::DbQuery("INSERT INTO `{$this->tableName}` ($columns) VALUES $values");
     }
 
     public function sqlUpdate(string $updates, string $condition) {
         /** @disregard */
-        \APP_DbObject::DbQuery("UPDATE `{$this->tableName}` SET $updates WHERE $condition");
+        Table::DbQuery("UPDATE `{$this->tableName}` SET $updates WHERE $condition");
     }
 
     public function sqlGetValue(string $column, string $condition) {
         /** @disregard */
-        return \APP_DbObject::getUniqueValueFromDB("SELECT $column FROM `{$this->tableName}` WHERE $condition");
+        return Table::getUniqueValueFromDB("SELECT $column FROM `{$this->tableName}` WHERE $condition");
     }
 
     public function sqlGetList(string $columns = '*', ?string $condition = null, ?string $orderBy = null, ?int $limit = null) {
@@ -60,7 +55,7 @@ class ItemManagerDbService {
             $sql .= " LIMIT $limit";
         }
         /** @disregard */
-        return \APP_DbObject::getCollectionFromDb($sql);
+        return Table::getCollectionFromDb($sql);
     }
 
     public function sqlEqual(ItemField $field, mixed $item): string {
@@ -95,7 +90,7 @@ class ItemManagerDbService {
             if ($field->type === 'bool') {
                 $sqlValueStr = $value ? '1' : '0';
             } else if ($field->type === 'json') {
-                $jsonObj = $this->objectToJson($value);
+                $jsonObj = Json::encode($value);
                 $escapedJson = str_replace('\\"', '\\\\"', str_replace("'", "\'", $jsonObj));
                 $sqlValueStr = "'{$escapedJson}'";
             } else {
@@ -113,70 +108,12 @@ class ItemManagerDbService {
             } else if ($field->type === 'int') {
                 $value = intval($sqlValue);
             } else if ($field->type === 'json') {
-                $value = $this->jsonToObject($sqlValue);
+                $value = Json::decode($sqlValue, $field->class);
             } else {
                 $value = $sqlValue;
             }
         }
         return $value;
-    }
-
-    /**
-     * When an associative array is encoded then decoded from json, it is transformed as an object.
-     * We add a flag to mark it as an associative array so we can fix the type after decoding. Recursive for multi-level cases.
-     */
-    private function setAssociativeArrayFlag(mixed &$value): void {
-        if (is_array($value)) {
-            foreach ($value as $arrKey => &$arrValue) {
-                $this->setAssociativeArrayFlag($arrValue);
-            }
-
-            if (!array_is_list($value)) {
-                $value['___bga_associative_array_flag'] = true;
-            }
-        } else if (is_object($value)) {
-            foreach ($value as $arrKey => &$arrValue) {
-                $this->setAssociativeArrayFlag($arrValue);
-            }
-        }
-    }
-
-    /**
-     * When an associative array is encoded then decoded from json, it is transformed as an object.
-     * We change the object to array if the flag is present, and when remove the flag. Recursive for multi-level cases.
-     */
-    private function applyAssociativeArrayFlag(mixed &$value): void {
-        if (is_array($value)) {
-            foreach ($value as $arrKey => &$arrValue) {
-                $this->applyAssociativeArrayFlag($arrValue);
-            }
-        } else if (is_object($value)) {
-            foreach ($value as $arrKey => &$arrValue) {
-                $this->applyAssociativeArrayFlag($arrValue);
-            }
-
-            if (property_exists($value, '___bga_associative_array_flag')) {
-                $value = (array)$value;
-                unset($value['___bga_associative_array_flag']);
-            }
-        }
-    }
-
-    /**
-     * Transforms an object to JSON. Adds a special flag to remember associative arrays.
-     */
-    protected function objectToJson(mixed $obj): string {
-        $this->setAssociativeArrayFlag($obj);
-        return json_encode($obj);
-    }
-
-    /**
-     * Transforms a JSON to an object. If a special flag is detected, transforms the object to an associative array.
-     */
-    protected function jsonToObject(string $json_obj): mixed {
-        $object = json_decode($json_obj);
-        $this->applyAssociativeArrayFlag($object);
-        return $object;
     }
 }
 
@@ -249,7 +186,15 @@ class ItemManager {
                     $attributeInstance->dbField = $attributeInstance->name;
                 }
                 if (empty($attributeInstance->type)) {
-                    $attributeInstance->type = $property->getType()->getName();
+                    if ($property->getType()->isBuiltin()) {
+                        $attributeInstance->type = $property->getType()->getName();
+                    } else {
+                        $attributeInstance->type = 'json';
+                        if (str_contains($property->getType()->getName(), 'Bga\Games')) {
+                            $attributeInstance->class = $property->getType()->getName();
+                        }
+
+                    }
                 }
                 $this->fields[] = $attributeInstance;
             }

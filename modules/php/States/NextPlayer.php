@@ -8,6 +8,7 @@ use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
 
 use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\PowerCards\FRENZY;
 
 class NextPlayer extends GameState {
     public function __construct(protected Game $game)
@@ -48,10 +49,10 @@ class NextPlayer extends GameState {
             $freezeTimeMaxTurns = intval($this->game->getGameStateValue(FREEZE_TIME_MAX_TURNS));
             $freezeTimeCurrentTurn = intval($this->game->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
 
-            $activatedFrenzys = $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId);
+            $activatedFrenzys = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY);
 
             if ($anotherTimeWithCard == 0 && count($activatedFrenzys) > 0) { // extra turn for current player
-                $cardId = $activatedFrenzys[0]->cardId;
+                $cardId = $activatedFrenzys[0]->id;
                 $card = $this->game->powerCards->getItemById($cardId);
                 if ($card) {
                     $anotherTimeWithCard = $card->type; // FRENZY card

@@ -128,12 +128,7 @@ class Arrays {
      * @return TValue|null the first found value, or null if not found.
      */
     public static function find(array $array, callable $fn): mixed {
-        foreach ($array as $value) {
-            if($fn($value)) {
-                return $value;
-            }
-        }
-        return null;
+        return array_find($array, $fn);
     }
     
     /**
@@ -146,12 +141,7 @@ class Arrays {
      * @return TKey|null the key of the first found value, or null if not found.
      */
     public static function findKey(array $array, callable $fn): mixed {
-        foreach ($array as $key => $value) {
-            if($fn($value)) {
-                return $key;
-            }
-        }
-        return null;
+        return array_find_key($array, $fn);
     }
     
     /**
@@ -165,12 +155,7 @@ class Arrays {
      * @return bool if there is at least one element in the array that match the condition.
      */
     public static function some(array $array, callable $fn): bool {
-        foreach ($array as $value) {
-            if($fn($value)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($array, $fn);
     }
     
     /**
@@ -184,12 +169,7 @@ class Arrays {
      * @return bool if all elements in the array that match the condition.
      */
     public static function every(array $array, callable $fn): bool {
-        foreach ($array as $value) {
-            if(!$fn($value)) {
-                return false;
-            }
-        }
-        return true;
+        return array_all($array, $fn);
     }
     
     /**

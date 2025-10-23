@@ -11,6 +11,7 @@ use Bga\Games\KingOfTokyo\Game;
 
 use function Bga\Games\KingOfTokyo\debug;
 
+use const Bga\Games\KingOfTokyo\PowerCards\FRENZY;
 use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_END_TURN;
 
 class BeforeEndTurnMulti extends GameState {
@@ -35,7 +36,7 @@ class BeforeEndTurnMulti extends GameState {
         $couldPlayEvolution = false;
 
         $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
-        if (count($consumableCards) > 0 && count($this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId)) > 0) {
+        if (count($consumableCards) > 0 && count($this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY)) > 0) {
             $consumableCards = [];
         }
         $canPlayConsumable = count($consumableCards) > 0;

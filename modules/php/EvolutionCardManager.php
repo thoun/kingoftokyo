@@ -12,6 +12,7 @@ use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
 use \Bga\GameFrameworkPrototype\Item\ItemManager;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 const EVOLUTION_CARD_CLASSES = [
@@ -294,6 +295,16 @@ class EvolutionCardManager extends ItemManager {
             /** @disregard */
             return $card->immediateEffect($context);
         }
+    }
+
+    public function activateKeyword(EvolutionCard $card, string $keyword): void {
+        $card->activated = new ActivatedConsumableKeyword($keyword);
+        $this->updateItem($card, ['activated']);
+    }
+
+    public function setActivatedKeywordTarget(EvolutionCard $card, int $targetPlayerId): void {
+        $card->activated->targetPlayerId = $targetPlayerId;
+        $this->updateItem($card, ['activated']);
     }
 
 }

@@ -4,6 +4,7 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use \Bga\GameFrameworkPrototype\Item\Item;
 use \Bga\GameFrameworkPrototype\Item\ItemField;
+use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 const PERMANENT = 1;
@@ -27,6 +28,10 @@ class EvolutionCard {
     
     #[ItemField(dbField: 'owner_id')]
     public ?int $ownerId;
+    #[ItemField]
+    public ?int $used;
+    #[ItemField]
+    public ?ActivatedConsumableKeyword $activated;
 
     // permanent, temporary or gift
     public int $evolutionType;

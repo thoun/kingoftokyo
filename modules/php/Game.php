@@ -382,11 +382,6 @@ class Game extends \Bga\GameFramework\Table {
         $isDarkEdition = $this->isDarkEdition();
         $isOrigins = $this->isOrigins();
 
-        // TEMP FIX TODOMB
-        /*if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_ASK_MINDBUG) {
-            $this->jumpToState(ST_RESOLVE_DIE_OF_FATE);
-        }*/
-
         $result = ['players' => []];
 
         $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
@@ -686,11 +681,8 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
-        if ($bonusMonsters || $this->mindbugExpansion->isActive()) {
-            // TODOMB activate it, but make sure the Evolutions don't show up !
-            if (Game::getBgaEnvironment() == 'studio') {                
-                $monsters = [...$monsters, /*61,*/ 62, /*63*/];
-            }
+        if ($bonusMonsters || $this->mindbugExpansion->isActive()) {             
+            $monsters = [...$monsters, /*61,*/ 62, /*63*/];
         }
 
         if ($this->wickednessExpansion->isActive()) {
@@ -931,6 +923,13 @@ class Game extends \Bga\GameFramework\Table {
         if ($from_version <= 2510131042) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_base_dice` tinyint unsigned NOT NULL DEFAULT 6";
             self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2510171738) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE `DBPREFIX_card` ADD `used` INT NULL DEFAULT NULL");
+            self::applyDbUpgradeToAllDB("ALTER TABLE `DBPREFIX_card` ADD `activated` JSON NULL DEFAULT NULL");
+            self::applyDbUpgradeToAllDB("ALTER TABLE `DBPREFIX_evolution_card` ADD `used` INT NULL DEFAULT NULL");
+            self::applyDbUpgradeToAllDB("ALTER TABLE `DBPREFIX_evolution_card` ADD `activated` JSON NULL DEFAULT NULL");
         }
     }
 }

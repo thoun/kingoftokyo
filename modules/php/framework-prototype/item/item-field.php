@@ -24,6 +24,12 @@ class ItemField {
      */
     public string $dbField;
 
+    /**
+     * The class of the object.
+     * Only used if the type is json and a specific class has been set as a type.
+     */
+    public ?string $class = null;
+
     public function __construct(
         /**
          * Set to identify mandatory field. Keep it null for standard (custom) fields.

@@ -24,11 +24,11 @@ class ResolveSkullDice extends GameState {
 
     public function onEnteringState(int $activePlayerId) {
         // in case the player rolled no claw, clean for unreliable targeting
-        $activatedHunters = $this->game->mindbugExpansion->getActivatedHunters($activePlayerId);
+        $activatedHunters = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, HUNTER);
         if (count($activatedHunters) > 0) {
             foreach ($activatedHunters as $activatedHunter) {
-                $card = $this->game->powerCards->getItemById($activatedHunter->cardId);
-                $card->applyEffect(new Context($this->game, $activePlayerId, targetPlayerId: $activatedHunter->targetPlayerId, keyword: HUNTER, lostHearts: 0));
+                /** @disregard */
+                $activatedHunter->applyEffect(new Context($this->game, $activePlayerId, targetPlayerId: $activatedHunter->activated->targetPlayerId, keyword: HUNTER, lostHearts: 0));
             }
             $this->globals->delete(ACTIVATED_HUNTER_CARDS);
         }

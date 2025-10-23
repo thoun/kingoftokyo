@@ -12,6 +12,7 @@ use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
 use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
@@ -629,5 +630,15 @@ class PowerCardManager extends ItemManager {
             return $card->getUnmetConditionRequirement($context);
         }
         return null;
+    }
+
+    public function activateKeyword(PowerCard $card, string $keyword): void {
+        $card->activated = new ActivatedConsumableKeyword($keyword);
+        $this->updateItem($card, ['activated']);
+    }
+
+    public function setActivatedKeywordTarget(PowerCard $card, int $targetPlayerId): void {
+        $card->activated->targetPlayerId = $targetPlayerId;
+        $this->updateItem($card, ['activated']);
     }
 }

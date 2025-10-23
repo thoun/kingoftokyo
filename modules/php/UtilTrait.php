@@ -114,7 +114,7 @@ trait UtilTrait {
     }
 
     function getUsedCard(): array {
-        return $this->getGlobalVariable(USED_CARDS, true);
+        return $this->getGlobalVariable(USED_CARDS, true) ?? [];
     }
 
     function resetUsedCards() {
@@ -921,13 +921,10 @@ trait UtilTrait {
             $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
             $this->incStat($damage->damage, 'smashesReceived', $playerId);
 
-            $activatedHunters = $this->mindbugExpansion->getActivatedHunters($damageDealerId);
-            if (count($activatedHunters) > 0) {
-                foreach ($activatedHunters as $activatedHunter) {
-                    $card = $this->powerCards->getItemById($activatedHunter->cardId);
-                    $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
-                }
-                $this->globals->delete(ACTIVATED_HUNTER_CARDS);
+            $activatedHunters = $this->mindbugExpansion->getActivatedCards($damageDealerId, HUNTER);
+            foreach ($activatedHunters as $card) {
+                /** @disregard */
+                $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
             }
         }
     }

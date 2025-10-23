@@ -3,6 +3,7 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 
 use \Bga\GameFrameworkPrototype\Item\Item;
 use \Bga\GameFrameworkPrototype\Item\ItemField;
+use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 
 const HUNTER = 'HUNTER';
 const SNEAKY = 'SNEAKY';
@@ -27,6 +28,11 @@ class PowerCard {
     public int $type_arg;
     #[ItemField(kind: 'order')]
     public ?int $order;
+
+    #[ItemField]
+    public ?int $used;
+    #[ItemField]
+    public ?ActivatedConsumableKeyword $activated;
     
     public ?int $mimicType = null;
     public int $tokens = 0;

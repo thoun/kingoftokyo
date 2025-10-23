@@ -408,7 +408,7 @@ trait CardsUtilTrait {
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
-        if ($card->id >= 2000) {
+        if ($card->id >= 2000 || $card->id < 0) {
             // trying to remove mimic tile, but tile isn't removed when mimicked card is removed
             return;
         }
@@ -427,6 +427,8 @@ trait CardsUtilTrait {
             $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
         }
 
+        $card->activated = null;
+        $this->powerCards->updateItem($card, ['activated']);
         $this->powerCards->moveItem($card, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
 
         if ($this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
