@@ -19,10 +19,6 @@ use const Bga\Games\KingOfTokyo\PowerCards\POISON;
 use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
 use const Bga\Games\KingOfTokyo\PowerCards\TOUGH;
 
-const ACTIVATED_HUNTER_CARDS = 'ACTIVATED_HUNTER_CARDS';
-const ACTIVATED_SNEAKY_CARDS = 'ACTIVATED_SNEAKY_CARDS';
-const ACTIVATED_FRENZY_CARDS = 'ACTIVATED_FRENZY_CARDS';
-
 class MindbugExpansion {
     public PlayerCounter $mindbugTokens;
 
@@ -245,6 +241,19 @@ class MindbugExpansion {
         );
     }
 
+    public function cleanActivatedCards(int $playerId, ?string $keyword = null): void {
+        $cards = $this->getActivatedPowerCards($playerId, $keyword);
+        foreach ($cards as $card) {
+            $card->activated = null;
+            $this->game->powerCards->updateItem($card, ['activated']);
+        }
+        $evolutions = $this->getActivatedEvolutionCards($playerId, $keyword);
+        foreach ($evolutions as $evolution) {
+            $evolution->activated = null;
+            $this->game->powerUpExpansion->evolutionCards->updateItem($evolution, ['activated']);
+        }
+    }
+
     private function activateHunter(int $playerId, PowerCard | EvolutionCard $card): void {
         $question = new Question(
             'Hunter',
@@ -336,6 +345,7 @@ class MindbugExpansion {
                 $damages = array_merge($damages, $newDamages);
             }
         }
+        $this->cleanActivatedCards($playerId, FRENZY);
         return $damages;
     }
 }

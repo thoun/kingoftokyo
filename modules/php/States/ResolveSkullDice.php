@@ -9,7 +9,6 @@ use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
-use const Bga\Games\KingOfTokyo\ACTIVATED_HUNTER_CARDS;
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
 
 class ResolveSkullDice extends GameState {
@@ -30,7 +29,7 @@ class ResolveSkullDice extends GameState {
                 /** @disregard */
                 $activatedHunter->applyEffect(new Context($this->game, $activePlayerId, targetPlayerId: $activatedHunter->activated->targetPlayerId, keyword: HUNTER, lostHearts: 0));
             }
-            $this->globals->delete(ACTIVATED_HUNTER_CARDS);
+            $this->game->mindbugExpansion->cleanActivatedCards($activePlayerId, HUNTER);
         }
         
         $pickEvolutionCards = false;

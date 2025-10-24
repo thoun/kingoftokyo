@@ -25,7 +25,6 @@ use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
 
-use const Bga\Games\KingOfTokyo\ACTIVATED_HUNTER_CARDS;
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
 use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
 
@@ -926,6 +925,7 @@ trait UtilTrait {
                 /** @disregard */
                 $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
             }
+            $this->mindbugExpansion->cleanActivatedCards($damageDealerId, HUNTER);
         }
     }
 

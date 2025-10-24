@@ -12,7 +12,7 @@ class TuneUp extends EvolutionCard {
         $this->evolutionType = TEMPORARY;
     }
 
-    public function applyEffect(Context $context) {
+    public function immediateEffect(Context $context) {
         $context->game->applyGetHealth($context->currentPlayerId, 4, $this, $context->currentPlayerId);
         $context->game->applyGetEnergy($context->currentPlayerId, 2, $this);
         $context->game->removeCard($context->currentPlayerId, $this, false/*, 5000*/);
