@@ -1692,6 +1692,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.statusBar.addActionButton(_("Declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }));
                 this.statusBar.addActionButton(_("Don't declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }));
                 break;
+            case 'MindbugsOverlordChoosePlayer':
+                const mindbugsOverlordArgs = question.args as MindbugsOverlordQuestionArgs;
+                mindbugsOverlordArgs.declaredAllegiance?.forEach(targetPlayerId => this.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bgaPerformAction('actAnswerMindbugsOverlordChoosePlayer', { targetPlayerId })));
+                break;
             case 'StrangeEvolution':
                 question.args.otherPlayerIds?.forEach(targetPlayerId => this.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bgaPerformAction('actDrawStrangeEvolution', { targetPlayerId })));
                 break;

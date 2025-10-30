@@ -6,6 +6,9 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 class AfterAnswerQuestion extends GameState {
     public function __construct(protected Game $game)
@@ -31,6 +34,13 @@ class AfterAnswerQuestion extends GameState {
 
         if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
             $this->game->goToState(\ST_AFTER_RESOLVE_DAMAGE);
+            return;
+        }
+
+        if ($question->code === 'MindbugsOverlord') {
+            $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+            $this->game->setUsedCard(3000 + $evolution->id);
+            $evolution->onMonstersDeclaredAllegiance(new Context($this->game, $question->args->askingPlayerId), $question);
             return;
         }
 

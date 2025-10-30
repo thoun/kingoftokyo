@@ -328,8 +328,15 @@ trait CardsArgTrait {
             $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
             $consumableCards = $clawDamage !== null ? $this->mindbugExpansion->getConsumableCards($playerId, MINDBUG_KEYWORDS_WOUNDED) : [];
-            $consumableToughCards = Arrays::filter($consumableCards, fn($card) => in_array(TOUGH, $card->mindbugKeywords));
-            $canPlayConsumable = count($consumableCards) > 0;
+            $consumableEvolutions = $this->mindbugExpansion->getConsumableEvolutions($playerId, MINDBUG_KEYWORDS_WOUNDED);
+            if (!$clawDamage) {
+                $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($evolution) => $evolution->type == UNDEAD_MUMMY_EVOLUTION);
+            }
+            $canPlayConsumable = count($consumableCards) > 0 || count($consumableEvolutions) > 0;
+            $consumableToughCards = array_merge(
+                Arrays::filter($consumableCards, fn($card) => in_array(TOUGH, $card->mindbugKeywords)),
+                Arrays::filter($consumableEvolutions, fn($evolution) => in_array(TOUGH, $evolution->mindbugKeywords)),
+            );
 
             $canCancelDamage = 
                 $canThrowDices || 
@@ -382,7 +389,7 @@ trait CardsArgTrait {
                 'skipMeansDeath' => $damageToCancelToSurvive > 0,
                 'canDoAction' => $canDoAction,
                 'consumableCards' => $consumableCards,
-                'consumableEvolutions' => []/* TODOMB $consumableEvolutions*/,
+                'consumableEvolutions' => $consumableEvolutions,
                 'canPlayConsumable' => $canPlayConsumable,
             ];
         } else {

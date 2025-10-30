@@ -17,6 +17,8 @@
     }
   }
 
+  $hoverInc: 40px;
+
   .monster-figure {
     background-repeat: no-repeat;
     background-position: 75% top;
@@ -24,6 +26,15 @@
     height: 45px;
     background-size: auto;
     width: auto;
+
+    position: relative;
+    top: 0;
+    transition: top 0.5s, height 0.5s, margin-bottom 0.5s;
+    &:hover, &:active {
+      top: -$hoverInc;
+      height: 45px + $hoverInc;
+      margin-bottom: -5px - $hoverInc;
+    }
   }
 
   .player_score, .fa-star {

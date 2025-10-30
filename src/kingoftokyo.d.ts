@@ -122,6 +122,10 @@ interface HunterQuestionArgs {
     playerIds: number[];
 }
 
+interface MindbugsOverlordQuestionArgs {
+    declaredAllegiance: number[];
+}
+
 interface SuperiorAlienTechnologyQuestionArgs {
     card: Card;
 }

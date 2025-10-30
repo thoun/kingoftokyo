@@ -20,6 +20,14 @@
   height: 45px;
   background-size: auto;
   width: auto;
+  position: relative;
+  top: 0;
+  transition: top 0.5s, height 0.5s, margin-bottom 0.5s;
+}
+.player-board .monster-figure:hover, .player-board .monster-figure:active {
+  top: -40px;
+  height: 85px;
+  margin-bottom: -45px;
 }
 .player-board .player_score, .player-board .fa-star {
   font-weight: bold;
@@ -1036,6 +1044,7 @@
   position: absolute;
   left: 0;
   top: 0;
+  line-height: 1;
 }
 
 .card-discard-text {
@@ -1053,6 +1062,7 @@
   position: absolute;
   left: 0;
   top: 0;
+  line-height: 1;
 }
 
 .card-consumable-text {
@@ -1070,6 +1080,7 @@
   position: absolute;
   left: 0;
   top: 0;
+  line-height: 1;
 }
 
 .card-keyword-buttons {

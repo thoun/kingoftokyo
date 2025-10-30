@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
+use Bga\GameFramework\UserException;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
@@ -38,7 +39,7 @@ class InterdimensionalPortal extends EvolutionCard
         } else if ($type === 4) {
             $context->game->applyGetHealth($context->currentPlayerId, 2, $this, $context->currentPlayerId);
         } else {
-            throw new \BgaUserException('Invalid answer');
+            throw new UserException('Invalid answer');
         }
     }
 

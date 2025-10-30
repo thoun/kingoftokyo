@@ -71,7 +71,6 @@ class Game extends \Bga\GameFramework\Table {
     public WickednessTileManager $wickednessTiles;
 
     // from material file
-    public array $MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,/* TODOPUHA 7,8,*//*TODOPUKK 11,*/13,14,15/* TODOPUBG ,18*//*, 61, 62, 63*/];
     public array $EVOLUTION_CARDS_TYPES;
     public array $EVOLUTION_CARDS_TYPES_FOR_STATS;
     public array $AUTO_DISCARDED_EVOLUTIONS;
@@ -682,7 +681,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
         if ($bonusMonsters || $this->mindbugExpansion->isActive()) {             
-            $monsters = [...$monsters, /*61,*/ 62, /*63*/];
+            $monsters = Game::getBgaEnvironment()==='studio' ? [...$monsters, 61, 62, 63] : [...$monsters, /*61,*/ 62, /*63*/]; // TODOMB
         }
 
         if ($this->wickednessExpansion->isActive()) {
@@ -690,7 +689,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, MONSTERS_WITH_POWER_UP_CARDS)));            
         }
         
         return $monsters;
@@ -764,7 +763,7 @@ class Game extends \Bga\GameFramework\Table {
         return $this->getGlobalVariable(QUESTION.$this->getStackedStateSuffix());
     }
 
-    function setQuestion(Question $question): void {
+    function setQuestion(/*object of Question*/ $question): void {
         $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
     }
 

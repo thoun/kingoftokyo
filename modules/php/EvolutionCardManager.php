@@ -176,7 +176,7 @@ class EvolutionCardManager extends ItemManager {
     }
 
     function setup(array $affectedPlayersMonsters):void {
-        foreach($this->game->MONSTERS_WITH_POWER_UP_CARDS as $monster) {
+        foreach(MONSTERS_WITH_POWER_UP_CARDS as $monster) {
             $cards = [];
             $location = array_key_exists($monster, $affectedPlayersMonsters) ? 'deck'.$affectedPlayersMonsters[$monster] : 'monster'.$monster;
             for($card=1; $card<=8; $card++) {

@@ -432,8 +432,24 @@ class AnswerQuestion extends GameState {
         }
     }
 
+    #[PossibleAction]
     public function actAnswerMindbugsOverlord(bool $declare, int $currentPlayerId) {
-        // TODOMB
+        if ($declare) {
+            $question = $this->game->getQuestion();
+            $question->args->declaredAllegiance[] = $currentPlayerId;
+            $this->game->setQuestion($question);
+        }
+
+        $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
+    }
+
+    #[PossibleAction]
+    public function actAnswerMindbugsOverlordChoosePlayer(int $targetPlayerId, int $currentPlayerId) {
+        $question = $this->game->getQuestion();
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+        $evolution->onChosenMonster(new Context($this->game, $currentPlayerId), $targetPlayerId);
+
+        $this->game->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
 
     #[PossibleAction]

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
+use Bga\Games\KingOfTokyo\Objects\Context;
+
 use const Bga\Games\KingOfTokyo\PowerCards\TOUGH;
 
 class UndeadMummy extends EvolutionCard
@@ -13,6 +15,7 @@ class UndeadMummy extends EvolutionCard
         $this->mindbugKeywords = [TOUGH];
     }
 
-    // TODOMB
-     //   $context->game->removeEvolution($context->currentPlayerId, $this);
+    public function applyEffect(Context $context) {
+        $context->game->removeEvolution($context->currentPlayerId, $this, false, 5000);
+    }
 }

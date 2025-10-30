@@ -7,7 +7,6 @@ use Bga\GameFramework\Components\Counters\PlayerCounter;
 use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
-use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use KOT\Objects\Damage;
@@ -29,14 +28,14 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0/* || Game::getBgaEnvironment() === 'studio'*/;
+        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0 || Game::getBgaEnvironment() === 'studio'; // TODOMB
     }
 
     public function getMindbugCardsSetting() {
         if (!$this->isActive()) {
             return 0;
         }
-        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION) ?? 0; 
+        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION) ?? (Game::getBgaEnvironment() === 'studio' ? 2 : 0); // TODOMB
     }
 
     public function initDb(array $playerIds): void {
@@ -287,14 +286,15 @@ class MindbugExpansion {
      * @return Damage[]
      */
     private function activatePoison(int $playerId, PowerCard | EvolutionCard $card): array {
+        /** @var CancelDamageIntervention */
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
         $newDamage = new Damage($damage->damageDealerId, $damage->damage, $playerId, $card);
         $intervention->damages[] = $newDamage;
         $intervention->allDamages[] = $newDamage;
-        $intervention->remainingPlayersIds[] = $damage->damageDealerId;
-        $this->game->resolveRemainingDamages($intervention, false, false);
+        $intervention->remainingPlayersId[] = $damage->damageDealerId;
+        $this->game->resolveRemainingDamages($intervention, false, true);
 
         $damages = [];
         /** @disregard */
@@ -309,11 +309,12 @@ class MindbugExpansion {
      * @return Damage[]
      */
     private function activateTough(int $playerId, PowerCard | EvolutionCard $card): array {
+        /** @var CancelDamageIntervention */
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
         $this->game->reduceInterventionDamages($playerId, $intervention, -1);
-        $this->game->resolveRemainingDamages($intervention, true, false);
+        $this->game->resolveRemainingDamages($intervention, false, true);
 
         $damages = [];
         /** @disregard */

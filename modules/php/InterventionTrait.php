@@ -48,6 +48,8 @@ trait InterventionTrait {
         }
     }
 
+
+    /** @return CancelDamageIntervention */
     function getDamageIntervention() {
         return $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
     }

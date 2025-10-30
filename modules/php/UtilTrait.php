@@ -1229,6 +1229,10 @@ trait UtilTrait {
 
     function canDoIntervention(int $playerId, int $damage, int $damageDealerId, $clawDamage) {
         $consumableCards = $clawDamage !== null ? $this->mindbugExpansion->getConsumableCards($playerId, MINDBUG_KEYWORDS_WOUNDED) : [];
+        $consumableEvolutions = $this->mindbugExpansion->getConsumableEvolutions($playerId, MINDBUG_KEYWORDS_WOUNDED);
+        if (!$clawDamage) {
+            $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($evolution) => $evolution->type == UNDEAD_MUMMY_EVOLUTION);
+        }
 
         $canDo = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
@@ -1236,7 +1240,8 @@ trait UtilTrait {
             ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
             ($this->powerUpExpansion->isActive() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
             $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0 ||
-            count($consumableCards) > 0;
+            count($consumableCards) > 0 ||
+            count($consumableEvolutions) > 0;
 
         if ($canDo) {
             return true;
@@ -1292,7 +1297,7 @@ trait UtilTrait {
         // if current player is already eliminated, we ignore it
         if ($endOfCurrentPlayer || $this->getPlayer($currentPlayerId)->eliminated) {
             array_shift($intervention->remainingPlayersId);
-            $this->resolveRemainingDamages($intervention, $fromCancelDamageState);
+            $this->resolveRemainingDamages($intervention, false, $fromCancelDamageState);
             return;
         }
 

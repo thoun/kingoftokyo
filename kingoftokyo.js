@@ -7874,7 +7874,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onUpdateActionButtonsAnswerQuestion = function (args) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var question = args.question;
         switch (question.code) {
             case 'BambooSupply':
@@ -8007,8 +8007,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.statusBar.addActionButton(_("Declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }); });
                 this.statusBar.addActionButton(_("Don't declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }); });
                 break;
+            case 'MindbugsOverlordChoosePlayer':
+                var mindbugsOverlordArgs = question.args;
+                (_b = mindbugsOverlordArgs.declaredAllegiance) === null || _b === void 0 ? void 0 : _b.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(_this.getPlayer(targetPlayerId).name, function () { return _this.bgaPerformAction('actAnswerMindbugsOverlordChoosePlayer', { targetPlayerId: targetPlayerId }); }); });
+                break;
             case 'StrangeEvolution':
-                (_b = question.args.otherPlayerIds) === null || _b === void 0 ? void 0 : _b.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(_this.getPlayer(targetPlayerId).name, function () { return _this.bgaPerformAction('actDrawStrangeEvolution', { targetPlayerId: targetPlayerId }); }); });
+                (_c = question.args.otherPlayerIds) === null || _c === void 0 ? void 0 : _c.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(_this.getPlayer(targetPlayerId).name, function () { return _this.bgaPerformAction('actDrawStrangeEvolution', { targetPlayerId: targetPlayerId }); }); });
                 break;
         }
     };
