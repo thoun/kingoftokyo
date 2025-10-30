@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\States;
 
+use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
@@ -634,6 +635,71 @@ class AnswerQuestion extends GameState {
         $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
 
         $evolution->applyEffect(new Context($this->game, $currentPlayerId, targetPlayerId: $targetPlayerId));
+    }
+
+    #[PossibleAction]
+    public function actAnswerMindControl(
+        #[IntArrayParam(name: 'ids')] array $diceIds,
+        int $currentPlayerId,
+    ): void {
+        $question = $this->game->getQuestion();
+        $min = (int)$question->args->min;
+        $max = (int)$question->args->max;
+        $selectableDice = $question->args->selectableDice;
+
+        $diceIds = array_values(array_unique(array_map('intval', $diceIds)));
+
+        if (count($diceIds) < $min) {
+            throw new \BgaUserException(\clienttranslate('You must select more dice.'));
+        }
+        if (count($diceIds) > $max) {
+            throw new \BgaUserException(\clienttranslate('You selected too many dice.'));
+        }
+
+        if (count($diceIds) === 0) {
+            $this->game->goToState(-1);
+            return;
+        }
+
+        $selectableIds = array_filter(
+            array_map(
+                fn($die) => property_exists($die, 'id') ? (int)$die->id : null,
+                $selectableDice ?? []
+            ),
+            fn($id) => $id !== null,
+        );
+
+        foreach ($diceIds as $dieId) {
+            if (!in_array($dieId, $selectableIds, true)) {
+                throw new \BgaUserException(\clienttranslate('You cannot reroll this die.'));
+            }
+        }
+
+        $activePlayerId = (int)$this->game->getActivePlayerId();
+
+        foreach ($diceIds as $dieId) {
+            $die = $this->game->getDieById($dieId);
+            if ($die === null) {
+                throw new \BgaUserException(\clienttranslate('Die not found.'));
+            }
+
+            $value = bga_rand(1, 6);
+            $this->game->DbQuery("UPDATE dice SET `rolled` = false WHERE `dice_id` <> $dieId");
+            $this->game->DbQuery("UPDATE dice SET `dice_value` = $value, `rolled` = true WHERE `dice_id` = $dieId");
+
+            $this->game->notify->all('changeDie', clienttranslate('${player_name} forces ${player_name2} to reroll ${die_face_before} die and obtains ${die_face_after}'), [
+                'playerId' => $currentPlayerId,
+                'player_name' => $this->game->getPlayerNameById($currentPlayerId),
+                'player_name2' => $this->game->getPlayerNameById($activePlayerId),
+                'dieId' => $die->id,
+                'toValue' => $value,
+                'roll' => true,
+                'die_face_before' => $this->game->getDieFaceLogName($die->value, $die->type),
+                'die_face_after' => $this->game->getDieFaceLogName($value, $die->type),
+            ]);
+        }
+
+        $this->game->goToState(-1);
     }
 
     public function zombie(int $playerId) {

@@ -100,6 +100,7 @@ trait DiceUtilTrait {
 
     public function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
+        $dice = Arrays::filter($dice, fn($die) => !$die->discarded);
 
         if ($includeBerserkDie && $this->cybertoothExpansion->isActive() && $this->cybertoothExpansion->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1)); // type 1 at the end

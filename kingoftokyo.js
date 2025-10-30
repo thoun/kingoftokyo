@@ -5133,6 +5133,10 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.discardDie = function (die) {
         this.removeDice(die, ANIMATION_MS);
     };
+    DiceManager.prototype.discardDice = function (dice) {
+        var _this = this;
+        dice.forEach(function (die) { return _this.discardDie(die); });
+    };
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
@@ -6765,6 +6769,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can leave Hibernation') : _('${actplayer} can leave Hibernation'), args);
                 }
                 break;
+            case 'beforeResolveDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringResolveNumberDice(args.args);
+                break;
             case 'rerollOrDiscardDie':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollOrDiscardDie(args.args);
@@ -7368,6 +7376,16 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.statusBar.addActionButton(formatTextIcons("".concat(dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 2 }))), function () { return _this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 5 }); });
                 this.statusBar.addActionButton(formatTextIcons("".concat(dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 2 }))), function () { return _this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 4 }); });
                 break;
+            case 'MindControl':
+                var mindControlArgs = question.args;
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(mindControlArgs);
+                this.statusBar.addActionButton(_("Reroll selected dice"), function () { return _this.bgaPerformAction('actAnswerMindControl', { ids: _this.diceManager.getSelectedDiceIds().join(',') }); }, { id: 'rerollDice_button' });
+                dojo.addClass('rerollDice_button', 'disabled');
+                if (mindControlArgs.min === 0) {
+                    this.statusBar.addActionButton(_("Skip"), function () { return _this.rerollDice([]); });
+                }
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -7713,10 +7731,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     break;
                 case 'rerollDice':
                     var argsRerollDice = args;
-                    this.addActionButton('rerollDice_button', _("Reroll selected dice"), function () { return _this.rerollDice(_this.diceManager.getSelectedDiceIds()); });
+                    this.statusBar.addActionButton(_("Reroll selected dice"), function () { return _this.rerollDice(_this.diceManager.getSelectedDiceIds()); }, { id: 'rerollDice_button' });
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
-                        this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
+                        this.statusBar.addActionButton(_("Skip"), function () { return _this.rerollDice([]); });
                     }
                     break;
                 case 'AskMindbug':
@@ -8218,7 +8236,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
         return this.gamedatas.gamestate.name;
     };
     KingOfTokyo.prototype.toggleRerollDiceButton = function () {
-        var args = this.gamedatas.gamestate.args;
+        var args = this.getStateName() === 'answerQuestion' ?
+            this.gamedatas.gamestate.args.question.args :
+            this.gamedatas.gamestate.args;
         var selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
         var canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
@@ -9353,6 +9373,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
+            ['discardedDice', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
             ['playEvolution', ANIMATION_MS],
             ['superiorAlienTechnologyRolledDie', ANIMATION_MS],
@@ -9755,6 +9776,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.notif_discardedDie = function (args) {
         this.diceManager.discardDie(args.die);
+    };
+    KingOfTokyo.prototype.notif_discardedDice = function (args) {
+        this.diceManager.discardDice(args.dice);
     };
     KingOfTokyo.prototype.notif_exchangeCard = function (args) {
         var previousOwnerCards = this.getPlayerTable(args.previousOwner).cards;

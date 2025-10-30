@@ -129,6 +129,8 @@ interface MindbugsOverlordQuestionArgs {
 interface SuperiorAlienTechnologyQuestionArgs {
     card: Card;
 }
+interface MindControlQuestionArgs extends EnteringRerollDiceArgs {
+}
 
 interface FreezeRayChooseOpponentQuestionArgs {
     smashedPlayersIds: number[];
@@ -749,6 +751,10 @@ interface NotifChangeGoldenScarabOwnerArgs {
 
 interface NotifDiscardedDieArgs {
     die: Die;
+} 
+
+interface NotifDiscardedDiceArgs {
+    dice: Die[];
 } 
 
 interface NotifChangeGoldenScarabOwnerArgs {

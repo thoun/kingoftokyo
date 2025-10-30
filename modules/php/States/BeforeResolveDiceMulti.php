@@ -21,7 +21,7 @@ class BeforeResolveDiceMulti extends GameState {
         );
     }
 
-    public function getArgs(): array {
+    public function getArgs(int $activePlayerId): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
         $highlighted = [];
@@ -30,6 +30,10 @@ class BeforeResolveDiceMulti extends GameState {
         }
 
         return [
+            'dice' => $this->game->getPlayerRolledDice($activePlayerId, true, true, false),
+            'canHealWithDice' => $this->game->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->game->frozenFaces($activePlayerId),
+
             'highlighted' => $highlighted,
             '_no_notify' => !$isPowerUpExpansion,
         ];

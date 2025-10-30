@@ -75,6 +75,10 @@ class DiceManager {
         this.removeDice(die, ANIMATION_MS);
     }
 
+    public discardDice(dice: Die[]) {
+        dice.forEach(die => this.discardDie(die));
+    }
+
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSneakyAlloy || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasEnergyDevourer || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;

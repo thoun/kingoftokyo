@@ -286,6 +286,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     );
                 }
                 break;
+            case 'beforeResolveDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringResolveNumberDice(args.args);
+                break;
             case 'rerollOrDiscardDie':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollOrDiscardDie(args.args);
@@ -1015,6 +1019,16 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     () => this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 4 }),
                 );
                 break;
+            case 'MindControl':
+                const mindControlArgs = question.args as MindControlQuestionArgs;
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(mindControlArgs);
+                this.statusBar.addActionButton(_("Reroll selected dice"), () => this.bgaPerformAction('actAnswerMindControl', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
+                dojo.addClass('rerollDice_button', 'disabled');
+                if (mindControlArgs.min === 0) {
+                    this.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
+                }
+                break;
         }
     }
 
@@ -1373,10 +1387,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     break;
                 case 'rerollDice':
                     const argsRerollDice = args as EnteringRerollDiceArgs;
-                    this.addActionButton('rerollDice_button', _("Reroll selected dice"), () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
+                    this.statusBar.addActionButton(_("Reroll selected dice"), () => this.rerollDice(this.diceManager.getSelectedDiceIds()), { id: 'rerollDice_button' });
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
-                        this.addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
+                        this.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
                     }
                     break;
 
@@ -1998,7 +2012,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public toggleRerollDiceButton(): void {
-        const args = (this.gamedatas.gamestate.args as EnteringRerollDiceArgs);
+        const args = this.getStateName() === 'answerQuestion' ? 
+            ((this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs).question.args as MindControlQuestionArgs) :
+            (this.gamedatas.gamestate.args as EnteringRerollDiceArgs);
         const selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
         const canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
@@ -3373,6 +3389,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
+            ['discardedDice', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
             ['playEvolution', ANIMATION_MS],
             ['superiorAlienTechnologyRolledDie', ANIMATION_MS],
@@ -3842,6 +3859,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     notif_discardedDie(args: NotifDiscardedDieArgs) {
         this.diceManager.discardDie(args.die);
+    }
+
+    notif_discardedDice(args: NotifDiscardedDiceArgs) {
+        this.diceManager.discardDice(args.dice);
     }
 
     notif_exchangeCard(args: NotifExchangeCardArgs) {
