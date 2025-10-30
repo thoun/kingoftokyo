@@ -57,4 +57,14 @@ trait InterventionTrait {
     function setDamageIntervention($intervention) {
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), $intervention);
     }
+
+    function addDamagesToCancelDamageIntervention($intervention, array $newDamages) {
+        foreach ($newDamages as $newDamage) {
+            $intervention->damages[] = $newDamage;
+            $intervention->allDamages[] = $newDamage;
+            if (!in_array($newDamage->playerId, $intervention->remainingPlayersId)) {
+                $intervention->remainingPlayersId[] = $newDamage->playerId;
+            }
+        }
+    }
 }

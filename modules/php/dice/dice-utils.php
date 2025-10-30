@@ -948,14 +948,6 @@ trait DiceUtilTrait {
             $cardsAddingSmashes[] = CHEERLEADER_CARD;
         }
 
-        // acid attack
-        $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);
-        if ($countAcidAttack > 0) {
-            $addedSmashes += $countAcidAttack;
-
-            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
-        }
-
         // no brain
         $countNoBrain = $this->countCardOfType($playerId, NO_BRAIN_CARD);
         if ($countNoBrain > 0) {
@@ -1041,6 +1033,17 @@ trait DiceUtilTrait {
                 }
             }
 
+            // TODO migrate all of the above in their respective card class like AcidAttack/FollowTheCubes/Barbs
+            [$addedByCards, $addingCards] = $this->powerCards->onAddSmashes(new Context(
+                $this, 
+                currentPlayerId: $playerId,
+                dieSmashes: $diceCounts[6],
+                addedSmashes: $addedSmashes,
+            ));
+
+            $addedSmashes += $addedByCards;
+            $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingCards);
+
             if ($this->wickednessExpansion->isActive()) {
                 [$addedByTiles, $addingTiles] = $this->wickednessTiles->onAddSmashes(new Context(
                     $this, 
@@ -1051,6 +1054,18 @@ trait DiceUtilTrait {
 
                 $addedSmashes += $addedByTiles;
                 $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingTiles);
+            }
+
+            if ($this->powerUpExpansion->isActive()) {
+                [$addedByEvolutions, $addingEvolutions] = $this->powerUpExpansion->evolutionCards->onAddSmashes(new Context(
+                    $this, 
+                    currentPlayerId: $playerId,
+                    dieSmashes: $diceCounts[6],
+                    addedSmashes: $addedSmashes,
+                ));
+
+                $addedSmashes += $addedByEvolutions;
+                $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingEvolutions);
             }
         }
 

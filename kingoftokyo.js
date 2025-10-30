@@ -3521,7 +3521,7 @@ var CurseCardsManager = /** @class */ (function (_super) {
     };
     return CurseCardsManager;
 }(CardManager));
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, /*TODOPUKK 11,*/ 13, 14, 15, 18, 61, 62, 63];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, /*TODOPUKK 11,*/ /*TODOPUCT 12,*/ 13, 14, 15, 18, 61, 62, 63];
 var EvolutionCardsManager = /** @class */ (function (_super) {
     __extends(EvolutionCardsManager, _super);
     function EvolutionCardsManager(game) {
@@ -3866,7 +3866,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 612: return /*_TODOMB*/ ("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game."); // TODOMB
             // 612 same as 611
             case 613: return /*_TODOMB*/ ("Once per turn, you may pay 1[Energy] to discard 2 dice from your result and add any 1 die symbol to your Roll."); // TODOMB
-            case 614: return '<TOUGHT><br>' + /*_TODOMB*/ ("If you must lose exactly 3[Heart], gain 3[Heart] instead."); // TODOMB
+            case 614: return '<TOUGH><br>' + /*_TODOMB*/ ("If you must lose exactly 3[Heart], gain 3[Heart] instead."); // TODOMB
             case 615: return /*_TODOMB*/ ("If you have exactly [die3][die3][die3] among the dice in your Roll, steal 1[Star] from the Monster with the most."); // TODOMB
             case 616: return /*_TODOMB*/ ("If you have exactly 3 identical dice among the dice in your Roll, all other Monsters lose 1[Heart] each."); // TODOMB
             case 617: return /*_TODOMB*/ ("If you have exactly [dieHeart][dieHeart][dieHeart] among the dice in your Roll, gain 3[Heart] and the Monster with the least [Heart] gains 1[Heart]."); // TODOMB
@@ -3885,7 +3885,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 632: return /*_TODOMB*/ ("Once per turn, pay 1[Energy] to change one of your [dieHeart] to [dieSmash]."); // TODOMB
             case 633: return /*_TODOMB*/ ("Draw the top card of another Monster’s Evolution deck."); // TODOMB
             case 634: return /*_TODOMB*/ ("When you wound a Monster, they must discard all their Power cards. They may pay 1[Energy] per card they want to keep."); // TODOMB
-            case 635: return '<TOUGHT><br>' + /*_TODOMB*/ ("You may also activate this keyword when an effect makes you “lose [Heart]”."); // TODOMB
+            case 635: return '<TOUGH><br>' + /*_TODOMB*/ ("You may also activate this keyword when an effect makes you “lose [Heart]”."); // TODOMB
             case 636: return '<HUNTER><br>' + /*_TODOMB*/ ("If you hunt the Monster with the most [Energy], add [dieClaw][dieClaw] to your Roll."); // TODOMB
             case 637: return '<POISON><br>' + /*_TODOMB*/ ("If you lose 3[Heart] or more, all other Monsters lose 1[Heart] each."); // TODOMB
             case 638: return '<FRENZY><br>' + /*_TODOMB*/ ("After your FRENZY turn, lose 2[Star], 2[Heart], and 2[Energy]."); // TODOMB
@@ -6036,6 +6036,52 @@ var SmashActionSelector = /** @class */ (function () {
     };
     return SmashActionSelector;
 }());
+var CrabClawActionSelector = /** @class */ (function () {
+    function CrabClawActionSelector(game, nodeId, args) {
+        var _this = this;
+        this.game = game;
+        this.nodeId = nodeId;
+        this.selections = {};
+        this.createToggleButtons(nodeId, args);
+        dojo.place("<div id=\"".concat(nodeId, "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"").concat(nodeId, "-apply\">").concat(_('Apply'), "</button></div>"), nodeId);
+        document.getElementById("".concat(nodeId, "-apply")).addEventListener('click', function () { return _this.game.bgaPerformAction('actApplyCrabClawChoices', {
+            crabClawChoices: JSON.stringify(_this.selections)
+        }); });
+    }
+    CrabClawActionSelector.prototype.createToggleButtons = function (nodeId, args) {
+        var _this = this;
+        args.forEach(function (card) {
+            var cardName = _this.game.cardsManager.getCardName(card.type, 'text-only');
+            var html = "<div class=\"row\">\n                <div class=\"legend\">\n                    ".concat(cardName, "\n                </div>\n                <div id=\"").concat(nodeId, "-card").concat(card.id, "\" class=\"toggle-buttons\"></div>\n            </div>");
+            dojo.place(html, nodeId);
+            _this.selections[card.id] = 'discard';
+            _this.createToggleButton("".concat(nodeId, "-card").concat(card.id), "".concat(nodeId, "-card").concat(card.id, "-discard"), _("Discard"), function () { return _this.setSelectedAction(card.id, 'discard'); }, true);
+            _this.createToggleButton("".concat(nodeId, "-card").concat(card.id), "".concat(nodeId, "-card").concat(card.id, "-pay"), formatTextIcons(_('Keep') + ' (1[Energy])'), function () { return _this.setSelectedAction(card.id, 'pay'); });
+        });
+    };
+    CrabClawActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, selected) {
+        if (selected === void 0) { selected = false; }
+        var html = "<div class=\"toggle-button\" id=\"".concat(id, "\">\n            ").concat(text, "\n        </button>");
+        dojo.place(html, destinationId);
+        if (selected) {
+            dojo.addClass(id, 'selected');
+        }
+        document.getElementById(id).addEventListener('click', function () { return callback(); });
+    };
+    CrabClawActionSelector.prototype.removeOldSelection = function (cardId) {
+        var oldSelectionId = "".concat(this.nodeId, "-card").concat(cardId, "-").concat(this.selections[cardId]);
+        dojo.removeClass(oldSelectionId, 'selected');
+    };
+    CrabClawActionSelector.prototype.setSelectedAction = function (cardId, action) {
+        if (this.selections[cardId] == action) {
+            return;
+        }
+        this.removeOldSelection(cardId);
+        this.selections[cardId] = action;
+        dojo.addClass("".concat(this.nodeId, "-card").concat(cardId, "-").concat(action), 'selected');
+    };
+    return CrabClawActionSelector;
+}());
 var BACKGROUND_FILENAME = {
     1: 'base.jpg',
     2: 'halloween.jpg',
@@ -6974,6 +7020,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
             if (args.rerollAllEnergy) {
                 this.createButton('dice-actions', 'rerollAllEnergy_button', formatTextIcons(_("Reroll all ${dieFace}").replace('${dieFace}', '[dieEnergy]')) + ' (' + this.evolutionCardsManager.getCardName(622, 'text-only') + ')', function () { return _this.actUseIntergalacticGenius(); });
             }
+            /*if (args.changeHeartToSmash.hasEvolution) {
+                this.createButton('dice-actions', 'changeHeartToSmash_button', formatTextIcons(_("Change ${from} to ${to}").replace('${from}', '[dieHeart]').replace('${to}', '[dieClaw]') + ' (1[Energy]) ('+this.evolutionCardsManager.getCardName(632, 'text-only')+')'), () => this.actUseEnergyDevourer(), !args.changeHeartToSmash.hasDiceHeart);
+            }*/
             if (args.rerollDie.isBeastForm) {
                 dojo.place("<div id=\"beast-form-dice-actions\"></div>", 'dice-actions');
                 var simpleFaces_1 = [];
@@ -7386,6 +7435,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     this.statusBar.addActionButton(_("Skip"), function () { return _this.rerollDice([]); });
                 }
                 break;
+            case 'CrabClaw':
+                var crabClawArgs = question.args;
+                dojo.place("<div id=\"crab-claw-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
+                new CrabClawActionSelector(this, 'crab-claw-action-selector', crabClawArgs.playerCards[this.getPlayerId()]);
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -7497,6 +7551,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.onLeavingAnswerQuestion();
                 if (this.gamedatas.gamestate.args.question.code === 'Bamboozle') {
                     this.onLeavingBuyCard();
+                }
+                else if (this.gamedatas.gamestate.args.question.code === 'CrabClaw') {
+                    if (document.getElementById('crab-claw-action-selector')) {
+                        dojo.destroy('crab-claw-action-selector');
+                    }
                 }
                 break;
             case 'MyToy':
@@ -8891,6 +8950,13 @@ var KingOfTokyo = /** @class */ (function (_super) {
             diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
         });
     };
+    /*public actUseEnergyDevourer() {
+        const lockedDice = this.diceManager.getLockedDice();
+
+        this.bgaPerformAction('actUseEnergyDevourer', {
+            diceIds: lockedDice.map(die => die.id).join(',')
+        });
+    }*/
     KingOfTokyo.prototype.rethrow3camouflage = function () {
         this.bgaPerformAction('actRethrow3Camouflage');
     };
@@ -9031,7 +9097,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.applySmashActions = function (selections) {
-        console.warn(selections);
         this.bgaPerformAction('actApplySmashDieChoices', {
             smashDieChoices: JSON.stringify(selections)
         });

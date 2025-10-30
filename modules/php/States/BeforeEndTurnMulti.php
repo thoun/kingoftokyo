@@ -35,11 +35,14 @@ class BeforeEndTurnMulti extends GameState {
         $privatePlayers = [];
         $couldPlayEvolution = false;
 
-        $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
-        if (count($consumableCards) > 0 && count($this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY)) > 0) {
-            $consumableCards = [];
+        $frenzyAlreadyActivated = count($this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY)) > 0;
+        $consumableCards = [];
+        $consumableEvolutions = [];
+        if (!$frenzyAlreadyActivated) {
+            $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+            $consumableEvolutions = $this->game->mindbugExpansion->getConsumableEvolutions($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
         }
-        $canPlayConsumable = count($consumableCards) > 0;
+        $canPlayConsumable = count($consumableCards) > 0 || count($consumableEvolutions) > 0;
         
         if ($isPowerUpExpansion) {
             $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_END);
@@ -72,7 +75,7 @@ class BeforeEndTurnMulti extends GameState {
             'highlighted' => $highlighted,
             '_private' => $privatePlayers,
             'consumableCards' => $consumableCards,
-            'consumableEvolutions' => []/* TODOMB $consumableEvolutions*/,
+            'consumableEvolutions' => $consumableEvolutions,
             'canPlayConsumable' => $canPlayConsumable,
             'couldPlayEvolution' => $couldPlayEvolution,
             '_no_notify' => !$canPlayConsumable && !$couldPlayEvolution,
@@ -118,6 +121,11 @@ class BeforeEndTurnMulti extends GameState {
     #[PossibleAction]
     public function actActivateConsumable(int $id, string $keyword, int $activePlayerId) {
         $this->game->mindbugExpansion->activateConsumable($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+    }
+
+    #[PossibleAction]
+    public function actActivateConsumableEvolution(int $id, string $keyword, int $activePlayerId) {
+        $this->game->mindbugExpansion->activateConsumableEvolution($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_END_TURN);
     }
 
     #[PossibleAction]

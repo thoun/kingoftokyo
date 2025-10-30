@@ -689,7 +689,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, MONSTERS_WITH_POWER_UP_CARDS)));            
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, $this->powerUpExpansion->getMonstersWithPowerUpCards())));            
         }
         
         return $monsters;

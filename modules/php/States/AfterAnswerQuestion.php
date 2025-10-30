@@ -32,7 +32,7 @@ class AfterAnswerQuestion extends GameState {
             return;
         }
 
-        if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
+        if (in_array($question->code, ['TargetAcquired', 'LightningArmor', 'CrabClaw'])) {
             $this->game->goToState(\ST_AFTER_RESOLVE_DAMAGE);
             return;
         }

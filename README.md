@@ -48,3 +48,7 @@ Parasitic Tentacles : can buy Keep cards => can buy Power cards : are costumes c
 Rooting for the Underdog : At the end of your turn => At the end of a turn => the turn of every monster, or just ours ?
 It has a child : and continue playing outside Tokyo. => and continue playing. Does the player now stays in Tokyo ? adapt Dark Edition text as well ?
 Alien Origin : Buying cards => Buying Power cards => does it still applies to costumes ?
+
+
+
+private alpha with Goku_2020 dc_existential

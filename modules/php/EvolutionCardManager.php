@@ -176,7 +176,7 @@ class EvolutionCardManager extends ItemManager {
     }
 
     function setup(array $affectedPlayersMonsters):void {
-        foreach(MONSTERS_WITH_POWER_UP_CARDS as $monster) {
+        foreach($this->game->powerUpExpansion->getMonstersWithPowerUpCards() as $monster) {
             $cards = [];
             $location = array_key_exists($monster, $affectedPlayersMonsters) ? 'deck'.$affectedPlayersMonsters[$monster] : 'monster'.$monster;
             for($card=1; $card<=8; $card++) {
@@ -295,6 +295,32 @@ class EvolutionCardManager extends ItemManager {
             /** @disregard */
             return $card->immediateEffect($context);
         }
+    }
+
+    public function onAddSmashes(Context $context): array {
+        $cards = $this->getPlayerVirtual($context->currentPlayerId, true, false);
+        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashesOrder') && method_exists($card, 'addSmashes'));
+        $addedByCards = 0;
+        $addingCards = [];
+
+        // to make sure antimatter beam multiplication is done after barbs addition
+        usort($cards, 
+            // Sort by the return value of addSmashesOrder, smaller order first
+            /** @disregard */
+            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+        );
+
+        foreach ($cards as $card) {
+             /** @disregard */
+            $addedByCard = $card->addSmashes($context);
+            $addedByCards += $addedByCard;
+            $context->addedSmashes += $addedByCard;
+            if ($addedByCard > 0) {
+                $addingCards[] = 3000 + $card->type;
+            }
+        }
+
+        return [$addedByCards, $addingCards];
     }
 
     public function activateKeyword(EvolutionCard $card, string $keyword): void {

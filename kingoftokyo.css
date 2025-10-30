@@ -665,6 +665,16 @@
   margin: -5px 0;
 }
 
+#crab-claw-action-selector .legend {
+  font-weight: bold;
+  width: 160px;
+}
+#crab-claw-action-selector .icon {
+  width: 20px;
+  height: 20px;
+  margin: -5px 0;
+}
+
 .die4 {
   position: relative;
   margin: 0 auto;

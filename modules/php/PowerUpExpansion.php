@@ -7,8 +7,6 @@ use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
-const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,/* TODOPUHA 7,8,*//*TODOPUKK 11,*/13,14,15/* TODOPUBG ,18*/, 61, 62, 63];
-
 class PowerUpExpansion {
     public EvolutionCardManager $evolutionCards;
 
@@ -32,6 +30,20 @@ class PowerUpExpansion {
     
     function isPowerUpMutantEvolution(): bool {
         return $this->isActive() && $this->game->tableOptions->get(POWERUP_EXPANSION_OPTION) === 3;
+    }
+
+    function getMonstersWithPowerUpCards() {
+        $monstersWithPowerUpCards = [1,2,3,4,5,6,/*TODOPUKK 11,*//*TODOPUCT 12,*/13,14,15/* TODOPUBG ,18*/];
+
+        /* TODOPUHA if ($this->game->isHalloweenExpansion()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [7, 8]);
+        }*/
+
+        if ($this->game->mindbugExpansion->isActive()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [61, 62, 63]);
+        }
+
+        return $monstersWithPowerUpCards;
     }
 
     function applyChooseEvolutionCard(int $playerId, int $id, bool $init): void {

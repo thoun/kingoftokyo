@@ -5,7 +5,9 @@ namespace Bga\Games\KingOfTokyo\States;
 
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
 use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
 use const Bga\Games\KingOfTokyo\PowerCards\FRENZY;
@@ -52,9 +54,10 @@ class NextPlayer extends GameState {
             $activatedFrenzys = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY);
 
             if ($anotherTimeWithCard == 0 && count($activatedFrenzys) > 0) { // extra turn for current player
-                $cardId = $activatedFrenzys[0]->id;
-                $card = $this->game->powerCards->getItemById($cardId);
-                if ($card) {
+                $card = $activatedFrenzys[0];
+                if ($card instanceof EvolutionCard) {
+                    $anotherTimeWithCard = 3000 + $card->type; // FRENZY evolution
+                } else if ($card instanceof PowerCard) {
                     $anotherTimeWithCard = $card->type; // FRENZY card
                 }
             }

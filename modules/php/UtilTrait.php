@@ -51,6 +51,7 @@ trait UtilTrait {
         return $this->tableOptions->get(TWO_PLAYERS_VARIANT_OPTION) === 2 && $this->getPlayersNumber() == 2;
     }
 
+    // TODOHA migrate expansion function in a dedicated class like MindbugExpansion and rename this function isActive
     function isHalloweenExpansion() {
         return $this->tableOptions->get(HALLOWEEN_EXPANSION_OPTION) === 2;
     }
@@ -1317,7 +1318,7 @@ trait UtilTrait {
         // if we are still here, player have cards to cancel/reduce damage. We check if he have enough energy to use them
         if ($this->autoSkipImpossibleActions()) {
             $arg = $this->argCancelDamage($currentPlayerId, $intervention);
-            if (!$arg['canDoAction'] || !$arg['canCancelDamage'] && $arg['damageToCancelToSurvive'] <= 0) {
+            if (!$arg['canDoAction']) {
                 $this->applyDamages($intervention, $currentPlayerId);
                 $this->resolveRemainingDamages($intervention, true, false);
                 return;

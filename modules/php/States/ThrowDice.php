@@ -8,6 +8,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -71,13 +72,21 @@ class ThrowDice extends GameState {
         $intergalacticGeniusEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, INTERGALACTIC_GENIUS_EVOLUTION, true, true);
         $intergalacticGeniusEvolution = Arrays::find($intergalacticGeniusEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
 
+        /*$energyDevourerEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, ENERGY_DEVOURER_EVOLUTION, true, true);
+        $energyDevourerEvolution = Arrays::find($energyDevourerEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
+        $hasDiceHeart = null;
+        if ($energyDevourerEvolution) {
+            $hasDiceHeart = $this->game->getFirstDieOfValue($activePlayerId, 4) != null;
+        }*/
+
         $hasActions = $throwNumber < $maxThrowNumber 
             || ($hasEnergyDrink && $playerEnergy >= 1) 
             || $hasDice3 
             || $hasSmokeCloud 
             || $hasCultist
             || ($isBeastForm && $canUseBeastForm)
-            || $intergalacticGeniusEvolution !== null;
+            || $intergalacticGeniusEvolution !== null/*
+            || $energyDevourerEvolution !== null*/;
 
         $selectableDice = $this->game->getSelectableDice($dice, false, true);
     
@@ -105,7 +114,12 @@ class ThrowDice extends GameState {
             'hasCultist' => $hasCultist,
             'hasActions' => $hasActions,
             'opponentsOrbOfDooms' => $opponentsOrbOfDooms,
-            'rerollAllEnergy' => $intergalacticGeniusEvolution !== null,
+            'rerollAllEnergy' => $intergalacticGeniusEvolution !== null,/*
+            'changeHeartToSmash' => [
+                'hasEvolution' => $energyDevourerEvolution !== null,
+                'playerEnergy' => $playerEnergy,
+                'hasDiceHeart' => $hasDiceHeart,
+            ]*/
         ];
     }
     
@@ -326,7 +340,7 @@ class ThrowDice extends GameState {
         $intergalacticGeniusEvolution = Arrays::find($intergalacticGeniusEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
         
         if (!$intergalacticGeniusEvolution) {
-            throw new \BgaUserException("You can't play Intergalactic Genius without this Evolution.");
+            throw new UserException("You can't play Intergalactic Genius without this Evolution.");
         }
 
         $this->game->DbQuery("UPDATE dice SET `locked` = false, `rolled` = false");
@@ -339,6 +353,30 @@ class ThrowDice extends GameState {
 
         return ThrowDice::class;
     }
+
+    /*#[PossibleAction]
+    function actUseEnergyDevourer(
+        #[IntArrayParam(name: 'diceIds')] array $diceIds,
+        int $activePlayerId
+    )  {
+        $usedCardIds = $this->game->getUsedCard();
+        $energyDevourerEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, ENERGY_DEVOURER_EVOLUTION, true, true);
+        $energyDevourerEvolution = Arrays::find($energyDevourerEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
+        
+        if (!$energyDevourerEvolution) {
+            throw new UserException("You can't play Energy Devourer without this Evolution.");
+        }
+
+        $this->game->DbQuery("UPDATE dice SET `locked` = false, `rolled` = false");
+        if (count($diceIds) > 0) {
+            $this->game->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN (".implode(',', $diceIds).")");
+        }
+        
+        /*_* @disregard *_/
+        $energyDevourerEvolution->applyEffect(new Context($this->game, $activePlayerId));
+
+        return ThrowDice::class;
+    }*/
 
     public function zombie(int $playerId) {
         return $this->actGoToChangeDie($playerId);

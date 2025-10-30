@@ -5,9 +5,11 @@ namespace Bga\Games\KingOfTokyo\States;
 
 use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFramework\Actions\Types\IntParam;
+use Bga\GameFramework\Actions\Types\JsonParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -700,6 +702,48 @@ class AnswerQuestion extends GameState {
         }
 
         $this->game->goToState(-1);
+    }
+
+    #[PossibleAction]
+    public function actApplyCrabClawChoices(#[JsonParam(associative: true)] array $crabClawChoices, int $currentPlayerId) {
+        $question = $this->game->getQuestion();
+        $playerCardIds = Arrays::pluck($question->args->playerCards->$currentPlayerId, 'id');
+
+        $mustPay = 0;
+        foreach ($playerCardIds as $cardId) {
+            $choice = $crabClawChoices[$cardId] ?? '';
+
+            $card = $this->game->powerCards->getItemById($cardId);
+            if ($choice === 'pay') {
+                $mustPay++;
+                $this->notify->all('log', clienttranslate('${player_name} pays 1[Energy] to ${player_name2} to keep ${card_name}'), [
+                    'playerId' => $currentPlayerId,
+                    'player_name' => $this->game->getPlayerNameById($currentPlayerId),
+                    'player_name2' => $this->game->getPlayerNameById($question->args->playerId),
+                    'card_name' => $card->type,
+                ]);
+            } else if ($choice === 'discard') {
+                $this->game->removeCard($currentPlayerId, $card);
+                $this->notify->all('log', clienttranslate('${player_name} discards ${card_name}'), [
+                    'playerId' => $currentPlayerId,
+                    'player_name' => $this->game->getPlayerNameById($currentPlayerId),
+                    'card_name' => $card->type,
+                ]);
+            } else {
+                throw new UserException('Invalid Crab Claw choice');
+            }
+        }
+
+        if ($mustPay > 0) {
+            $playerEnergy = $this->game->getPlayerEnergy($currentPlayerId);
+            if ($playerEnergy < $mustPay) {
+                throw new UserException(clienttranslate('Not enough energy'));
+            }
+            $this->game->applyLoseEnergy($currentPlayerId, $mustPay, 0);
+            $this->game->applyGetEnergy($question->args->playerId, $mustPay, 0);
+        }
+
+        $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
     }
 
     public function zombie(int $playerId) {

@@ -624,6 +624,30 @@ class PowerCardManager extends ItemManager {
         return $inc;
     }
 
+    public function onAddSmashes(Context $context): array {
+        $cards = $this->getPlayerVirtual($context->currentPlayerId);
+        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashesOrder') && method_exists($card, 'addSmashes'));
+        $addedByCards = 0;
+        $addingCards = [];
+
+        // to make sure antimatter beam multiplication is done after barbs addition
+        usort($cards, 
+            // Sort by the return value of addSmashesOrder, smaller order first
+            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+        );
+
+        foreach ($cards as $card) {
+            $addedByCard = $card->addSmashes($context);
+            $addedByCards += $addedByCard;
+            $context->addedSmashes += $addedByCard;
+            if ($addedByCard > 0) {
+                $addingCards[] = $card->type;
+            }
+        }
+
+        return [$addedByCards, $addingCards];
+    }
+
     public function getUnmetConditionRequirement(PowerCard $card, Context $context): ?NotificationMessage {
         if (method_exists($card, 'getUnmetConditionRequirement')) {
             /** @disregard */

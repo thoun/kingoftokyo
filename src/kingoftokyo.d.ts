@@ -54,6 +54,7 @@ interface EvolutionCard {
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
 type SmashAction = 'smash' | 'steal';
+type CrabClawAction = 'discard' | 'pay';
 
 interface HeartActionSelection {
     action: HeartAction;
@@ -130,6 +131,11 @@ interface SuperiorAlienTechnologyQuestionArgs {
     card: Card;
 }
 interface MindControlQuestionArgs extends EnteringRerollDiceArgs {
+}
+
+interface CrabClawQuestionArgs {
+    playerId: number; // player to pay to
+    playerCards: { [playerId: number]: Card[] };
 }
 
 interface FreezeRayChooseOpponentQuestionArgs {
@@ -301,6 +307,12 @@ interface Rethrow3 {
     hasDice3: boolean;
 }
 
+/*interface ChangeHeartToSmash {
+    hasEvolution: boolean;
+    playerEnergy: number;
+    hasDiceHeart: boolean;
+}*/
+
 interface RerollDie {
     isBeastForm: boolean;
     canUseBeastForm: boolean;
@@ -344,6 +356,7 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     hasCultist: boolean;
     opponentsOrbOfDooms: number;
     rerollAllEnergy: boolean;
+    /*changeHeartToSmash: ChangeHeartToSmash;*/
 }
 
 interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {

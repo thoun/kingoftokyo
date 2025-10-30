@@ -572,6 +572,19 @@ $size: 0.25em;
   }
 }
 
+#crab-claw-action-selector {
+  .legend {
+    font-weight: bold;
+    width: 160px;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin: -5px 0;
+  }
+}
+
 $die4size: 5em;
 $die4halfbase: $die4size / 2;
 $die4height: /*sqrt(3)*/1.73205080757 * $die4halfbase;

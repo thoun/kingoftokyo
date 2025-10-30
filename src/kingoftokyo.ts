@@ -562,6 +562,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.createButton('dice-actions', 'rerollAllEnergy_button', formatTextIcons(_("Reroll all ${dieFace}").replace('${dieFace}', '[dieEnergy]')) + ' ('+this.evolutionCardsManager.getCardName(622, 'text-only')+')', () => this.actUseIntergalacticGenius());
             }
 
+            /*if (args.changeHeartToSmash.hasEvolution) {
+                this.createButton('dice-actions', 'changeHeartToSmash_button', formatTextIcons(_("Change ${from} to ${to}").replace('${from}', '[dieHeart]').replace('${to}', '[dieClaw]') + ' (1[Energy]) ('+this.evolutionCardsManager.getCardName(632, 'text-only')+')'), () => this.actUseEnergyDevourer(), !args.changeHeartToSmash.hasDiceHeart);
+            }*/
+
             if (args.rerollDie.isBeastForm) {
                 dojo.place(`<div id="beast-form-dice-actions"></div>`, 'dice-actions');
 
@@ -1029,6 +1033,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
                 }
                 break;
+            case 'CrabClaw':
+                const crabClawArgs = question.args as CrabClawQuestionArgs;
+                dojo.place(`<div id="crab-claw-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');
+                new CrabClawActionSelector(this, 'crab-claw-action-selector', crabClawArgs.playerCards[this.getPlayerId()]);
+                break;
         }
     }
 
@@ -1144,6 +1153,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.onLeavingAnswerQuestion();
                 if (this.gamedatas.gamestate.args.question.code === 'Bamboozle') {
                     this.onLeavingBuyCard();
+                } else if (this.gamedatas.gamestate.args.question.code === 'CrabClaw') {
+                    if (document.getElementById('crab-claw-action-selector')) {
+                        dojo.destroy('crab-claw-action-selector');
+                    }
                 }
                 break;            
             case 'MyToy':
@@ -2803,6 +2816,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         });
     }
 
+    /*public actUseEnergyDevourer() {
+        const lockedDice = this.diceManager.getLockedDice();
+
+        this.bgaPerformAction('actUseEnergyDevourer', {
+            diceIds: lockedDice.map(die => die.id).join(',')
+        });
+    }*/
+
     public rethrow3camouflage() {
         this.bgaPerformAction('actRethrow3Camouflage');
     }
@@ -2978,7 +2999,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public applySmashActions(selections: { [playerId: number]: SmashAction } ) {
-        console.warn(selections);
         this.bgaPerformAction('actApplySmashDieChoices', {
             smashDieChoices: JSON.stringify(selections)
         });

@@ -226,13 +226,11 @@ class WickednessTileManager extends ItemManager {
         );
 
         foreach ($tiles as $tile) {
-            if (method_exists($tile, 'addSmashes')) {
-                $addedByTile = $tile->addSmashes($context);
-                $addedByTiles += $addedByTile;
-                $context->addedSmashes += $addedByTile;
-                if ($addedByTile > 0) {
-                    $addingTiles[] = 2000 + $tile->type;
-                }
+            $addedByTile = $tile->addSmashes($context);
+            $addedByTiles += $addedByTile;
+            $context->addedSmashes += $addedByTile;
+            if ($addedByTile > 0) {
+                $addingTiles[] = 2000 + $tile->type;
             }
         }
 

@@ -64,6 +64,22 @@ class AfterResolveDamage extends GameState {
             }
         }
 
+        $unusedCrabClawEvolution = $this->game->getFirstUnusedEvolution($activePlayerId, \CRAB_CLAW_EVOLUTION);
+        if ($unusedCrabClawEvolution !== null) {
+            $this->game->setUsedCard(3000 + $unusedCrabClawEvolution->id);
+            $woundDamagesByActivePlayer = array_values(array_filter(
+                $intervention->damages,
+                fn($damage) => $damage->clawDamage != null && $damage->damageDealerId == $activePlayerId && $damage->effectiveDamage > 0,
+            ));
+            $woundedPlayersByCrabClawOwner = array_values(array_unique(array_map(fn($damage) => $damage->playerId, $woundDamagesByActivePlayer)));
+
+            /** @disregard */
+            $redirected = $unusedCrabClawEvolution->applyEffect(new Context($this->game, $activePlayerId), $woundedPlayersByCrabClawOwner);
+            if ($redirected) {
+                return;
+            }
+        }
+
         $this->game->goToState($intervention->endState);
     }
 }

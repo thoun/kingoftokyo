@@ -28,7 +28,7 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0 || Game::getBgaEnvironment() === 'studio'; // TODOMB
+        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0 /*|| Game::getBgaEnvironment() === 'studio'*/; // TODOMB
     }
 
     public function getMindbugCardsSetting() {
@@ -154,7 +154,7 @@ class MindbugExpansion {
     /**
      * @return Damage[]
      */
-    public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords): array {
+    public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords): void {
         $consumableCards = $this->game->mindbugExpansion->getConsumableCards($playerId, $keywords);
         $card = Arrays::find($consumableCards, fn($c) => $c->id === $id);
         if (!$card) {
@@ -164,23 +164,24 @@ class MindbugExpansion {
             throw new \BgaUserException("This card doesn't have the keyword $keyword");
         }
 
+        $activatedFrenzyCards = $keyword === FRENZY ? $this->getActivatedCards($playerId, FRENZY) : [];
+
         $this->game->powerCards->activateKeyword($card, $keyword);
         $this->game->notify->all('activatedKeyword', '', [ 'card' => $card, 'keyword' => $keyword, ]);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
             case SNEAKY: $this->activateSneaky($playerId, $card); break;
-            case POISON: return $this->activatePoison($playerId, $card);
-            case TOUGH: return $this->activateTough($playerId, $card);
-            case FRENZY: $this->activateFrenzy($playerId, $card); break;
+            case POISON: $this->activatePoison($playerId, $card); break;
+            case TOUGH: $this->activateTough($playerId, $card); break;
+            case FRENZY: $this->activateFrenzy($activatedFrenzyCards); break;
         }
-        return [];
     }
 
     /**
      * @return Damage[]
      */
-    public function activateConsumableEvolution(int $id, string $keyword, int $playerId, array $keywords): array {
+    public function activateConsumableEvolution(int $id, string $keyword, int $playerId, array $keywords): void {
         $playerEvolutionsInHand = $this->game->powerUpExpansion->evolutionCards->getPlayerReal($playerId, false, true);
         $consumableEvolutions = Arrays::filter($playerEvolutionsInHand, fn($evolution) => $evolution->mindbugKeywords !== null);
         $card = Arrays::find($consumableEvolutions, fn($c) => $c->id === $id);
@@ -191,6 +192,8 @@ class MindbugExpansion {
             throw new \BgaUserException("This card doesn't have the keyword $keyword");
         }
 
+        $activatedFrenzyCards = $keyword === FRENZY ? $this->getActivatedCards($playerId, FRENZY) : [];
+
         $this->game->playEvolutionToTable($playerId, $card);
 
         $this->game->powerUpExpansion->evolutionCards->activateKeyword($card, $keyword);
@@ -199,11 +202,10 @@ class MindbugExpansion {
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
             case SNEAKY: $this->activateSneaky($playerId, $card); break;
-            case POISON: return $this->activatePoison($playerId, $card);
-            case TOUGH: return $this->activateTough($playerId, $card);
-            case FRENZY: $this->activateFrenzy($playerId, $card); break;
+            case POISON: $this->activatePoison($playerId, $card); break;
+            case TOUGH: $this->activateTough($playerId, $card); break;
+            case FRENZY: $this->activateFrenzy($activatedFrenzyCards); break;
         }
-        return [];
     }
 
     /**
@@ -245,11 +247,13 @@ class MindbugExpansion {
         foreach ($cards as $card) {
             $card->activated = null;
             $this->game->powerCards->updateItem($card, ['activated']);
+            $this->game->removeCard($playerId, $card);
         }
         $evolutions = $this->getActivatedEvolutionCards($playerId, $keyword);
         foreach ($evolutions as $evolution) {
             $evolution->activated = null;
             $this->game->powerUpExpansion->evolutionCards->updateItem($evolution, ['activated']);
+            $this->game->removeEvolution($playerId, $evolution);
         }
     }
 
@@ -282,51 +286,40 @@ class MindbugExpansion {
         }
     }
 
-    /**
-     * @return Damage[]
-     */
-    private function activatePoison(int $playerId, PowerCard | EvolutionCard $card): array {
+    private function activatePoison(int $playerId, PowerCard | EvolutionCard $card): void {
         /** @var CancelDamageIntervention */
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
         $newDamage = new Damage($damage->damageDealerId, $damage->damage, $playerId, $card);
-        $intervention->damages[] = $newDamage;
-        $intervention->allDamages[] = $newDamage;
-        $intervention->remainingPlayersId[] = $damage->damageDealerId;
-        $this->game->resolveRemainingDamages($intervention, false, true);
+        $this->game->addDamagesToCancelDamageIntervention($intervention, [$newDamage]);
 
-        $damages = [];
         /** @disregard */
         $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: POISON, lostHearts: $theoricalLostHearts, attackerPlayerId: $damage->damageDealerId));
         if (gettype($newDamages) === 'array') {
-            $damages = array_merge($damages, $newDamages);
+            $this->game->addDamagesToCancelDamageIntervention($intervention, $newDamages);
         }
-        return $damages;
+
+        $this->game->resolveRemainingDamages($intervention, false, true);
     }
 
-    /**
-     * @return Damage[]
-     */
-    private function activateTough(int $playerId, PowerCard | EvolutionCard $card): array {
+    private function activateTough(int $playerId, PowerCard | EvolutionCard $card): void {
         /** @var CancelDamageIntervention */
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
         $this->game->reduceInterventionDamages($playerId, $intervention, -1);
-        $this->game->resolveRemainingDamages($intervention, false, true);
 
-        $damages = [];
         /** @disregard */
         $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: TOUGH, lostHearts: $theoricalLostHearts));
         if (gettype($newDamages) === 'array') {
-            $damages = array_merge($damages, $newDamages);
+            $this->game->addDamagesToCancelDamageIntervention($intervention, $newDamages);
         }
-        return $damages;
+        
+        $this->game->resolveRemainingDamages($intervention, false, true);
     }
 
-    private function activateFrenzy(int $playerId, PowerCard | EvolutionCard $card): void {
-        $activatedFrenzyCards = $this->getActivatedCards($playerId, FRENZY);
+    private function activateFrenzy(array $activatedFrenzyCards): void {
         if (!empty($activatedFrenzyCards)) {
             throw new \BgaSystemException('Already a frenzy turn awaiting');
         }
@@ -345,6 +338,7 @@ class MindbugExpansion {
             if (gettype($newDamages) === 'array') {
                 $damages = array_merge($damages, $newDamages);
             }
+            debug($damages, $newDamages);
         }
         $this->cleanActivatedCards($playerId, FRENZY);
         return $damages;

@@ -15,11 +15,23 @@ class FollowTheCubes extends EvolutionCard
         $this->mindbugKeywords = [HUNTER];
     }
 
-    public function applyEffect(Context $context) {
-        $targetPlayerEnergy = $context->game->getPlayerEnergy($context->targetPlayerId);
-        if ($targetPlayerEnergy === $context->game->getMaxPlayerEnergy()) {
-            // TODOMB add 2 [dieClaw]
+    public function addSmashesOrder(): int {
+        return 1;
+    }
+
+    public function addSmashes(Context $context): int {
+        if (!$this->activated) {
+            return 0;
         }
+        
+        $targetPlayerEnergy = $context->game->getPlayerEnergy($this->activated->targetPlayerId);
+        if ($targetPlayerEnergy === $context->game->getMaxPlayerEnergy()) {
+            return 2;
+        }
+        return 0;
+    }
+
+    public function applyEffect(Context $context) {
         $context->game->removeEvolution($context->currentPlayerId, $this);
     }
 }

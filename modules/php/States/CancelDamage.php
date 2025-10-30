@@ -52,8 +52,12 @@ class CancelDamage extends GameState {
 
     #[PossibleAction]
     public function actActivateConsumable(int $id, string $keyword, int $currentPlayerId) {
-        $damages = $this->game->mindbugExpansion->activateConsumable($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
-        // TODOMB apply $damages
+        $this->game->mindbugExpansion->activateConsumable($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
+    }
+
+    #[PossibleAction]
+    public function actActivateConsumableEvolution(int $id, string $keyword, int $currentPlayerId) {
+        $this->game->mindbugExpansion->activateConsumableEvolution($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
     }
     
     #[PossibleAction]
@@ -198,7 +202,7 @@ class CancelDamage extends GameState {
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
         if ($remainingDamage > 0) {
-            $stayOnState = $args['canCancelDamage'];
+            $stayOnState = $args['canDoAction'];
         }
 
         $this->notify->all('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [

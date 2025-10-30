@@ -12,7 +12,7 @@ class PoisonedTentacles extends EvolutionCard
 {
     public function __construct()
     {
-        $this->evolutionType = PERMANENT;
+        $this->evolutionType = TEMPORARY;
         $this->mindbugKeywords = [POISON];
     }
 
@@ -21,12 +21,12 @@ class PoisonedTentacles extends EvolutionCard
         if ($context->lostHearts >= 3) {
             $otherPlayerIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
             foreach ($otherPlayerIds as $otherPlayerId) {
-                return new Damage($otherPlayerId, 1, $context->currentPlayerId, $this);
+                $damages[] = new Damage($otherPlayerId, 1, $context->currentPlayerId, $this);
             }
         }
 
         $context->game->removeEvolution($context->currentPlayerId, $this);
 
-        return $damages; // TODOMB test
+        return $damages;
     }
 }
