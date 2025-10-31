@@ -378,6 +378,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasYinYang: boolean;
     hasBiofuel: boolean;
     hasShrinky: boolean;
+    hasEnergyInfusedMonster: number | null;
     rethrow3: Rethrow3;
 }
 

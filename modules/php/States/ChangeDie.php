@@ -37,7 +37,7 @@ class ChangeDie extends GameState {
 
         $dice = $this->game->getPlayerRolledDice($activePlayerId, true, true, true);
         $selectableDice = $this->game->getSelectableDice($dice, true, false);
-
+        // TODO add _no_notify flag when the player can't do anything and use it in onEnteringState
         $diceArg = [
             'playerId' => $activePlayerId,
             'dice' => $dice,
@@ -235,6 +235,14 @@ class ChangeDie extends GameState {
         $yinYangEvolutions[0]->applyEffect(new Context($this->game, $activePlayerId));
 
         return ChangeDie::class;
+    }
+
+    #[PossibleAction]
+    function actUseEnergyInfusedMonster(int $id, int $activePlayerId) {
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($id);
+        
+        /** @disregard */
+        $evolution->applyEffect(new Context($this->game, $activePlayerId));
     }
 
     public function zombie(int $playerId): int {

@@ -7,6 +7,7 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 
 class ResolveDice extends GameState {
     public function __construct(protected Game $game)
@@ -52,16 +53,16 @@ class ResolveDice extends GameState {
         $canLeaveHibernation = (bool)($args['canLeaveHibernation'] ?? false);
 
         if (!$isInHibernation || !$canLeaveHibernation) {
-            $this->applyResolveDice($activePlayerId);
-            $this->game->goToState($this->game->redirectAfterResolveDice());
+            $damages = $this->applyResolveDice($activePlayerId);
+            $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
         }
     }
 
   	#[PossibleAction]
     public function actStayInHibernation(int $activePlayerId) {
-        $this->applyResolveDice($activePlayerId);
+        $damages = $this->applyResolveDice($activePlayerId);
         
-        $this->game->goToState($this->game->redirectAfterResolveDice());
+        $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
     }
   	
   	#[PossibleAction]
@@ -69,16 +70,17 @@ class ResolveDice extends GameState {
         $cards = $this->game->powerCards->getCardsOfType(HIBERNATION_CARD);
         $this->game->removeCards($activePlayerId, $cards);
 
-        $this->applyResolveDice($activePlayerId);
+        $damages = $this->applyResolveDice($activePlayerId);
 
-        $this->game->goToState($this->game->redirectAfterResolveDice());
+        $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
     }
 
     public function zombie(int $playerId): void {
         $this->actLeaveHibernation($playerId);
     }
 
-    function applyResolveDice(int $playerId) {
+    function applyResolveDice(int $playerId): array {
+        $damages = [];
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
         $playerInTokyo = $this->game->inTokyo($playerId);
@@ -249,13 +251,15 @@ class ResolveDice extends GameState {
         $threeTimesAsStrongEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \THREE_TIMES_AS_STRONG_EVOLUTION, true, false);
         foreach ($threeTimesAsStrongEvolutions as $threeTimesAsStrongEvolution) {
             /** @disregard */
-            $threeTimesAsStrongEvolution->applyEffect(new Context($this, $playerId));
+            $damages = array_merge($damages, $threeTimesAsStrongEvolution->applyEffect(new Context($this->game, $playerId)));
         }
 
         $this->game->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->game->setGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, $funnyLookingButDangerousDamages);
         $this->game->setGlobalVariable(FLAMING_AURA_DAMAGES, $flamingAuraDamages);
         $this->game->setGlobalVariable(DICE_COUNTS, $diceAndCardsCounts);
+
+        return $damages;
     }
 
     function canLeaveHibernation(int $playerId, $dice = null) {

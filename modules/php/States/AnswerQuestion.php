@@ -704,6 +704,29 @@ class AnswerQuestion extends GameState {
         $this->game->goToState(-1);
     }
 
+    // TODO for other similar actions, move the code to the card class like it's done here
+    #[PossibleAction]
+    public function actAnswerEnergyInfusedMonster(
+        #[IntArrayParam(name: 'ids')] array $diceIds,
+        int $currentPlayerId,
+    ): void {
+        /** @var Question */
+        $question = $this->game->getQuestion();
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->evolutionId);
+        $evolution->actAnswerEnergyInfusedMonster(new Context($this->game, $currentPlayerId), $question, $diceIds);
+    }
+    
+    #[PossibleAction]
+    public function actAnswerEnergyInfusedMonsterSelectExtraDie(
+        int $face,
+        int $currentPlayerId,
+    ): void {
+        /** @var Question */
+        $question = $this->game->getQuestion();
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->evolutionId);
+        $evolution->actAnswerEnergyInfusedMonsterSelectExtraDie(new Context($this->game, $currentPlayerId), $question, $face);
+    }
+
     #[PossibleAction]
     public function actApplyCrabClawChoices(#[JsonParam(associative: true)] array $crabClawChoices, int $currentPlayerId) {
         $question = $this->game->getQuestion();

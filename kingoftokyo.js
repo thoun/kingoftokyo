@@ -7431,14 +7431,28 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.onEnteringRerollDice(mindControlArgs);
                 this.statusBar.addActionButton(_("Reroll selected dice"), function () { return _this.bgaPerformAction('actAnswerMindControl', { ids: _this.diceManager.getSelectedDiceIds().join(',') }); }, { id: 'rerollDice_button' });
                 dojo.addClass('rerollDice_button', 'disabled');
-                if (mindControlArgs.min === 0) {
-                    this.statusBar.addActionButton(_("Skip"), function () { return _this.rerollDice([]); });
-                }
                 break;
             case 'CrabClaw':
                 var crabClawArgs = question.args;
                 dojo.place("<div id=\"crab-claw-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
                 new CrabClawActionSelector(this, 'crab-claw-action-selector', crabClawArgs.playerCards[this.getPlayerId()]);
+                break;
+            case 'EnergyInfusedMonster':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(question.args);
+                this.statusBar.addActionButton(_("Discard selected dice"), function () { return _this.bgaPerformAction('actAnswerEnergyInfusedMonster', { ids: _this.diceManager.getSelectedDiceIds().join(',') }); }, { id: 'rerollDice_button' });
+                dojo.addClass('rerollDice_button', 'disabled');
+                break;
+            case 'EnergyInfusedMonsterSelectExtraDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringSelectExtraDie(question.args);
+                var _loop_6 = function (face) {
+                    this_3.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.bgaPerformAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face: face }); });
+                };
+                var this_3 = this;
+                for (var face = 1; face <= 6; face++) {
+                    _loop_6(face);
+                }
                 break;
         }
     };
@@ -7556,6 +7570,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     if (document.getElementById('crab-claw-action-selector')) {
                         dojo.destroy('crab-claw-action-selector');
                     }
+                }
+                else if (['MindControl', 'EnergyInfusedMonster'].includes(this.gamedatas.gamestate.args.question.code)) {
+                    this.diceManager.removeSelection();
                 }
                 break;
             case 'MyToy':
@@ -7737,9 +7754,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     }
                     break;
                 case 'changeDie':
-                    var argsChangeDie = args;
-                    if (argsChangeDie.hasYinYang) {
+                    var argsChangeDie_1 = args;
+                    if (argsChangeDie_1.hasYinYang) {
                         this.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), function () { return _this.bgaPerformAction('actUseYinYang'); });
+                    }
+                    if (argsChangeDie_1.hasEnergyInfusedMonster) {
+                        this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(613, 'text-only') }) + ' (1[Energy])'), function () { return _this.bgaPerformAction('actUseEnergyInfusedMonster', { id: argsChangeDie_1.hasEnergyInfusedMonster }); });
                     }
                     this.addActionButton('resolve_button', _("Resolve dice"), function () { return _this.resolveDice(); }, null, null, 'red');
                     break;
@@ -7767,12 +7787,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     });
                     break;
                 case 'selectExtraDie':
-                    var _loop_6 = function (face) {
-                        this_3.addActionButton("selectExtraDie_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
+                    var _loop_7 = function (face) {
+                        this_4.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
                     };
-                    var this_3 = this;
+                    var this_4 = this;
                     for (var face = 1; face <= 6; face++) {
-                        _loop_6(face);
+                        _loop_7(face);
                     }
                     break;
                 case 'rerollOrDiscardDie':
@@ -8004,12 +8024,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: "".concat(giveEnergyOrLoseHeartsQuestionArgs.heartNumber, "[Heart]") })), function () { return _this.loseHearts(); });
                 break;
             case 'FreezeRay':
-                var _loop_7 = function (face) {
-                    this_4.addActionButton("selectFrozenDieFace_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
+                var _loop_8 = function (face) {
+                    this_5.addActionButton("selectFrozenDieFace_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
                 };
-                var this_4 = this;
+                var this_5 = this;
                 for (var face = 1; face <= 6; face++) {
-                    _loop_7(face);
+                    _loop_8(face);
                 }
                 break;
             case 'MiraculousCatch':
@@ -8074,7 +8094,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.addActionButton('answerElectricCarrot4_button', formatTextIcons(_("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
                 break;
             case 'SuperiorAlienTechnology':
-                this.addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
+                this.statusBar.addActionButton(_('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
                 break;
             case 'Hunter':
                 var hunterArgs = question.args;
@@ -8660,23 +8680,23 @@ var KingOfTokyo = /** @class */ (function (_super) {
             html += "<button class=\"action-button bgabutton ".concat(!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton disable\" id=\"").concat(popinId, "_setStay0\">").concat(_('Disabled'), "</button>");
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_8 = function (i) {
+            var _loop_9 = function (i) {
                 document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_8(i);
+                _loop_9(i);
             }
-            var _loop_9 = function (i) {
+            var _loop_10 = function (i) {
                 document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_9(i);
+                _loop_10(i);
             }
             document.getElementById("".concat(popinId, "_setStay0")).addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -8699,31 +8719,31 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 dojo.destroy("".concat(popinId, "_setStay").concat(i));
             }
         }
-        var _loop_10 = function (i) {
+        var _loop_11 = function (i) {
             if (!document.getElementById("".concat(popinId, "_set").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_5.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-buttons"), 'first');
+                dojo.place("<button class=\"action-button bgabutton ".concat(this_6.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-buttons"), 'first');
                 document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_5 = this;
+        var this_6 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_10(i);
+            _loop_11(i);
         }
-        var _loop_11 = function (i) {
+        var _loop_12 = function (i) {
             if (!document.getElementById("".concat(popinId, "_setStay").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_6.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this_6.gamedatas.leaveTokyoUnder > 0 && i <= this_6.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-stay-buttons"), 'first');
+                dojo.place("<button class=\"action-button bgabutton ".concat(this_7.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this_7.gamedatas.leaveTokyoUnder > 0 && i <= this_7.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-stay-buttons"), 'first');
                 document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_6 = this;
+        var this_7 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_11(i);
+            _loop_12(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {

@@ -1029,14 +1029,24 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.onEnteringRerollDice(mindControlArgs);
                 this.statusBar.addActionButton(_("Reroll selected dice"), () => this.bgaPerformAction('actAnswerMindControl', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
                 dojo.addClass('rerollDice_button', 'disabled');
-                if (mindControlArgs.min === 0) {
-                    this.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
-                }
                 break;
             case 'CrabClaw':
                 const crabClawArgs = question.args as CrabClawQuestionArgs;
                 dojo.place(`<div id="crab-claw-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');
                 new CrabClawActionSelector(this, 'crab-claw-action-selector', crabClawArgs.playerCards[this.getPlayerId()]);
+                break;
+            case 'EnergyInfusedMonster':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(question.args);
+                this.statusBar.addActionButton(_("Discard selected dice"), () => this.bgaPerformAction('actAnswerEnergyInfusedMonster', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
+                dojo.addClass('rerollDice_button', 'disabled');
+                break;
+            case 'EnergyInfusedMonsterSelectExtraDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringSelectExtraDie(question.args);
+                for (let face=1; face<=6; face++) {
+                    this.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.bgaPerformAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face }));
+                }
                 break;
         }
     }
@@ -1157,6 +1167,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     if (document.getElementById('crab-claw-action-selector')) {
                         dojo.destroy('crab-claw-action-selector');
                     }
+                } else if (['MindControl', 'EnergyInfusedMonster'].includes(this.gamedatas.gamestate.args.question.code)) {
+                    this.diceManager.removeSelection();
                 }
                 break;            
             case 'MyToy':
@@ -1354,6 +1366,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     if (argsChangeDie.hasYinYang) {
                         this.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.bgaPerformAction('actUseYinYang'));
                     }
+                    if (argsChangeDie.hasEnergyInfusedMonster) {
+                        this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(613, 'text-only') }) + ' (1[Energy])'), () => this.bgaPerformAction('actUseEnergyInfusedMonster', { id: argsChangeDie.hasEnergyInfusedMonster }));
+                    }
 
                     this.addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
                     break;
@@ -1382,7 +1397,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     break;
                 case 'selectExtraDie':
                     for (let face=1; face<=6; face++) {
-                        this.addActionButton(`selectExtraDie_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
+                        this.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
                     }
                     break;
                 case 'rerollOrDiscardDie':
@@ -1709,7 +1724,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.addActionButton('answerElectricCarrot4_button',  formatTextIcons(_("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
                 break;
             case 'SuperiorAlienTechnology':
-                this.addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
+                this.statusBar.addActionButton(_('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
                 break;
             case 'Hunter':
                 const hunterArgs = question.args as HunterQuestionArgs;

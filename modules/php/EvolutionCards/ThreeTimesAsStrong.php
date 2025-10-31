@@ -23,10 +23,10 @@ class ThreeTimesAsStrong extends EvolutionCard
         if (Arrays::some($diceCounts, fn($diceCount) => $diceCount === 3)) {
             $otherPlayerIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
             foreach ($otherPlayerIds as $otherPlayerId) {
-                return new Damage($otherPlayerId, 1, $context->currentPlayerId, $this);
+                $damages[] = new Damage($otherPlayerId, 1, $context->currentPlayerId, $this);
             }
 
         }
-        return $damages; // TODOMB test
+        return $damages;
     }
 }

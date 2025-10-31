@@ -750,6 +750,9 @@ trait DiceUtilTrait {
 
             // yin & yang
             $hasYinYang = $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
+
+            // energy-infused monster
+            $energyInfusedMonster = $this->getFirstUnusedEvolution($playerId, ENERGY_INFUSED_MONSTER_EVOLUTION);
         }
         
         return [
@@ -766,6 +769,7 @@ trait DiceUtilTrait {
             'hasYinYang' => $hasYinYang,
             'hasBiofuel' => $hasBiofuel,
             'hasShrinky' => $hasShrinky,
+            'hasEnergyInfusedMonster' => $energyInfusedMonster?->id,
         ];
     }
 
@@ -782,7 +786,8 @@ trait DiceUtilTrait {
             || $cards['hasEnergyDevourer'] 
             || $cards['hasYinYang'] 
             || $cards['hasBiofuel'] 
-            || $cards['hasShrinky'];
+            || $cards['hasShrinky'] 
+            || $cards['hasEnergyInfusedMonster'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        
