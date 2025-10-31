@@ -718,6 +718,7 @@ trait DiceUtilTrait {
         $hasEnergyDevourer = false;
         $hasSaurianAdaptability = false;
         $hasYinYang = false;
+        $energyInfusedMonster = null;
         if ($isPowerUpExpansion) {
             $playerEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtual($playerId, true, true, true);
             $usedCards = $this->getUsedCard();
