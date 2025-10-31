@@ -59,6 +59,16 @@ $game_options = [
         'default' => 0,
     ],*/
 
+        /*'startcondition' => [
+            1 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Mindbug expansion will be available soon',
+                ] 
+            ],
+        ],*/
+
     HALLOWEEN_EXPANSION_OPTION => [
         'name' => totranslate('Halloween'),
         'values' => [
@@ -215,29 +225,6 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        /*'startcondition' => [
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => 'Dark edition will be available soon',
-                ] 
-            ],
-            3 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => 'Dark edition will be available soon',
-                ] 
-            ],
-            4 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => 'Dark edition will be available soon',
-                ] 
-            ],
-        ],*/
     ],
 
     ORIGINS_EXCLUSIVE_CARDS_OPTION => [
@@ -258,12 +245,12 @@ $game_options = [
         'name' => totranslate('Mindbug Power cards'),
         'values' => [
             1 => [
-                'name' => totranslate('L\'incursion Mindbug'), // TODOMB translate
-                'description' => totranslate("Add Mindbug Power cards to regular Power Cards"),
+                'name' => totranslate('Mindbug trial'), // TODOMB translate
+                'description' => totranslate("Shuffle the 24 new Power cards into the King of Tokyo Power card deck."),
             ],
             2 => [
-                'name' => totranslate('L\'experience Mindbug (difficile)'), // TODOMB translate
-                'description' => totranslate("Use only Mindbug Power cards"),
+                'name' => totranslate('Mindbug experience (difficult)'), // TODOMB translate
+                'description' => totranslate("Do not use the King of Tokyo Power card deck. Instead, use only the 24 Power cards from this expansion."),
                 'nobeginner' => true,
             ],
         ],
