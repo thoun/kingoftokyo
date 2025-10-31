@@ -28,14 +28,14 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0 || Game::getBgaEnvironment() === 'studio'; // TODOMB
+        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0;
     }
 
     public function getMindbugCardsSetting() {
         if (!$this->isActive()) {
             return 0;
         }
-        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION) ?? (Game::getBgaEnvironment() === 'studio' ? 2 : 0); // TODOMB
+        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION);
     }
 
     public function initDb(array $playerIds): void {
@@ -167,7 +167,7 @@ class MindbugExpansion {
         $activatedFrenzyCards = $keyword === FRENZY ? $this->getActivatedCards($playerId, FRENZY) : [];
 
         $this->game->powerCards->activateKeyword($card, $keyword);
-        $this->game->notify->all('activatedKeyword', '', [ 'card' => $card, 'keyword' => $keyword, ]);
+        $this->game->notify->all('activatedKeywordCard', '', [ 'card' => $card ]);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
@@ -197,7 +197,7 @@ class MindbugExpansion {
         $this->game->playEvolutionToTable($playerId, $card);
 
         $this->game->powerUpExpansion->evolutionCards->activateKeyword($card, $keyword);
-        $this->game->notify->all('activatedKeyword', '', [ 'card' => $card, 'keyword' => $keyword, ]);
+        $this->game->notify->all('activatedKeywordEvolution', '', [ 'card' => $card, 'keyword' => $keyword, ]);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;

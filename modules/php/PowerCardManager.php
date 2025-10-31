@@ -656,7 +656,7 @@ class PowerCardManager extends ItemManager {
         return null;
     }
 
-    public function activateKeyword(PowerCard $card, string $keyword): void {
+    public function activateKeyword(PowerCard &$card, string $keyword): void {
         $card->activated = new ActivatedConsumableKeyword($keyword);
         $this->updateItem($card, ['activated']);
     }

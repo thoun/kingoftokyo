@@ -18,6 +18,14 @@ $description-size: 7pt;
     border-radius: 10px;
     text-align: center;
 
+    &.activated {
+        box-shadow: unset;
+
+        .card-sides .card-side.front {
+            box-shadow: 0 0 5px 5px #810047;
+        }
+    }
+
     &.kot-card {
         display: inline-block;
         position: relative;

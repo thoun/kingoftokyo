@@ -35,8 +35,12 @@ const RULEBOOK_LINKS = [
         'en': 'https://cdn.1j1ju.com/medias/53/d4/2e-king-of-tokyo-dark-edition-rulebook.pdf',
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
+    { // Mindbug
+        'en': 'TODOMB',
+        'fr': 'TODOMB',
+    },
 ];
-const EXPANSION_NUMBER = 8;
+const EXPANSION_NUMBER = 9;
 
 class ActivatedExpansionsPopin {
     public activatedExpansions: number[] = [];
@@ -68,7 +72,7 @@ class ActivatedExpansionsPopin {
             this.activatedExpansions.push(8);
         }
         if (this.gamedatas.mindbugExpansion) {
-            // TODOMB this.activatedExpansions.push(9);
+            this.activatedExpansions.push(9);
         }
         
 
@@ -105,6 +109,7 @@ class ActivatedExpansionsPopin {
             case 6: return _('“Even more wicked!” event');
             case 7: return _('Power-Up! (Evolutions)');
             case 8: return _('Dark Edition');
+            case 9: return _('Mindbug');
         }
     }
 
@@ -122,6 +127,7 @@ class ActivatedExpansionsPopin {
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(_("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
             case 8: return _("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
+            case 9: return formatTextIcons(_("Mindbug expansion brings a new mechanic of stealing another player Roll, new Monsters, cards and evolution, including a new type of cards : Consumables."));
         }
         return '';
     }
@@ -171,7 +177,7 @@ class ActivatedExpansionsPopin {
                 </div>
             </div>
         </div>`;
-        dojo.place(html, $(document.body));
+        document.body.insertAdjacentHTML('beforeend', html);
 
         document.getElementById(`popin_showActivatedExpansions_close`).addEventListener(`click`, () => this.closePopin());
         document.getElementById(`popin_showActivatedExpansions_underlay`).addEventListener(`click`, () => this.closePopin());

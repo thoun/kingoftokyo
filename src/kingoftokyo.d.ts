@@ -12,6 +12,10 @@ interface Die {
     canReroll: boolean;
 }
 
+interface ActivatedKeyword {
+    keyword: string;
+}
+
 interface Card {
     id: number;
     type: number;
@@ -22,6 +26,7 @@ interface Card {
     location: string;
     location_arg: number;
     mindbugKeywords?: string[];
+    activated?: ActivatedKeyword;
 }
 
 interface CurseCard {
@@ -50,6 +55,7 @@ interface EvolutionCard {
     location: string;
     location_arg: number;
     mindbugKeywords?: string[];
+    activated?: ActivatedKeyword;
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
@@ -505,6 +511,7 @@ interface EnteringCancelDamageArgs extends EnteringMindbugKeywordStateArgs {
     canPlayConsumable: boolean;
     consumableCards: Card[];
     consumableEvolutions: EvolutionCard[];
+    ancestralDefense: number;
 }
 
 interface EnteringLeaveTokyoArgs {
@@ -824,4 +831,9 @@ interface NotifResurrectArgs {
 interface NotifMindbugPlayerArgs {
     activePlayerId: number;
     mindbuggedPlayerId: number | null;
+}
+
+interface NotifActivatedKeywordArgs {
+    card: Card | EvolutionCard;
+    keyword: string;
 }

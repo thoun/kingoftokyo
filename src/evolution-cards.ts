@@ -17,12 +17,21 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
                 }
 
                 div.insertAdjacentHTML('beforeend', `<div id="evolution-${card.id}-keyword-buttons" class="evolution-keyword-buttons"></div>`)
+
+                if (card.activated) {
+                    this.toggleActivated(card);
+                }
             },
             setupBackDiv: (card: EvolutionCard, div: HTMLElement) => {
                 div.style.backgroundPositionX = `0%`;
             }
         });
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
+    }
+
+    public toggleActivated(card: EvolutionCard) {
+        const div = this.getCardElement(card);
+        div.classList.toggle('activated', !!card.activated);
     }
 
     // gameui.evolutionCards.debugSeeAllCards()

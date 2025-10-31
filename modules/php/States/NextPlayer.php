@@ -24,6 +24,7 @@ class NextPlayer extends GameState {
 
     function onEnteringState(int $activePlayerId) {
         $this->game->removeDiscardCards($activePlayerId);
+        $this->game->globals->delete(ANCESTRAL_DEFENSE);
 
         if (!$this->game->getPlayer($activePlayerId)->eliminated) {
             $this->game->applyEndOfEachMonsterCards();

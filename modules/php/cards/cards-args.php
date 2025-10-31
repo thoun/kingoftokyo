@@ -337,6 +337,10 @@ trait CardsArgTrait {
                 Arrays::filter($consumableCards, fn($card) => in_array(TOUGH, $card->mindbugKeywords)),
                 Arrays::filter($consumableEvolutions, fn($evolution) => in_array(TOUGH, $evolution->mindbugKeywords)),
             );
+            $ancestralDefense = min(
+                $this->globals->get(ANCESTRAL_DEFENSE, 0),
+                (int)floor($potentialEnergy / 2)
+            );
 
             $canCancelDamage = 
                 $canThrowDices || 
@@ -353,7 +357,7 @@ trait CardsArgTrait {
             $canHealToAvoidDeath = !$cancelHealWithEnergyCards || count($consumableToughCards) > 0;
 
             $canDoAction = 
-                $canCancelDamage || $canHealToAvoidDeath || $canPlayConsumable;
+                $canCancelDamage || $canHealToAvoidDeath || $canPlayConsumable || $ancestralDefense > 0;
 
             $damageText = "$remainingDamage";
             $effectiveDamage = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
@@ -391,6 +395,7 @@ trait CardsArgTrait {
                 'consumableCards' => $consumableCards,
                 'consumableEvolutions' => $consumableEvolutions,
                 'canPlayConsumable' => $canPlayConsumable,
+                'ancestralDefense' => $ancestralDefense,
             ];
         } else {
             return [

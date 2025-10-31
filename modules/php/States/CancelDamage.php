@@ -306,6 +306,36 @@ class CancelDamage extends GameState {
     }
 
     #[PossibleAction]
+    function actUseAncestralDefense(int $gain, int $currentPlayerId) {
+        if ($this->game->getPlayerEnergy($currentPlayerId) < 2 * $gain) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        if ($this->game->getPlayer($currentPlayerId)->eliminated) {
+            throw new \BgaUserException('You can\'t heal when you\'re dead');
+        }
+
+        $health = $this->game->getPlayerHealth($currentPlayerId);
+
+        if ($health >= $this->game->getPlayerMaxHealth($currentPlayerId)) {
+            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
+        }
+
+        if (!$this->game->canGainHealth($currentPlayerId)) {
+            throw new \BgaUserException(clienttranslate('You cannot gain [Heart]'));
+        }
+
+        if ($this->game->globals->get(ANCESTRAL_DEFENSE, 0) == 0) {
+            throw new \BgaUserException('No Ancestral Defense card');
+        }
+
+        $this->game->applyGetHealth($currentPlayerId, $gain, ANCESTRAL_DEFENSE_CARD, $currentPlayerId);
+        $this->game->applyLoseEnergyIgnoreCards($currentPlayerId, 2 * $gain, 0, $currentPlayerId);
+
+        return CancelDamage::class;
+    }
+
+    #[PossibleAction]
     public function actRethrow3Camouflage(int $currentPlayerId) {
         $countBackgroundDweller = $this->game->countCardOfType($currentPlayerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {

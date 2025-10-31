@@ -357,6 +357,10 @@ class CardsManager extends CardManager<Card> {
                 if (card.type > 400 && card.type < 500) {
                     div.insertAdjacentHTML('beforeend', `<div id="card-${card.id}-keyword-buttons" class="card-keyword-buttons"></div>`)
                 }
+
+                if (card.activated) {
+                    this.toggleActivated(card);
+                }
             },
             setupBackDiv: (card: Card, div: HTMLElement) => {
                 const darkEdition = this.game.isDarkEdition();
@@ -377,6 +381,11 @@ class CardsManager extends CardManager<Card> {
             cardHeight: 185,
         });
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
+    }
+
+    public toggleActivated(card: Card) {
+        const div = this.getCardElement(card);
+        div.classList.toggle('activated', !!card.activated);
     }
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {

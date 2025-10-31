@@ -2490,6 +2490,9 @@ var CardsManager = /** @class */ (function (_super) {
                 if (card.type > 400 && card.type < 500) {
                     div.insertAdjacentHTML('beforeend', "<div id=\"card-".concat(card.id, "-keyword-buttons\" class=\"card-keyword-buttons\"></div>"));
                 }
+                if (card.activated) {
+                    _this.toggleActivated(card);
+                }
             },
             setupBackDiv: function (card, div) {
                 var darkEdition = _this.game.isDarkEdition();
@@ -2516,6 +2519,10 @@ var CardsManager = /** @class */ (function (_super) {
         _this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
         return _this;
     }
+    CardsManager.prototype.toggleActivated = function (card) {
+        var div = this.getCardElement(card);
+        div.classList.toggle('activated', !!card.activated);
+    };
     CardsManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
@@ -3538,6 +3545,9 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                     _this.placeTokensOnCard(card);
                 }
                 div.insertAdjacentHTML('beforeend', "<div id=\"evolution-".concat(card.id, "-keyword-buttons\" class=\"evolution-keyword-buttons\"></div>"));
+                if (card.activated) {
+                    _this.toggleActivated(card);
+                }
             },
             setupBackDiv: function (card, div) {
                 div.style.backgroundPositionX = "0%";
@@ -3547,6 +3557,10 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         _this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
         return _this;
     }
+    EvolutionCardsManager.prototype.toggleActivated = function (card) {
+        var div = this.getCardElement(card);
+        div.classList.toggle('activated', !!card.activated);
+    };
     // gameui.evolutionCards.debugSeeAllCards()
     EvolutionCardsManager.prototype.debugSeeAllCards = function () {
         var _this = this;
@@ -6420,8 +6434,12 @@ var RULEBOOK_LINKS = [
         'en': 'https://cdn.1j1ju.com/medias/53/d4/2e-king-of-tokyo-dark-edition-rulebook.pdf',
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
+    {
+        'en': 'TODOMB',
+        'fr': 'TODOMB',
+    },
 ];
-var EXPANSION_NUMBER = 8;
+var EXPANSION_NUMBER = 9;
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
         if (language === void 0) { language = 'en'; }
@@ -6454,7 +6472,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             this.activatedExpansions.push(8);
         }
         if (this.gamedatas.mindbugExpansion) {
-            // TODOMB this.activatedExpansions.push(9);
+            this.activatedExpansions.push(9);
         }
         if (this.activatedExpansions.length) {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">".concat(_('Active expansions'), "</div>\n                    <div class=\"expansion-zone-list\">");
@@ -6478,6 +6496,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 6: return _('“Even more wicked!” event');
             case 7: return _('Power-Up! (Evolutions)');
             case 8: return _('Dark Edition');
+            case 9: return _('Mindbug');
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -6490,6 +6509,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(_("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
             case 8: return _("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
+            case 9: return formatTextIcons(_("Mindbug expansion brings a new mechanic of stealing another player Roll, new Monsters, cards and evolution, including a new type of cards : Consumables."));
         }
         return '';
     };
@@ -6519,7 +6539,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
     ActivatedExpansionsPopin.prototype.createPopin = function () {
         var _this = this;
         var html = "\n        <div id=\"popin_showActivatedExpansions_container\" class=\"kingoftokyo_popin_container\">\n            <div id=\"popin_showActivatedExpansions_underlay\" class=\"kingoftokyo_popin_underlay\"></div>\n                <div id=\"popin_showActivatedExpansions_wrapper\" class=\"kingoftokyo_popin_wrapper\">\n                <div id=\"popin_showActivatedExpansions\" class=\"kingoftokyo_popin\">\n                    <a id=\"popin_showActivatedExpansions_close\" class=\"closeicon\"><i class=\"fa fa-times fa-2x\" aria-hidden=\"true\"></i></a>\n                                \n                    <h2>".concat(_('Active expansions'), "</h2>\n                    <div id=\"playermat-container-modal\"></div>\n                </div>\n            </div>\n        </div>");
-        dojo.place(html, $(document.body));
+        document.body.insertAdjacentHTML('beforeend', html);
         document.getElementById("popin_showActivatedExpansions_close").addEventListener("click", function () { return _this.closePopin(); });
         document.getElementById("popin_showActivatedExpansions_underlay").addEventListener("click", function () { return _this.closePopin(); });
         for (var i = 0; i <= EXPANSION_NUMBER; i++) {
@@ -6945,7 +6965,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onLeavingMindbugKeywordState = function () {
         if (this.isCurrentPlayerActive()) {
-            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(function (elem) { return elem.remove(); }); // TODOMB test
+            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(function (elem) { return elem.remove(); });
         }
     };
     KingOfTokyo.prototype.onEnteringBeforeStartTurn = function (args) {
@@ -7235,6 +7255,21 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     }
                 });
             }
+            if (args.ancestralDefense > 0) {
+                var _loop_5 = function (i) {
+                    var id = "useAncestralDefense".concat(i, "_button");
+                    if (!document.getElementById(id)) {
+                        var energyCost = i * 2;
+                        this_2.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " : +".concat(i, "[Heart] (").concat(energyCost, "[Energy])"), { 'card_name': this_2.cardsManager.getCardName(409, 'text-only') })), function () { return _this.bgaPerformAction('actUseAncestralDefense', { gain: i }); }, { id: id });
+                        document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
+                };
+                var this_2 = this;
+                for (var i = 1; i <= args.ancestralDefense; i++) {
+                    _loop_5(i);
+                }
+            }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 var canAvoidDeath_1 = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
                 this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cardsManager.getCardName(48, 'text-only') }) : _("Skip"), function () {
@@ -7252,7 +7287,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
             rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
             if (args.canHeal && args.damageToCancelToSurvive > 0) {
-                var _loop_5 = function (i) {
+                var _loop_6 = function (i) {
                     var cultistCount = i;
                     var rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
                     var cardsNames = [];
@@ -7260,17 +7295,17 @@ var KingOfTokyo = /** @class */ (function (_super) {
                         cardsNames.push(_('Cultist'));
                     }
                     if (rapidHealingCount > 0) {
-                        cardsNames.push(_(this_2.cardsManager.getCardName(37, 'text-only')));
+                        cardsNames.push(_(this_3.cardsManager.getCardName(37, 'text-only')));
                     }
                     if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2 * rapidHealingCount <= args.playerEnergy) {
                         var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("".concat(_('Gain ${hearts}[Heart]')) + (rapidHealingCount > 0 ? " (".concat(2 * rapidHealingCount, "[Energy])") : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
-                        this_2.addActionButton("rapidHealingSync_button_".concat(i), text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
+                        this_3.addActionButton("rapidHealingSync_button_".concat(i), text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
                     }
                 };
-                var this_2 = this;
+                var this_3 = this;
                 //this.rapidHealingSyncHearts = args.rapidHealingHearts;
                 for (var i = Math.min(args.rapidHealingCultists, args.canHeal); i >= 0; i--) {
-                    _loop_5(i);
+                    _loop_6(i);
                 }
             }
         }
@@ -7446,12 +7481,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'EnergyInfusedMonsterSelectExtraDie':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringSelectExtraDie(question.args);
-                var _loop_6 = function (face) {
-                    this_3.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.bgaPerformAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face: face }); });
+                var _loop_7 = function (face) {
+                    this_4.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.bgaPerformAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face: face }); });
                 };
-                var this_3 = this;
+                var this_4 = this;
                 for (var face = 1; face <= 6; face++) {
-                    _loop_6(face);
+                    _loop_7(face);
                 }
                 break;
         }
@@ -7787,12 +7822,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     });
                     break;
                 case 'selectExtraDie':
-                    var _loop_7 = function (face) {
-                        this_4.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
+                    var _loop_8 = function (face) {
+                        this_5.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
                     };
-                    var this_4 = this;
+                    var this_5 = this;
                     for (var face = 1; face <= 6; face++) {
-                        _loop_7(face);
+                        _loop_8(face);
                     }
                     break;
                 case 'rerollOrDiscardDie':
@@ -8024,12 +8059,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: "".concat(giveEnergyOrLoseHeartsQuestionArgs.heartNumber, "[Heart]") })), function () { return _this.loseHearts(); });
                 break;
             case 'FreezeRay':
-                var _loop_8 = function (face) {
-                    this_5.addActionButton("selectFrozenDieFace_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
+                var _loop_9 = function (face) {
+                    this_6.addActionButton("selectFrozenDieFace_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
                 };
-                var this_5 = this;
+                var this_6 = this;
                 for (var face = 1; face <= 6; face++) {
-                    _loop_8(face);
+                    _loop_9(face);
                 }
                 break;
             case 'MiraculousCatch':
@@ -8680,23 +8715,23 @@ var KingOfTokyo = /** @class */ (function (_super) {
             html += "<button class=\"action-button bgabutton ".concat(!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton disable\" id=\"").concat(popinId, "_setStay0\">").concat(_('Disabled'), "</button>");
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_9 = function (i) {
+            var _loop_10 = function (i) {
                 document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_9(i);
+                _loop_10(i);
             }
-            var _loop_10 = function (i) {
+            var _loop_11 = function (i) {
                 document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_10(i);
+                _loop_11(i);
             }
             document.getElementById("".concat(popinId, "_setStay0")).addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -8719,31 +8754,31 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 dojo.destroy("".concat(popinId, "_setStay").concat(i));
             }
         }
-        var _loop_11 = function (i) {
+        var _loop_12 = function (i) {
             if (!document.getElementById("".concat(popinId, "_set").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_6.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-buttons"), 'first');
+                dojo.place("<button class=\"action-button bgabutton ".concat(this_7.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-buttons"), 'first');
                 document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_6 = this;
+        var this_7 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_11(i);
+            _loop_12(i);
         }
-        var _loop_12 = function (i) {
+        var _loop_13 = function (i) {
             if (!document.getElementById("".concat(popinId, "_setStay").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_7.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this_7.gamedatas.leaveTokyoUnder > 0 && i <= this_7.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-stay-buttons"), 'first');
+                dojo.place("<button class=\"action-button bgabutton ".concat(this_8.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this_8.gamedatas.leaveTokyoUnder > 0 && i <= this_8.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-stay-buttons"), 'first');
                 document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_7 = this;
+        var this_8 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_12(i);
+            _loop_13(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -9501,6 +9536,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
             ['resurrect', 1],
             ['mindbugPlayer', 1],
             ['setPlayerCounter', 1],
+            ['activatedKeywordCard', 1],
+            ['activatedKeywordEvolution', 1],
             ['log500', 500],
         ];
         notifs.forEach(function (notif) {
@@ -9969,6 +10006,14 @@ var KingOfTokyo = /** @class */ (function (_super) {
             (_a = document.querySelector('.player-table.mindbugged')) === null || _a === void 0 ? void 0 : _a.classList.remove('mindbugged');
             (_b = document.getElementById('mindbug-notice')) === null || _b === void 0 ? void 0 : _b.remove();
         }
+    };
+    KingOfTokyo.prototype.notif_activatedKeywordCard = function (args) {
+        var card = args.card;
+        this.cardsManager.toggleActivated(card);
+    };
+    KingOfTokyo.prototype.notif_activatedKeywordEvolution = function (args) {
+        var card = args.card;
+        this.evolutionCardsManager.toggleActivated(card);
     };
     KingOfTokyo.prototype.notif_setPlayerCounter = function (args) {
         var name = args.name, playerId = args.playerId, value = args.value;

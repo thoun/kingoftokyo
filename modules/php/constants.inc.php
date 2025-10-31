@@ -158,11 +158,7 @@ const ENCASED_IN_ICE_DIE_ID = 'EncasedInIceDieId';
 const TARGETED_PLAYER = 'TargetedPlayer';
 const MINDBUGGED_PLAYER = 'MindbuggedPlayer';
 const NEXT_POWER_CARD_COST_REDUCTION = 'NEXT_POWER_CARD_COST_REDUCTION';
-
-/*
- * Global variables
- */
-
+const ANCESTRAL_DEFENSE = 'ANCESTRAL_DEFENSE';
 const FIRE_BREATHING_DAMAGES = 'FireBreathingDamages';
 const FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES = 'FunnyLookingButDangerousDamages';
 const FLAMING_AURA_DAMAGES = 'FlamingAuraDamages';

@@ -323,7 +323,7 @@ class EvolutionCardManager extends ItemManager {
         return [$addedByCards, $addingCards];
     }
 
-    public function activateKeyword(EvolutionCard $card, string $keyword): void {
+    public function activateKeyword(EvolutionCard &$card, string $keyword): void {
         $card->activated = new ActivatedConsumableKeyword($keyword);
         $this->updateItem($card, ['activated']);
     }

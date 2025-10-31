@@ -451,7 +451,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private onLeavingMindbugKeywordState() {
         if (this.isCurrentPlayerActive()) {
-            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(elem => elem.remove()); // TODOMB test
+            document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(elem => elem.remove());
         }
     }
 
@@ -804,6 +804,18 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
                 });
+            }
+
+            if (args.ancestralDefense > 0) {
+                for (let i = 1; i <= args.ancestralDefense; i++) {
+                    const id = `useAncestralDefense${i}_button`;
+                    if (!document.getElementById(id)) {
+                        const energyCost = i*2;
+                        this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ` : +${i}[Heart] (${energyCost}[Energy])`, { 'card_name': this.cardsManager.getCardName(409, 'text-only')})), () => this.bgaPerformAction('actUseAncestralDefense', { gain: i }), { id });
+                        document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
+                }
             }
 
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
@@ -3467,6 +3479,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             ['resurrect', 1],
             ['mindbugPlayer', 1],
             ['setPlayerCounter', 1],
+            ['activatedKeywordCard', 1],
+            ['activatedKeywordEvolution', 1],
             ['log500', 500],
         ];
     
@@ -4020,6 +4034,16 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             document.querySelector('.player-table.mindbugged')?.classList.remove('mindbugged');
             document.getElementById('mindbug-notice')?.remove();
         }
+    }
+
+    notif_activatedKeywordCard(args: NotifActivatedKeywordArgs) {
+        const { card } = args;
+        this.cardsManager.toggleActivated(card as Card);
+    }
+
+    notif_activatedKeywordEvolution(args: NotifActivatedKeywordArgs) {
+        const { card } = args;
+        this.evolutionCardsManager.toggleActivated(card as EvolutionCard);
     }
 
     notif_setPlayerCounter(args) {

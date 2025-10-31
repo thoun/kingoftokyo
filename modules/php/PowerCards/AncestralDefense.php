@@ -12,10 +12,8 @@ class AncestralDefense extends PowerCard
     }
 
     public function applyEffect(Context $context) {
-        // TODOMB
+        $context->game->globals->set(ANCESTRAL_DEFENSE, (int)floor($context->game->getPlayerEnergy($context->currentPlayerId) / 2));
 
         $context->game->removeCard($context->currentPlayerId, $this);
-
-        // TODOMB test
     }
 }
