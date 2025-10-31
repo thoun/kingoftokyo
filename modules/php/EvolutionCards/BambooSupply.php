@@ -20,7 +20,8 @@ class BambooSupply extends EvolutionCard
             clienttranslate('${you} can put or take [Energy]'),
             [$context->currentPlayerId],
             \ST_QUESTIONS_BEFORE_START_TURN,
-            [ 'canTake' => $this->tokens > 0 ]
+            [ 'canTake' => $this->tokens > 0 ],
+            evolutionId: $this->id,
         );
         $context->game->setQuestion($question);
         $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

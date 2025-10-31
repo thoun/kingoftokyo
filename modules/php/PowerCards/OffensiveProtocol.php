@@ -18,7 +18,6 @@ class OffensiveProtocol extends PowerCard
         foreach ($otherPlayersIds as $otherPlayerId) {
             $damages[] = new Damage($otherPlayerId, $context->lostPoints, $context->currentPlayerId, $this);
         }
-        // TODOMB test
 
         $context->game->removeCard($context->currentPlayerId, $this);
         return $damages;

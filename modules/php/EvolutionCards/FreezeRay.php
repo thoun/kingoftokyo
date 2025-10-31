@@ -14,25 +14,26 @@ class FreezeRay extends EvolutionCard
     }
 
     public function applyEffect(Context $context): bool {
-            $ownerId = $this->ownerId;
-            if ($context->currentPlayerId != $ownerId && !$context->game->getPlayer($ownerId)->eliminated) {
-                $question = new Question(
-                    'FreezeRay',
-                    clienttranslate('${actplayer} must choose a die face that will have no effect that turn'),
-                    clienttranslate('${you} must choose a die face that will have no effect that turn'),
-                    [$ownerId],
-                    \ST_QUESTIONS_BEFORE_START_TURN,
-                    [ 'card' => $this ]
-                );
-                $context->game->setQuestion($question);
-                $context->game->gamestate->setPlayersMultiactive([$ownerId], 'next', true);
+        $ownerId = $this->ownerId;
+        if ($context->currentPlayerId != $ownerId && !$context->game->getPlayer($ownerId)->eliminated) {
+            $question = new Question(
+                'FreezeRay',
+                clienttranslate('${actplayer} must choose a die face that will have no effect that turn'),
+                clienttranslate('${you} must choose a die face that will have no effect that turn'),
+                [$ownerId],
+                \ST_QUESTIONS_BEFORE_START_TURN,
+                [ 'card' => $this ],
+                evolutionId: $this->id,
+            );
+            $context->game->setQuestion($question);
+            $context->game->gamestate->setPlayersMultiactive([$ownerId], 'next', true);
 
-                $context->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
-                return true;
-            } else {
-                $context->game->setUsedCard(3000 + $this->id);
-            }
-            return false;
+            $context->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
+            return true;
+        } else {
+            $context->game->setUsedCard(3000 + $this->id);
+        }
+        return false;
     }
 
     function freezeRayChooseOpponentQuestion(Context $context, array $smashedPlayersIds) {
@@ -50,7 +51,8 @@ class FreezeRay extends EvolutionCard
                 ],
                 'card' => $this,
                 'smashedPlayersIds' => $smashedPlayersIds,
-            ]
+            ],
+            evolutionId: $this->id,
         );
 
         $context->game->addStackedState();

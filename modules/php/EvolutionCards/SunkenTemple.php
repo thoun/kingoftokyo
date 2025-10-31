@@ -24,7 +24,8 @@ class SunkenTemple extends EvolutionCard
             clienttranslate('${you} can pass your turn to gain 3[Heart] and 3[Energy]'),
             [$context->currentPlayerId],
             \ST_QUESTIONS_BEFORE_START_TURN,
-            []
+            [],
+            evolutionId: $this->id,
         );
         $context->game->setQuestion($question);
         $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

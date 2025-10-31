@@ -23,7 +23,8 @@ class InterdimensionalPortal extends EvolutionCard
             $context->stateAfter ?? -1,
             [
                 'card_name' => 3000 + $this->type,
-            ]
+            ],
+            evolutionId: $this->id,
         );
         $context->game->addStackedState();
         $context->game->setQuestion($question);

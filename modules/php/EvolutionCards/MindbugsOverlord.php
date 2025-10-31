@@ -26,7 +26,8 @@ class MindbugsOverlord extends EvolutionCard
                 'evolutionId' => $this->id,
                 'askingPlayerId' => $context->currentPlayerId,
                 'declaredAllegiance' => [],
-            ]
+            ],
+            evolutionId: $this->id,
         );
         $context->game->setQuestion($question);
         $context->game->gamestate->setPlayersMultiactive($otherPlayerIds, 'next', true);
@@ -52,7 +53,8 @@ class MindbugsOverlord extends EvolutionCard
             [
                 'evolutionId' => $this->id,
                 'declaredAllegiance' => $declaredAllegiance,
-            ]
+            ],
+            evolutionId: $this->id,
         );
         $context->game->setQuestion($question);
         $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

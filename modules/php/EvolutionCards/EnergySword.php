@@ -27,7 +27,8 @@ class EnergySword extends EvolutionCard
                     '_args' => [
                         'card_name' => 3000 + \ENERGY_SWORD_EVOLUTION,
                     ],
-                ]
+                ],
+                evolutionId: $this->id,
             );
             $context->game->setQuestion($question);
             $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

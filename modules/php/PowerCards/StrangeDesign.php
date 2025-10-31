@@ -17,6 +17,6 @@ class StrangeDesign extends PowerCard
 
         $context->game->removeCard($context->currentPlayerId, $this);
 
-        return [$damage]; // TODOMB test
+        return [$damage];
     }
 }

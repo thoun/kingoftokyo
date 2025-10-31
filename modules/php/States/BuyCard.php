@@ -176,7 +176,8 @@ class BuyCard extends GameState {
                 '_args' => [
                     'card_name' => $card->type,
                 ],
-            ]
+            ],
+            evolutionId: $evolution->id,
         );
         $this->game->setQuestion($question);
         $this->gamestate->setPlayersMultiactive([$activePlayerId], 'next', true);

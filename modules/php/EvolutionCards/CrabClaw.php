@@ -37,7 +37,8 @@ class CrabClaw extends EvolutionCard
             [ 
                 'playerId' => $context->currentPlayerId,
                 'playerCards' => $playerCards,
-            ]
+            ],
+            evolutionId: $this->id,
         );
 
         $context->game->setQuestion($question);

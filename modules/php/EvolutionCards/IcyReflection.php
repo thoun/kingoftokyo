@@ -39,7 +39,8 @@ class IcyReflection extends EvolutionCard {
                 '_args' => [ 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId) ],
                 'enabledEvolutions' => $enabledEvolutions,
                 'disabledEvolutions' => $disabledEvolutions,
-            ]
+            ],
+            evolutionId: $this->id,
         );
 
         $context->game->addStackedState();

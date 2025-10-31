@@ -12,7 +12,7 @@ class EnergyArmor extends PowerCard
     }
 
     public function applyEffect(Context $context) {
-        $context->game->applyGetEnergy($context->currentPlayerId, $context->lostHearts, $this); // TODOMB test
+        $context->game->applyGetEnergy($context->currentPlayerId, $context->lostHearts, $this);
 
         $context->game->removeCard($context->currentPlayerId, $this);
     }

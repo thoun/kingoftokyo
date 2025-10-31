@@ -12,7 +12,7 @@ class ToxicPetals extends PowerCard
     }
 
     public function applyEffect(Context $context) {
-        $context->game->applyLosePoints($context->attackerPlayerId, $context->lostHearts, $this); // TODOMB test
+        $context->game->applyLosePoints($context->attackerPlayerId, $context->lostHearts, $this); 
 
         $context->game->removeCard($context->currentPlayerId, $this);
     }

@@ -38,8 +38,6 @@ class MiraculousMindbug extends PowerCard
         ]);
 
         $context->game->mindbugExpansion->applyGetMindbugTokens($context->currentPlayerId, 1, $this);
-
-        // TODOMB test
     }
 
 

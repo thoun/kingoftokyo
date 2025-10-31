@@ -24,7 +24,8 @@ class MyToy extends EvolutionCard {
                 'playerId' => $context->currentPlayerId,
                 '_args' => [ 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId) ],
                 'card' => $this,
-            ]
+            ],
+            evolutionId: $this->id,
         );
 
         $context->game->addStackedState();

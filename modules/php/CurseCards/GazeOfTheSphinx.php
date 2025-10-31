@@ -17,7 +17,8 @@ class GazeOfTheSphinx extends CurseCard {
                 clienttranslate('${you} must choose to draw an Evolution card or gain 3[Energy]'),
                 [$context->currentPlayerId],
                 ST_RESOLVE_DICE,
-                []
+                [],
+                cardId: $this->id,
             );
             $context->game->setQuestion($question);
             $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);
@@ -45,7 +46,8 @@ class GazeOfTheSphinx extends CurseCard {
                 ST_RESOLVE_DICE,
                 [
                     'canLoseEnergy' => $playerEnergy >= 3,
-                ]
+                ],
+                cardId: $this->id,
             );
             $context->game->setQuestion($question);
             $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

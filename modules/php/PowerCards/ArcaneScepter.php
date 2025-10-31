@@ -28,7 +28,8 @@ class ArcaneScepter extends PowerCard
             -1,
             [
                 'cards' => $cards,
-            ]
+            ],
+            cardId: $this->id,
         );
         $context->game->addStackedState();
         $context->game->setQuestion($question);

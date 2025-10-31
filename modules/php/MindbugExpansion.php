@@ -271,7 +271,9 @@ class MindbugExpansion {
                 ],
                 'cardId' => $card instanceof EvolutionCard ? null : $card->id,
                 'evolutionId' => $card instanceof EvolutionCard ? $card->id : null,
-            ]
+            ],
+            cardId: $card instanceof EvolutionCard ? null : $card->id,
+            evolutionId: $card instanceof EvolutionCard ? $card->id : null,
         );
         $this->game->setQuestion($question);
         $this->game->gamestate->setPlayersMultiactive([$playerId], 'next', true);

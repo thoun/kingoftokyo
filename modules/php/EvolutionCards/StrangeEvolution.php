@@ -24,7 +24,8 @@ class StrangeEvolution extends EvolutionCard
             [ 
                 'otherPlayerIds' => $otherPlayerIds,
                 'evolutionId' => $this->id,
-            ]
+            ],
+            evolutionId: $this->id,
         );
         $context->game->addStackedState();
         $context->game->setQuestion($question);

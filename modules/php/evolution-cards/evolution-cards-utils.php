@@ -365,6 +365,7 @@ trait EvolutionCardsUtilTrait {
             [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
             $args,
+            evolutionId: $card->id,
         );
 
         $this->addStackedState();
@@ -393,7 +394,8 @@ trait EvolutionCardsUtilTrait {
                  ],
                 'canGiveEnergy' => $canGiveEnergy,
                 'heartNumber' => $heartNumber,
-            ]
+            ],
+            evolutionId: $card->id,
         );
 
         $this->addStackedState();

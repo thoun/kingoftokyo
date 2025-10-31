@@ -16,7 +16,7 @@ class ExplosiveCrystals extends PowerCard
         $damages = [];
 
         if ($context->game->getPlayer($context->currentPlayerId)->eliminated) {
-            $damages[] = new Damage($context->attackerPlayerId, $context->lostHearts * 2, $context->currentPlayerId, $this); // TODOMB test
+            $damages[] = new Damage($context->attackerPlayerId, $context->lostHearts * 2, $context->currentPlayerId, $this);
         }
 
         $context->game->removeCard($context->currentPlayerId, $this);

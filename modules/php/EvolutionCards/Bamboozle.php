@@ -51,7 +51,8 @@ class Bamboozle extends EvolutionCard {
                 [ 
                     'cardBeingBought' => $cardBeingBought, 
                     'buyCardArgs' => $buyCardArgs,
-                ]
+                ],
+                evolutionId: $this->id,
             );
             $context->game->setQuestion($question);
             $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);

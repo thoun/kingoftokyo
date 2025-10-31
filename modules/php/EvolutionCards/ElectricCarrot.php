@@ -20,7 +20,8 @@ class ElectricCarrot extends EvolutionCard {
             clienttranslate('${you} can give 1[Energy] or lose 1 extra [Heart]'),
             $smashedPlayersIds,
             ST_AFTER_RESOLVE_DAMAGE,
-            []
+            [],
+            evolutionId: $this->id,
         );
 
         $context->game->addStackedState();

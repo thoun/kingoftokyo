@@ -29,7 +29,8 @@ class DeepDive extends EvolutionCard {
             -1,
             [
                 'cards' => $cards,
-            ]
+            ],
+            evolutionId: $this->id,
         );
         $context->game->addStackedState();
         $context->game->setQuestion($question);

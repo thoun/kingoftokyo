@@ -45,6 +45,7 @@ class MindControl extends EvolutionCard
             [$context->currentPlayerId],
             -1,
             $args,
+            evolutionId: $this->id,
         );
         $context->game->addStackedState();
         $context->game->setQuestion($question);
