@@ -7,10 +7,11 @@ require_once(__DIR__.'/framework-prototype/item/item.php');
 require_once(__DIR__.'/framework-prototype/item/item-field.php');
 require_once(__DIR__.'/framework-prototype/item/item-location.php');
 require_once(__DIR__.'/framework-prototype/item/item-manager.php');
+require_once(__DIR__.'/framework-prototype/item/card-manager.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
-use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use \Bga\GameFrameworkPrototype\Item\CardManager;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -162,7 +163,7 @@ const EVOLUTION_CARD_CLASSES = [
     CHEW_PINCH_CATCH_AND_SMACK_EVOLUTION => 'ChewPinchCatchAndSmack',
 ];
 
-class EvolutionCardManager extends ItemManager {
+class EvolutionCardManager extends CardManager {
 
     function __construct(
         protected Game $game,

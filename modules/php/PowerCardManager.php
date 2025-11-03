@@ -7,11 +7,12 @@ require_once(__DIR__.'/framework-prototype/item/item.php');
 require_once(__DIR__.'/framework-prototype/item/item-field.php');
 require_once(__DIR__.'/framework-prototype/item/item-location.php');
 require_once(__DIR__.'/framework-prototype/item/item-manager.php');
+require_once(__DIR__.'/framework-prototype/item/card-manager.php');
 
 use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
-use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use \Bga\GameFrameworkPrototype\Item\CardManager;
 use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
@@ -147,7 +148,7 @@ const POWER_CARD_CLASSES = [
     SPATIAL_HUNTER_CARD => 'SpatialHunter',
 ];
 
-class PowerCardManager extends ItemManager {
+class PowerCardManager extends CardManager {
     static array $ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST = [
         BIOFUEL_CARD,
         DRAINING_RAY_CARD,

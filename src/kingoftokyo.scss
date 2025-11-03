@@ -19,6 +19,7 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
 @import 'playerboards';
 @import 'dice';
 @import 'cards';
+@import '../node_modules/bga-help/bga-help';
 @import '../node_modules/bga-cards/bga-cards';
 @import 'curse-cards';
 @import 'evolution-cards';
@@ -83,6 +84,7 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
     height: 32px;
     background-image: url('img/icons.png');
     background-size: auto 100%;
+    vertical-align: middle;
   
     &.points {
       background-position: #{0 * 100% / 7} 0%;
@@ -350,13 +352,11 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
   .icon {
     width: 16px;
     height: 16px;
-    margin-bottom: -2px;
   }
   
   .token {
     width: 16px;
     height: 16px;
-    margin-bottom: -2px;
     box-shadow: none !important;
   }
 
@@ -383,7 +383,6 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
   .icon {
     width: 20px;
     height: 20px;
-    margin-bottom: -2px;
   }
 
   .dice-icon {
@@ -406,13 +405,11 @@ button, a {
   .icon {
     width: 16px;
     height: 16px;
-    margin-bottom: -2px;
   }
 
   .token {
     width: 16px;
     height: 16px;
-    margin-bottom: -2px;
     box-shadow: none !important;
   }
 }
@@ -734,4 +731,34 @@ button, a {
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
+}
+
+#popin_bgaHelpDialog {
+  background: #ecd2cb;
+}
+
+#popin_bgaHelpDialog_title {
+    color: #810047;
+    font-size: 22px;
+}
+
+#help-popin {
+    .help-section {    
+        margin: 5px;
+
+        &>div:first-child {
+            background: var(--color);
+            color: white;
+            text-transform: uppercase;
+            display: inline-block;
+            padding: 5px;
+            font-weight: bold;
+        } 
+        &>div:not(:first-child) {
+            border: 2px solid var(--color);
+            color: black;
+            padding: 8px;
+            border-radius: 0 15px 15px 15px;
+        } 
+    }
 }

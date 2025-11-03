@@ -13,6 +13,7 @@
         "src/slide-utils.ts",
         "src/text-icons-formatter.ts",
         "node_modules/bga-zoom/src/zoom-manager.ts",
+        "node_modules/bga-help/src/help-manager.ts",
         "node_modules/bga-animations/src/animations.ts",
         "node_modules/bga-animations/src/animations/attach-with-animation.ts",
         "node_modules/bga-animations/src/animations/cumulated-animations.ts",

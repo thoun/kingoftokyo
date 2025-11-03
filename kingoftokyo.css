@@ -951,7 +951,6 @@
 .kot-curse-card .description-wrapper .icon, .kot-tile .description-wrapper .icon, .kot-evolution .description-wrapper .icon, .kot-card .description-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .kot-curse-card .description-wrapper.consumable, .kot-tile .description-wrapper.consumable, .kot-evolution .description-wrapper.consumable, .kot-card .description-wrapper.consumable {
   bottom: 10px;
@@ -974,7 +973,6 @@
 .kot-curse-card .effect-wrapper .icon, .kot-tile .effect-wrapper .icon, .kot-evolution .effect-wrapper .icon, .kot-card .effect-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .kot-curse-card .effect-wrapper .effect-text.overflow, .kot-tile .effect-wrapper .effect-text.overflow, .kot-evolution .effect-wrapper .effect-text.overflow, .kot-card .effect-wrapper .effect-text.overflow {
   background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
@@ -1039,7 +1037,6 @@
 .card-tooltip .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .card-tooltip .cost {
   color: #a6c136;
@@ -1114,6 +1111,99 @@
 .card-keyword-buttons button {
   margin: 0;
   pointer-events: all;
+}
+
+#bga-help_buttons {
+  position: fixed;
+  bottom: 12px;
+  left: 5px;
+  display: flex;
+  gap: 10px;
+  z-index: 949;
+  align-items: flex-end;
+}
+
+.bga-help_button {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 3px 5px 5px 0px rgb(0, 0, 0);
+}
+
+.bga-help_popin-button {
+  --background: black;
+  --color: white;
+  font-weight: bold;
+  font-size: 28pt;
+  background: var(--background);
+  color: var(--color);
+}
+
+.bga-help_expandable-button {
+  overflow: hidden;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: width 0.5s, height 0.5s, border-radius 0.5s;
+  display: grid;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+}
+
+.bga-help_expandable-button .bga-help_folded-content {
+  grid-row: 1;
+  grid-column: 1;
+  opacity: 1;
+  width: 50px;
+  height: 50px;
+}
+
+.bga-help_expandable-button .bga-help_unfolded-content {
+  grid-row: 1;
+  grid-column: 1;
+  opacity: 0;
+}
+
+.bga-help_expandable-button[data-folded=false] {
+  width: var(--expanded-width);
+  height: var(--expanded-height);
+  border-radius: var(--expanded-radius);
+}
+
+.bga-help_expandable-button[data-folded=false] .bga-help_folded-content {
+  opacity: 0;
+}
+
+.bga-help_expandable-button[data-folded=false] .bga-help_unfolded-content {
+  opacity: 1;
+}
+
+/* we show help button if user has no mouse ( = no tooltips) */
+@media (hover: hover) {
+  #bga-help_buttons {
+    bottom: 5px;
+  }
+}
+#popin_bgaHelpDialog_contents {
+  max-width: 100vw;
+  overflow-x: auto;
+}
+
+#popin_bgaHelpDialog {
+  --background-color: white;
+  background: var(--background-color);
+  background-repeat: repeat;
+  max-width: 100vw;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+#help-dialog-content {
+  width: 520px;
+  max-width: 35rem;
+  max-height: calc(80vh - 80px);
+  overflow: auto;
 }
 
 body > .card {
@@ -1392,7 +1482,6 @@ body > .card {
 .kot-curse-card .effect-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .kot-curse-card .effect-wrapper .effect-text.overflow {
   background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
@@ -1507,12 +1596,10 @@ body > .card {
 .kot-evolution .description-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .kot-evolution .description-wrapper .token {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
   box-shadow: none;
 }
 .kot-evolution.disabled {
@@ -1612,12 +1699,10 @@ body > .card {
 .player-evolution-cards .stockitem .description-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .player-evolution-cards .stockitem .description-wrapper .token {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
   box-shadow: none;
 }
 .player-evolution-cards .stockitem.disabled {
@@ -1722,7 +1807,6 @@ body > .card {
 .kot-tile .description-wrapper .icon {
   width: 12px;
   height: 12px;
-  margin-bottom: -2px;
 }
 .kot-tile.disabled {
   filter: contrast(0.6);
@@ -2718,7 +2802,6 @@ h2 {
 #playermat-container-modal .icon {
   width: 16px;
   height: 16px;
-  margin-bottom: -2px;
 }
 
 html[data-dark-edition=true] #loader_mask #game_box_loader_front, html[data-dark-edition=true] #loader_mask #game_box_loader_back {
@@ -3154,6 +3237,7 @@ html[data-dice="6"] .animation {
   height: 32px;
   background-image: url("img/icons.png");
   background-size: auto 100%;
+  vertical-align: middle;
 }
 .icon.points {
   background-position: 0% 0%;
@@ -3476,12 +3560,10 @@ html[data-dice="6"] .animation {
 .log .icon {
   width: 16px;
   height: 16px;
-  margin-bottom: -2px;
 }
 .log .token {
   width: 16px;
   height: 16px;
-  margin-bottom: -2px;
   box-shadow: none !important;
 }
 .log .dice-icon {
@@ -3503,7 +3585,6 @@ html[data-dice="6"] .animation {
 .gamelogreview .icon {
   width: 20px;
   height: 20px;
-  margin-bottom: -2px;
 }
 .gamelogreview .dice-icon {
   width: 20px;
@@ -3521,12 +3602,10 @@ button .icon, a .icon {
 .dijitTooltipContents .icon {
   width: 16px;
   height: 16px;
-  margin-bottom: -2px;
 }
 .dijitTooltipContents .token {
   width: 16px;
   height: 16px;
-  margin-bottom: -2px;
   box-shadow: none !important;
 }
 
@@ -3895,4 +3974,31 @@ button .icon, a .icon {
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
+}
+
+#popin_bgaHelpDialog {
+  background: #ecd2cb;
+}
+
+#popin_bgaHelpDialog_title {
+  color: #810047;
+  font-size: 22px;
+}
+
+#help-popin .help-section {
+  margin: 5px;
+}
+#help-popin .help-section > div:first-child {
+  background: var(--color);
+  color: white;
+  text-transform: uppercase;
+  display: inline-block;
+  padding: 5px;
+  font-weight: bold;
+}
+#help-popin .help-section > div:not(:first-child) {
+  border: 2px solid var(--color);
+  color: black;
+  padding: 8px;
+  border-radius: 0 15px 15px 15px;
 }

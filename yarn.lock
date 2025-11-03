@@ -12,11 +12,15 @@ anymatch@~3.1.2:
 
 bga-animations@*, bga-animations@thoun/bga-animations#1.0.2:
   version "1.0.0"
-  resolved "git+ssh://git@github.com/thoun/bga-animations.git#74a2aa97bc5367a84965aed6b4903d46a024b43e"
+  resolved "git+ssh://git@github.com/thoun/bga-animations.git"
 
 bga-cards@thoun/bga-cards#3.1.5:
   version "3.1.1"
   resolved "git+ssh://git@github.com/thoun/bga-cards.git#5f3e5e6d3f1795728bf3b71ef646eaffa7579b84"
+
+bga-help@thoun/bga-help#1.0.0:
+  version "1.0.0"
+  resolved "git+ssh://git@github.com/thoun/bga-help.git#ccd1dcea174006d7b64755ee09ca9484f783254d"
 
 bga-zoom@thoun/bga-zoom#1.0.4:
   version "1.0.3"

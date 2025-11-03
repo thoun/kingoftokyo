@@ -7,9 +7,10 @@ require_once(__DIR__.'/framework-prototype/item/item.php');
 require_once(__DIR__.'/framework-prototype/item/item-field.php');
 require_once(__DIR__.'/framework-prototype/item/item-location.php');
 require_once(__DIR__.'/framework-prototype/item/item-manager.php');
+require_once(__DIR__.'/framework-prototype/item/card-manager.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
-use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use \Bga\GameFrameworkPrototype\Item\CardManager;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
@@ -62,7 +63,7 @@ const WICKEDNESS_TILE_CLASSES = [
     STARBURST_WICKEDNESS_TILE => 'Starburst',
 ];
 
-class WickednessTileManager extends ItemManager {
+class WickednessTileManager extends CardManager {
 
     function __construct(
         protected $game,

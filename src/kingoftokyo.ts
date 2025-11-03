@@ -151,7 +151,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         if (currentPlayer?.location > 0) {
             this.addAutoLeaveUnderButton();
         }
-
+        this.setupHelp();
         this.setupNotifications();
 
         document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
@@ -3395,8 +3395,49 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         actionTimerId = window.setInterval(() => actionTimerFunction(), 1000);
     }
 
-    ///////////////////////////////////////////////////
-    //// Reaction to cometD notifications
+    private getHelpHtml() {
+        let html = `
+        <div id="help-popin">
+            <div class="help-section" style="--color: #de511e;">
+                <div>${_('On your turn, before rolling dice')}</div>
+                <div>
+                    <strong>${_('HUNTER')}:</strong> ${_('Choose any Monster (even if it’s in the same location as you). They will be the only target for your [dieClaw].')}
+                    <br>
+                    <strong>${_('SNEAKY')}:</strong> ${_('All other Monsters lose as many [Star] as you gain when resolving your Roll.')}
+                </div>
+            </div>
+            <div class="help-section" style="--color: #d83884;">
+                <div>${_('When you are wounded')}</div>
+                <div>
+                    <strong>${_('POISON')}:</strong> ${_('The attacking Monster loses as many [Heart] as you.')}
+                    <br>
+                    <strong>${_('TOUGH')}:</strong> ${_('You don’t lose any [Heart].')}
+                </div>
+            </div>
+            <div class="help-section" style="--color: #00aaa0;">
+                <div>${_('At the end of your turn')}</div>
+                <div>
+                    <strong>${_('FRENZY')}:</strong> ${_('Immediately take another turn (called a “FRENZY turn”).')}
+                </div>
+            </div>
+        </div>`;
+
+        return formatTextIcons(html);
+    }
+
+    setupHelp() {
+        if (this.gamedatas.mindbugExpansion) {
+            new HelpManager(this, { 
+                buttons: [
+                    new BgaHelpPopinButton({
+                        title: _("Mindbug help").toUpperCase(),
+                        html: this.getHelpHtml(),
+                        buttonBackground: '#810047',
+                    }),
+                ]
+            });
+        }
+    }
 
     /*
         setupNotifications:
