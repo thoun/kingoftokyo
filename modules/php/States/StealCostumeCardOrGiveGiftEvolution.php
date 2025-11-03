@@ -92,7 +92,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
 
     #[PossibleAction]
     public function actStealCostumeCard(int $id, int $activePlayerId, array $args) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
         if (!$card) {
             throw new \BgaUserException('Invalid card id (stealCostumeCard)');
         }
@@ -121,7 +121,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
         $this->game->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $activePlayerId");
 
         $this->game->removeCard($from, $card, true, false, true);
-        $this->game->powerCards->moveItem($card, 'hand', $activePlayerId);
+        $this->game->powerCards->moveCard($card, 'hand', $activePlayerId);
 
         $this->notify->all("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
             'playerId' => $activePlayerId,
@@ -154,7 +154,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
     #[PossibleAction]
     public function actGiveGiftEvolution(int $id, int $toPlayerId, int $currentPlayerId) {
         $fromPlayerId = $currentPlayerId;
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($id);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($id);
 
         $this->game->giveEvolution($fromPlayerId, $toPlayerId, $evolution);
 

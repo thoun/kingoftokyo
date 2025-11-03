@@ -184,7 +184,7 @@ class EvolutionCardManager extends CardManager {
                 $type = $monster * 10 + $card;
                 $cards[] = ['location' => $location, 'type' => $type, 'type_arg' => 0, 'nbr' => 1];
             }
-            $this->createItems($cards);
+            $this->createCards($cards);
             $this->shuffle($location); 
         }
 
@@ -193,7 +193,7 @@ class EvolutionCardManager extends CardManager {
         }
     }
 
-    protected function getClassName(?array $dbItem): ?string {
+    public function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, EVOLUTION_CARD_CLASSES)) {
             return null;
@@ -210,7 +210,7 @@ class EvolutionCardManager extends CardManager {
      * @return EvolutionCard[]
      */
     function getPlayerRealByLocation(int $playerId, string $location): array {        
-        $evolutions = $this->getItemsInLocation($location, $playerId, true, sortByField: 'location_arg');
+        $evolutions = $this->getCardsInLocation($location, $playerId, true, sortByField: 'location_arg');
         return $evolutions;
     }
 
@@ -249,7 +249,7 @@ class EvolutionCardManager extends CardManager {
         if ($icyReflectionEvolution) {
             $mimickedCardId = $this->game->getMimickedEvolutionId();
             if ($mimickedCardId) {
-                $virtualCard = $this->getItemById($mimickedCardId);
+                $virtualCard = $this->getCardById($mimickedCardId);
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingEvolutionId = $icyReflectionEvolution->id;
@@ -326,12 +326,12 @@ class EvolutionCardManager extends CardManager {
 
     public function activateKeyword(EvolutionCard &$card, string $keyword): void {
         $card->activated = new ActivatedConsumableKeyword($keyword);
-        $this->updateItem($card, ['activated']);
+        $this->updateCard($card, ['activated']);
     }
 
     public function setActivatedKeywordTarget(EvolutionCard $card, int $targetPlayerId): void {
         $card->activated->targetPlayerId = $targetPlayerId;
-        $this->updateItem($card, ['activated']);
+        $this->updateCard($card, ['activated']);
     }
 
 }

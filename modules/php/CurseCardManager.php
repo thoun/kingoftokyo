@@ -58,14 +58,14 @@ class CurseCardManager extends CardManager {
         for($value=1; $value<=24; $value++) {
             $cards[] = ['type' => $value, 'location' => 'deck', 'type_arg' => 0, 'nbr' => 1];
         }
-        $this->createItems($cards);
+        $this->createCards($cards);
         $this->shuffle('deck'); 
 
         // init first curse card
-        $this->pickItemForLocation('deck', null, 'table');
+        $this->pickCardForLocation('deck', null, 'table');
     }
 
-    protected function getClassName(?array $dbItem): ?string {
+    public function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, CURSE_CARD_CLASSES)) {
             return null;
@@ -78,11 +78,11 @@ class CurseCardManager extends CardManager {
     }
 
     function getCurrent() {
-        return $this->getItemsInLocation('table')[0];
+        return $this->getCardsInLocation('table')[0];
     }
 
     function getTopDeck() {
-        return CurseCard::onlyId($this->getItemOnTop('deck'));
+        return CurseCard::onlyId($this->getCardOnTop('deck'));
     }
 
     public function immediateEffect(CurseCard $card, Context $context) {

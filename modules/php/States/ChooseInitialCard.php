@@ -32,7 +32,7 @@ class ChooseInitialCard extends GameState {
         ];
 
         if ($chooseCostume) {
-            $args['cards'] = $this->game->powerCards->getCardsOnTop(2, 'costumedeck');
+            $args['cards'] = $this->game->powerCards->getCardsOnTopOldOrder(2, 'costumedeck');
         }
 
         if ($chooseEvolution) {
@@ -59,7 +59,7 @@ class ChooseInitialCard extends GameState {
                 throw new \BgaUserException('No selected Costume card');
             }
 
-            $topCards = $this->game->powerCards->getCardsOnTop(2, 'costumedeck');
+            $topCards = $this->game->powerCards->getCardsOnTopOldOrder(2, 'costumedeck');
             if (!Arrays::some($topCards, fn($topCard) => $topCard->id == $costumeId)) {
                 throw new \BgaUserException('Card not available');
             }
@@ -97,10 +97,10 @@ class ChooseInitialCard extends GameState {
     }
 
     private function setInitialCostumeCard(int $playerId, int $id, PowerCard $otherCard) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
         
-        $this->game->powerCards->moveItem($card, 'hand', $playerId);
-        $this->game->powerCards->moveItem($otherCard, 'costumediscard');
+        $this->game->powerCards->moveCard($card, 'hand', $playerId);
+        $this->game->powerCards->moveCard($otherCard, 'costumediscard');
 
         $this->notify->all("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,

@@ -430,7 +430,7 @@ class PowerCardManager extends CardManager {
             }
         }
 
-        $this->createItems($cards);
+        $this->createCards($cards);
 
         if ($this->game->isHalloweenExpansion()) { 
             $cards = [];
@@ -440,7 +440,7 @@ class PowerCardManager extends CardManager {
                 $cards[] = ['location' => 'costumedeck', 'type' => $type, 'type_arg' => 0];
             }
 
-            $this->createItems($cards);
+            $this->createCards($cards);
             $this->shuffle('costumedeck'); 
         }
 
@@ -449,11 +449,11 @@ class PowerCardManager extends CardManager {
                 ['location' => 'mutantdeck', 'type' => 301, 'type_arg' => 0, 'item_nbr' => 6]
             ];
 
-            $this->createItems($cards);
+            $this->createCards($cards);
         }
     }
 
-    protected function getClassName(?array $dbItem): ?string {
+    public function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, POWER_CARD_CLASSES)) {
             return null;
@@ -485,55 +485,55 @@ class PowerCardManager extends CardManager {
     /**
      * Return cards, ordered by location_arg for legacy purposes.
      */
-    public function getCardsInLocation(string $location, ?int $locationArg = null) {
-        $cards = $this->getItemsInLocation($location, $locationArg);
+    public function getCardsInLocationOldOrder(string $location, ?int $locationArg = null) {
+        $cards = $this->getCardsInLocation($location, $locationArg);
         usort($cards, fn($a, $b) => $a->location_arg <=> $b->location_arg);
         return $cards;
     }
 
     public function getDeckCount(): int {
-        return $this->countItemsInLocation('deck');
+        return $this->countCardsInLocation('deck');
     }
 
     public function getTopDeckCard(bool $onlyPublic = true): ?PowerCard {
-        $card = $this->getCardOnTop('deck');
+        $card = $this->getCardOnTopOldOrder('deck');
         return $onlyPublic ? PowerCard::onlyId($card) : $card;
     }
 
-    public function getCardsOnTop(int $number, string $location): array {
-        $cards = $this->getCardsInLocation($location);
+    public function getCardsOnTopOldOrder(int $number, string $location): array {
+        $cards = $this->getCardsInLocationOldOrder($location);
         return count($cards) > 0 ? array_slice($cards, -$number) : [];
     }
 
-    public function getCardOnTop(string $location): PowerCard {
-        $cards = $this->getCardsOnTop(1, $location);
+    public function getCardOnTopOldOrder(string $location): PowerCard {
+        $cards = $this->getCardsOnTopOldOrder(1, $location);
         return count($cards) > 0 ? $cards[0] : null;
     }
 
     public function getCardsOfType(int $type): array {
-        return $this->getItemsByFieldName('type', [$type]);
+        return $this->getCardsByFieldName('type', [$type]);
     }
 
     public function getPlayerCardsOfType(int $type, int $playerId): array {
-        return Arrays::filter($this->getItemsByFieldName('type', [$type]), fn($card) => $card->location === 'hand' && $card->location_arg === $playerId);
+        return Arrays::filter($this->getCardsByFieldName('type', [$type]), fn($card) => $card->location === 'hand' && $card->location_arg === $playerId);
     }
 
-    public function pickCardForLocation(string $fromLocation, string $toLocation, int $toLocationArg = 0) {
-        $item = $this->getCardOnTop($fromLocation);
+    public function pickCardForLocationOldOrder(string $fromLocation, string $toLocation, int $toLocationArg = 0) {
+        $item = $this->getCardOnTopOldOrder($fromLocation);
         if ($item === null && $fromLocation === 'deck') {
-            $this->moveAllItemsInLocation('discard', 'deck');
+            $this->moveAllCardsInLocation('discard', 'deck');
             $this->shuffle('deck');
-            $item = $this->getCardOnTop($fromLocation);
+            $item = $this->getCardOnTopOldOrder($fromLocation);
         }
 
         if ($item !== null) {
-            $this->moveItem($item, $toLocation, $toLocationArg);
+            $this->moveCard($item, $toLocation, $toLocationArg);
         }
         return $item;
     }
 
     public function getTable(): array {
-        return $this->getCardsInLocation('table');
+        return $this->getCardsInLocationOldOrder('table');
     }
 
     /**
@@ -541,7 +541,7 @@ class PowerCardManager extends CardManager {
      * Includes disabled Keep cards.
      */
     public function getPlayerReal(int $playerId): array {
-        return $this->getItemsInLocation('hand', $playerId);
+        return $this->getCardsInLocation('hand', $playerId);
     }
 
     /**
@@ -559,7 +559,7 @@ class PowerCardManager extends CardManager {
         if ($mimicCard) {
             $mimickedCardId = $this->game->getMimickedCardId(MIMIC_CARD);
             if ($mimickedCardId) {
-                $virtualCard = $this->getItemById($mimickedCardId);
+                $virtualCard = $this->getCardById($mimickedCardId);
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingCardId = $mimicCard->id;
@@ -576,7 +576,7 @@ class PowerCardManager extends CardManager {
         if ($fluxlingTile) {
             $mimickedCardId = $this->game->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             if ($mimickedCardId) {
-                $virtualCard = $this->getItemById($mimickedCardId);
+                $virtualCard = $this->getCardById($mimickedCardId);
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingTileId = $fluxlingTile->id;
@@ -593,7 +593,7 @@ class PowerCardManager extends CardManager {
     }
 
     public function getReserved(int $playerId, ?int $locationArg = null): array {
-        return $this->getItemsInLocation('reserved'.$playerId, $locationArg);
+        return $this->getCardsInLocation('reserved'.$playerId, $locationArg);
     }
 
     function applyEffects(PowerCard $card, int $playerId, int $stateAfter) { // return $damages
@@ -659,11 +659,11 @@ class PowerCardManager extends CardManager {
 
     public function activateKeyword(PowerCard &$card, string $keyword): void {
         $card->activated = new ActivatedConsumableKeyword($keyword);
-        $this->updateItem($card, ['activated']);
+        $this->updateCard($card, ['activated']);
     }
 
     public function setActivatedKeywordTarget(PowerCard $card, int $targetPlayerId): void {
         $card->activated->targetPlayerId = $targetPlayerId;
-        $this->updateItem($card, ['activated']);
+        $this->updateCard($card, ['activated']);
     }
 }

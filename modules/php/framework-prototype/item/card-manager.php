@@ -7,62 +7,87 @@ namespace Bga\GameFrameworkPrototype\Item;
  * @template T of object
  */
 class CardManager extends ItemManager {
+    protected ItemManager $itemManager;
 
     /**
      * @param class-string<T> $className The Item object class. Defaults to stdClass.
      * @param ItemLocation[] $locations The different possible locations, used for autoReshuffle.
      */
     public function __construct(
-        protected string $className = \stdClass::class,
+        string $className = \stdClass::class,
         protected array $locations = [],
     ) {
-        parent::__construct($className, $locations);
+        $this->itemManager = new ItemManager($className);
+    }
 
-        foreach (['id', 'location', 'location_arg', 'order'] as $mandatoryKind) {
-            if (!array_find($this->fields, fn($field) => $field->kind === $mandatoryKind)) {
-                throw new ItemManagerConfigurationException("A mandatory #[ItemField(kind: '$mandatoryKind')] attribute is missing on a $className field");
-            }
-        }
+    /**
+     * Create the DB table. 
+     * Should be called at the beginning of Game::setupNewGame.
+     */
+    public function initDb(): void {
+        $this->itemManager->initDb();
+    }
+
+    /**
+     * Create new items in the DB.
+     * 
+     * $itemsTypes should be like this :
+     * [
+     *   ['location' => 'deck', 'type' => 0, 'item_nbr' => 2],
+     *   ['location' => 'table', 'locationArg' => 1, 'type' => 1, 'flipped' => true],
+     * ]
+     * 
+     * item_nbr is a special field, that will create this number of items. If unset, defaults to 1.
+     * 
+     * @param array[] $itemsTypes An array of arrays, where each inner array follows the described structure.
+     */
+    public function createCards(array $cardTypes): void {
+        $this->itemManager->createItems($cardTypes);
     }
 
     /**
      * Shuffle the order of the items in a location.
      */
     public function shuffle(string $location, ?int $locationArg = null): void {
-        $idField = $this->getItemFieldByKind('id');
-        $locationField = $this->getItemFieldByKind('location');
-        $locationArgField = $this->getItemFieldByKind('location_arg');
-        $orderField = $this->getItemFieldByKind('order');
+        $idField = $this->itemManager->getItemFieldByKind('id');
+        $locationField = $this->itemManager->getItemFieldByKind('location');
+        $locationArgField = $this->itemManager->getItemFieldByKind('location_arg');
+        $orderField = $this->itemManager->getItemFieldByKind('order');
 
-        $where = $this->db->sqlEqualValue($locationField, $location);
+        $where = $this->itemManager->db->sqlEqualValue($locationField, $location);
         if ($locationArg !== NULL) {
-            $where .= " AND ".$this->db->sqlEqualValue($locationArgField, $locationArg);
+            $where .= " AND ".$this->itemManager->db->sqlEqualValue($locationArgField, $locationArg);
         }
-        $item_ids = $this->db->sqlGetList("`{$idField->dbField}`", $where);
+        $item_ids = $this->itemManager->db->sqlGetList("`{$idField->dbField}`", $where);
         $item_ids = array_values(array_map(fn($dbObject) => intval($dbObject[$idField->dbField]), $item_ids));
         
         array_shuffle_bga_rand( $item_ids );
         
         foreach( $item_ids as $index => $item_id ) {
-            $this->db->sqlUpdate(
-                $this->db->sqlEqualValue($orderField, $index), 
-                $this->db->sqlEqualValue($idField, $item_id)
+            $this->itemManager->db->sqlUpdate(
+                $this->itemManager->db->sqlEqualValue($orderField, $index), 
+                $this->itemManager->db->sqlEqualValue($idField, $item_id)
             );
         }
     }
 
-    public function moveAllItemsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {
-        $locationField = $this->getItemFieldByKind('location');
-        $locationArgField = $this->getItemFieldByKind('location_arg');
-        $orderField = $this->getItemFieldByKind('order');
+    public function moveAllCardsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {        
+        $this->itemManager->moveAllItemsInLocation($fromLocation, $toLocation, $toLocationArg);
+    }
 
-        $update = $this->db->sqlEqualValue($locationField, $toLocation);
-        if ($toLocationArg !== null) {
-            $update .= ", ".$this->db->sqlEqualValue($locationArgField, $toLocationArg);
-        }
-        $update .= ", ".$this->db->sqlEqualValue($orderField, 0);
-        $where = $fromLocation === null ? '1' : $this->db->sqlEqualValue($locationField, $fromLocation);
-        $this->db->sqlUpdate($this->db->sqlEqualValue($locationField, $toLocation), $where);
+    /**
+     * Pick an item from a location into another location.
+     *
+     * @param string $fromLocation location to pick the item
+     * @param int|null $fromLocationArg locationArg to pick the item
+     * @param string $toLocation location to put the picked item
+     * @param int $toLocationArg locationArg to put the picked item
+     * 
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function pickCardForLocation(string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): ?object {
+        $items = $this->pickCardsForLocation(1, $fromLocation, $fromLocationArg, $toLocation, $toLocationArg);
+        return count($items) > 0 ? $items[0] : null;
     }
 
     /**
@@ -76,36 +101,137 @@ class CardManager extends ItemManager {
      * 
      * @return T[] An array of objects of the type specified by $this->className.
      */
-    public function pickItemsForLocation(int $number, string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): array {
-        $items = $this->getItemsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
+    public function pickCardsForLocation(int $number, string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): array {
+        $items = $this->getCardsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
         if (count($items) < $number) {
             $itemLocation = array_find($this->locations, fn($location) => $location->name === $fromLocation);
             if ($itemLocation && $itemLocation->autoReshuffleFrom !== null) {
                 // reshuffle
-                $this->moveAllItemsInLocation($itemLocation->autoReshuffleFrom, $fromLocation);
+                $this->moveAllCardsInLocation($itemLocation->autoReshuffleFrom, $fromLocation);
                 $this->shuffle($fromLocation);
 
-                $items = array_merge($items, $this->getItemsInLocation($fromLocation, reversed: true, limit: ($number - count($items))));
+                $items = array_merge($items, $this->getCardsInLocation($fromLocation, reversed: true, limit: ($number - count($items))));
             }
         }
         if (count($items) > 0) {
-            $this->moveItems($items, $toLocation, $toLocationArg);
+            $this->moveCards($items, $toLocation, $toLocationArg);
         }
         return $items;
+    }
+
+    public function setCardOrder(object $item, int $order): void {
+        $this->itemManager->setItemOrder($item, $order);
+    }
+
+    public function moveCard(object $item, string $toLocation, int $toLocationArg = 0, ?int $order = null): void {
+        $this->itemManager->moveItem($item, $toLocation, $toLocationArg, $order);
+    }
+
+    public function moveCards(array $items, string $toLocation, int $toLocationArg = 0): void {
+        $this->itemManager->moveItems($items, $toLocation, $toLocationArg);
+    }
+
+    public function moveCardKeepOrder(object $item, string $toLocation, int $toLocationArg = 0): void {
+        $this->itemManager->moveItemKeepOrder($item, $toLocation, $toLocationArg);
+    }
+
+    public function moveCardsKeepOrder(array $items, string $toLocation, int $toLocationArg = 0): void {
+        $this->itemManager->moveItemsKeepOrder($items, $toLocation, $toLocationArg);
+    }
+
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
+    public function getCardsByFieldName(string $fieldName, array $values, ?int $limit = null): array {
+        return $this->itemManager->getItemsByFieldName($fieldName, $values, $limit);
+    }
+
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
+    public function getCardsByField(ItemField $field, array $values, ?int $limit = null): array {
+        return $this->itemManager->getItemsByField($field, $values, $limit);
+    }
+
+    /**
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function getCardById(int $id): ?object {
+        return $this->itemManager->getItemById($id);
+    }
+
+    public function getCardsByIds(array $ids): array {
+        return $this->itemManager->getItemsByIds($ids);
+    }
+
+    public function countCardsInLocation(string $location, ?int $locationArg = null): int {
+        return $this->itemManager->countItemsInLocation($location, $locationArg);
+    }
+
+    public function getMaxOrderInLocation(string $location, ?int $locationArg = null): int {
+        return $this->itemManager->getMaxOrderInLocation($location, $locationArg);
+    }
+
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
+    public function getCardsInLocation(string $location, ?int $locationArg = null, bool $reversed = false, ?int $limit = null, ?string $sortByField = null): array {
+        return $this->itemManager->getItemsInLocation($location, $locationArg, $reversed, $limit, $sortByField);
+    }
+
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
+    public function getAllCards(?int $limit = null): array {
+        return $this->itemManager->getAllItems($limit);
     }
 
 	/**
      * @return T|null An object of the type specified by $this->className, or null if no item is picked.
      */
-    public function getItemOnTop(string $location, ?int $locationArg = null): ?object {
-        $items = $this->getItemsOnTop(1, $location, $locationArg);
-        return count($items) > 0 ? $items[0] : null;
+    public function getCardOnTop(string $location, ?int $locationArg = null): ?object {
+        return $this->itemManager->getItemOnTop($location, $locationArg);
 	}
 
 	/**
      * @return T[] An array of objects of the type specified by $this->className.
      */
-    public function getItemsOnTop(int $number, string $location, ?int $locationArg = null): array {
-        return $this->getItemsInLocation($location, $locationArg, true, $number);
+    public function getCardsOnTop(int $number, string $location, ?int $locationArg = null): array {
+        return $this->itemManager->getItemsOnTop($number, $location, $locationArg);
 	}
+
+    /**
+     * Update the DB value based on the Item fields.
+     * Set $fields to set which fields to update (all if null)
+     */
+    public function updateCard(object $item, ?array $fields = null): void {
+        $this->itemManager->updateItem($item, $fields);
+    }
+
+    /**
+     * Update the DB value based on the Item fields.
+     * Set $fields to set which fields to update (all if null)
+     */
+    public function updateAllCards(string $fieldName, mixed $value): void {
+        $this->itemManager->updateAllItems($fieldName, $value);
+    }
+
+    public function getCardField(string $name): ?ItemField {
+        return $this->itemManager->getItemField($name);
+    }
+
+    public function getCardFieldByKind(string $kind): ?ItemField {
+        return $this->itemManager->getItemFieldByKind($kind);
+    }
+
+    public function getClassName(?array $dbItem): ?string {
+        return $this->itemManager->getClassName($dbItem);
+    }
+
+    /**
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function getCardFromDb(?array $dbItem): ?object {
+        return $this->itemManager->getItemFromDb($dbItem);
+    }
 }

@@ -46,7 +46,7 @@ class ChangeMimickedCardWickednessTile extends GameState {
         int $currentPlayerId,
         #[IntParam(name: 'id')] int $cardId,
     ) {
-        $card = $this->game->powerCards->getItemById($cardId);
+        $card = $this->game->powerCards->getCardById($cardId);
         if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }

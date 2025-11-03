@@ -22,7 +22,7 @@ class PrecisionFieldSupport extends EvolutionCard {
                 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
                 'card_name' => $topCard->type,
             ]);
-            $context->game->powerCards->moveItem($topCard, 'discard');
+            $context->game->powerCards->moveCard($topCard, 'discard');
             $this->immediateEffect($context);
 
         } else if ($context->game->powerCards->getCardBaseCost($topCard->type) > 4) {
@@ -32,7 +32,7 @@ class PrecisionFieldSupport extends EvolutionCard {
                 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
                 'card_name' => $topCard->type,
             ]);
-            $context->game->powerCards->moveItem($topCard, 'discard');
+            $context->game->powerCards->moveCard($topCard, 'discard');
             $this->immediateEffect($context);
 
         } else {

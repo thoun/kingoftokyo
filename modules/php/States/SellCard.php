@@ -61,7 +61,7 @@ class SellCard extends GameState {
             throw new \BgaUserException("You can't sell cards without Metamorph");
         }
 
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
         
         if ($card->location != 'hand' || $card->location_arg != $activePlayerId) {
             throw new \BgaUserException("You can't sell cards that you don't own");

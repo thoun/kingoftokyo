@@ -63,7 +63,7 @@ class Bamboozle extends EvolutionCard {
         } else {
             $activePlayerId = (int)$context->game->getActivePlayerId();
 
-            $forbiddenCard = $context->game->powerCards->getItemById($cardBeingBought->cardId);
+            $forbiddenCard = $context->game->powerCards->getCardById($cardBeingBought->cardId);
 
             $context->game->notify->all('log', clienttranslate('${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '), [
                 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),

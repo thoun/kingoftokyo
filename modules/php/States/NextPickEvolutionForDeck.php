@@ -23,11 +23,11 @@ class NextPickEvolutionForDeck extends GameState {
             // give 8 random evolutions to each players mutant deck
             $playersIds = $this->game->getPlayersIds();
             foreach($playersIds as $playerId) {
-                $this->game->powerUpExpansion->evolutionCards->moveAllItemsInLocation('deck'.$playerId, 'mutantdeck');
+                $this->game->powerUpExpansion->evolutionCards->moveAllCardsInLocation('deck'.$playerId, 'mutantdeck');
             }
             $this->game->powerUpExpansion->evolutionCards->shuffle('mutantdeck');
             foreach($playersIds as $index => $playerId) {
-                $this->game->powerUpExpansion->evolutionCards->pickItemsForLocation(8, 'mutantdeck', null, 'mutant'.$index);
+                $this->game->powerUpExpansion->evolutionCards->pickCardsForLocation(8, 'mutantdeck', null, 'mutant'.$index);
             }
         }
 

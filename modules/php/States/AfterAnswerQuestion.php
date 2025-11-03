@@ -38,7 +38,7 @@ class AfterAnswerQuestion extends GameState {
         }
 
         if ($question->code === 'MindbugsOverlord') {
-            $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+            $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($question->args->evolutionId);
             $this->game->setUsedCard(3000 + $evolution->id);
             $evolution->onMonstersDeclaredAllegiance(new Context($this->game, $question->args->askingPlayerId), $question);
             return;

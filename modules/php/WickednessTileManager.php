@@ -80,19 +80,19 @@ class WickednessTileManager extends CardManager {
             $level = $value > 8 ? 10 : ($value > 4 ? 6 : 3);
             $cards[] = ['location' => 'table', 'location_arg' => $level, 'type' => $value + 100 * $cardSide, 'tokens' => 0];
         }
-        $this->createItems($cards);
+        $this->createCards($cards);
 
-        $allTiles = $this->getItemsInLocation('deck');
+        $allTiles = $this->getCardsInLocation('deck');
 
         foreach ([3, 6, 10] as $level) {
             $levelTiles = Arrays::filter($allTiles, fn($tile) =>
                 $level === (($tile->type % 100) > 8 ? 10 : (($tile->type % 100) > 4 ? 6 : 3))
             );
-            $this->moveItems($levelTiles, 'table', $level);
+            $this->moveCards($levelTiles, 'table', $level);
         }
     }
 
-    protected function getClassName(?array $dbItem): ?string {
+    public function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, WICKEDNESS_TILE_CLASSES)) {
             throw new \BgaSystemException('Unexisting WickednessTile class');
@@ -104,11 +104,11 @@ class WickednessTileManager extends CardManager {
     }
 
     public function getTable(?int $level = null): array {
-        return $this->getItemsInLocation('table', $level);
+        return $this->getCardsInLocation('table', $level);
     }
 
     public function getPlayerTiles(int $playerId): array {
-        return $this->getItemsInLocation('hand', $playerId);
+        return $this->getCardsInLocation('hand', $playerId);
     }
 
     public function immediateEffect(WickednessTile $tile, Context $context) {

@@ -14,12 +14,12 @@ class DeepDive extends EvolutionCard {
     }
 
     public function immediateEffect(Context $context) {
-        if ($context->game->powerCards->countItemsInLocation('deck') === 0) {
+        if ($context->game->powerCards->countCardsInLocation('deck') === 0) {
             throw new \BgaUserException("No cards in deck pile");
         }
 
         $context->game->powerCards->shuffle('discard');
-        $cards = $context->game->powerCards->getCardsOnTop(3, 'deck');
+        $cards = $context->game->powerCards->getCardsOnTopOldOrder(3, 'deck');
 
         $question = new Question(
             'DeepDive',

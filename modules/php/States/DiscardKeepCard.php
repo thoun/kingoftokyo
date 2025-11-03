@@ -45,7 +45,7 @@ class DiscardKeepCard extends GameState {
         #[IntParam(name: 'id')] int $cardId,
         int $currentPlayerId,
     ) {
-        $card = $this->game->powerCards->getItemById($cardId);
+        $card = $this->game->powerCards->getCardById($cardId);
         if (!$card || $card->location !== 'hand' || $card->location_arg != $currentPlayerId) {
             throw new \BgaUserException(\clienttranslate('You must select one of your cards.'));
         }

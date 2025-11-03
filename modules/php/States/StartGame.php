@@ -18,8 +18,8 @@ class StartGame extends GameState {
 
     function onEnteringState() { 
         if ($this->game->isHalloweenExpansion()) {
-            $this->game->powerCards->moveAllItemsInLocation('costumedeck', 'deck');
-            $this->game->powerCards->moveAllItemsInLocation('costumediscard', 'deck');
+            $this->game->powerCards->moveAllCardsInLocation('costumedeck', 'deck');
+            $this->game->powerCards->moveAllCardsInLocation('costumediscard', 'deck');
         }
         $this->game->powerCards->shuffle('deck'); 
 

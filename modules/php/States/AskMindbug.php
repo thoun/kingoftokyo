@@ -60,7 +60,7 @@ class AskMindbug extends GameState {
                 throw new \BgaUserException('No Evasive Mindbug card');
             }
 
-            $this->game->powerCards->moveItem($evasiveMindbugCard, 'hand', $mindbuggedPlayerId);
+            $this->game->powerCards->moveCard($evasiveMindbugCard, 'hand', $mindbuggedPlayerId);
 
             $this->game->notify->all("buyCard", clienttranslate('${player_name2} gives ${card_name} to ${player_name}'), [
                 'playerId' => $mindbuggedPlayerId,

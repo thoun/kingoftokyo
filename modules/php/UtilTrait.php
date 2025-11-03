@@ -1375,7 +1375,7 @@ trait UtilTrait {
         $cards = [];
         
         for ($i=1; $i<=3; $i++) {
-            $cards[] = $this->powerCards->pickCardForLocation('deck', 'table', $i);
+            $cards[] = $this->powerCards->pickCardForLocationOldOrder('deck', 'table', $i);
         }
 
         return $cards;

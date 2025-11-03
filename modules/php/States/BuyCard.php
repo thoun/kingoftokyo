@@ -76,7 +76,7 @@ class BuyCard extends GameState {
             if ($adaptiveTechnologyCard->location === 'hand') {
                 $this->game->powerUpExpansion->applyPlayEvolution($activePlayerId, $adaptiveTechnologyCard);
                 $this->game->applyEvolutionEffects($adaptiveTechnologyCard, $activePlayerId);
-                $adaptiveTechnologyCard = $this->game->powerUpExpansion->evolutionCards->getItemById($adaptiveTechnologyCard->id);
+                $adaptiveTechnologyCard = $this->game->powerUpExpansion->evolutionCards->getCardById($adaptiveTechnologyCard->id);
             }
             $tokens = $adaptiveTechnologyCard->tokens - 1;
             $this->game->setEvolutionTokens($activePlayerId, $adaptiveTechnologyCard, $tokens);
@@ -94,7 +94,7 @@ class BuyCard extends GameState {
 
         $this->game->removeDiscardCards($activePlayerId);
 
-        $this->game->powerCards->moveAllItemsInLocation('table', 'discard');
+        $this->game->powerCards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->game->placeNewCardsOnTable();
 
         $notifArgs = [
@@ -146,7 +146,7 @@ class BuyCard extends GameState {
         if ($evolution === null) {
             throw new \BgaUserException("No unused Miraculous catch");
         }
-        if ($this->game->powerCards->countItemsInLocation('discard') === 0) {
+        if ($this->game->powerCards->countCardsInLocation('discard') === 0) {
             throw new \BgaUserException("No cards in discard pile");
         }
         
@@ -155,7 +155,7 @@ class BuyCard extends GameState {
         }
 
         $this->game->powerCards->shuffle('discard');
-        $card = $this->game->powerCards->getCardOnTop('discard');
+        $card = $this->game->powerCards->getCardOnTopOldOrder('discard');
 
         $cost = $this->game->getCardCost($activePlayerId, $card->type) - 1;
         $canUseSuperiorAlienTechnology = 

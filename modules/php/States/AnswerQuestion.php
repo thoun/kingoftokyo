@@ -74,7 +74,7 @@ class AnswerQuestion extends GameState {
         int $currentPlayerId,
         #[IntParam(name: 'id')] int $cardId,
     ) {
-        $card = $this->game->powerCards->getItemById($cardId);
+        $card = $this->game->powerCards->getCardById($cardId);
         if ($card->type > 100 || $card->type == \MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -108,7 +108,7 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'id')] int $id,
     ) {
 
-        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($id);
+        $card = $this->game->powerUpExpansion->evolutionCards->getCardById($id);
 
         $this->game->removeEvolution($activePlayerId, $card);
 
@@ -153,8 +153,8 @@ class AnswerQuestion extends GameState {
         int $currentPlayerId,
         int $activePlayerId,
     ) {
-        $forcedCard = $this->game->powerCards->getItemById($id);
-        $forbiddenCard = $this->game->powerCards->getItemById($this->game->getGlobalVariable(CARD_BEING_BOUGHT)->cardId);
+        $forcedCard = $this->game->powerCards->getCardById($id);
+        $forbiddenCard = $this->game->powerCards->getCardById($this->game->getGlobalVariable(CARD_BEING_BOUGHT)->cardId);
 
         $this->notify->all('log', clienttranslate('${player_name} force ${player_name2} to buy ${card_name} instead of ${card_name2}. ${player_name2} cannot buy ${card_name2} this turn'), [
             'player_name' => $this->game->getPlayerNameById($currentPlayerId),
@@ -189,7 +189,7 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'id')] int $mimickedEvolutionId,
         int $currentPlayerId,
     ) {
-        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($mimickedEvolutionId);
+        $card = $this->game->powerUpExpansion->evolutionCards->getCardById($mimickedEvolutionId);
         if ($this->game->EVOLUTION_CARDS_TYPES[$card->type] != 1) {
             throw new \BgaUserException("You can only mimic Permanent evolutions");
         }
@@ -210,7 +210,7 @@ class AnswerQuestion extends GameState {
     ) {
         $question = $this->game->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($evolutionId);
         $this->game->setEvolutionTokens($activePlayerId, $evolution, $symbol, true);
 
         $this->notify->all('log', clienttranslate('${player_name} chooses that ${die_face} will have no effect this turn'), [
@@ -228,7 +228,7 @@ class AnswerQuestion extends GameState {
     ) {
         $evolution = $this->game->getFirstUnusedEvolution($currentPlayerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
-        $card = $this->game->powerCards->getCardOnTop('discard');
+        $card = $this->game->powerCards->getCardOnTopOldOrder('discard');
 
         $this->game->setUsedCard(3000 + $evolution->id);
         $this->game->powerCards->shuffle('discard');
@@ -264,7 +264,7 @@ class AnswerQuestion extends GameState {
         int $id,
         int $currentPlayerId,
     ) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
 
         $evolutions = $this->game->getEvolutionCardsByType(DEEP_DIVE_EVOLUTION);
         foreach($evolutions as $evolution) {
@@ -275,11 +275,11 @@ class AnswerQuestion extends GameState {
 
         // move other cards to bottom deck
         $question = $this->game->getQuestion();
-        $cards = $this->game->powerCards->getItemsByIds(Arrays::map($question->args->cards, fn($card) => $card->id));
+        $cards = $this->game->powerCards->getCardsByIds(Arrays::map($question->args->cards, fn($card) => $card->id));
         $otherCards = Arrays::filter($cards, fn($otherCard) => $otherCard->id != $card->id);
         $this->game->DbQuery("UPDATE `card` SET `card_location_arg` = card_location_arg + ".count($otherCards)." WHERE `card_location` = 'deck'");
         foreach($otherCards as $index => $otherCard) {
-            $this->game->powerCards->moveItem($otherCard, 'deck', $index);
+            $this->game->powerCards->moveCard($otherCard, 'deck', $index);
         }
 
         $mimic = false;
@@ -311,7 +311,7 @@ class AnswerQuestion extends GameState {
 
         $question = $this->game->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($evolutionId);
         $this->game->setEvolutionTokens($activePlayerId, $evolution, 2);
 
         $this->game->setUsedCard(3000 + $evolutionId);
@@ -449,7 +449,7 @@ class AnswerQuestion extends GameState {
     #[PossibleAction]
     public function actAnswerMindbugsOverlordChoosePlayer(int $targetPlayerId, int $currentPlayerId) {
         $question = $this->game->getQuestion();
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($question->args->evolutionId);
         $evolution->onChosenMonster(new Context($this->game, $currentPlayerId), $targetPlayerId);
 
         $this->game->goToState(ST_QUESTIONS_BEFORE_START_TURN);
@@ -482,7 +482,7 @@ class AnswerQuestion extends GameState {
         int $currentPlayerId,
         int $id,
     ) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
         $cardLocationArg = $card->location_arg;
         if ($card->location !== 'table') {
             throw new \BgaUserException("Card is not on table");
@@ -491,9 +491,9 @@ class AnswerQuestion extends GameState {
         $question = $this->game->getQuestion();
         $evolution = $question->args->card;
 
-        $this->game->powerCards->moveItem($card, 'reserved'.$currentPlayerId, $evolution->id);
+        $this->game->powerCards->moveCard($card, 'reserved'.$currentPlayerId, $evolution->id);
 
-        $newCard = $this->game->powerCards->pickCardForLocation('deck', 'table', $cardLocationArg);
+        $newCard = $this->game->powerCards->pickCardForLocationOldOrder('deck', 'table', $cardLocationArg);
 
         $this->notify->all("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
             'playerId' => $currentPlayerId,
@@ -549,7 +549,7 @@ class AnswerQuestion extends GameState {
         #[IntParam(name: 'playerId')] int $toPlayerId,
     ) {
         $question = $this->game->getQuestion();
-        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->card->id);
+        $card = $this->game->powerUpExpansion->evolutionCards->getCardById($question->args->card->id);
         /** @disregard */
         $card->giveFreezeRay(new Context($this->game), $currentPlayerId, $toPlayerId);
 
@@ -578,7 +578,7 @@ class AnswerQuestion extends GameState {
         int $currentPlayerId,
         int $id,
     ) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
 
         $this->game->applyBuyCard($currentPlayerId, $card->id, null, $this->game->getCardCost($currentPlayerId, $card->type) - 3);
 
@@ -590,7 +590,7 @@ class AnswerQuestion extends GameState {
         int $currentPlayerId,
         int $id,
     ) {
-        $card = $this->game->powerCards->getItemById($id);
+        $card = $this->game->powerCards->getCardById($id);
 
         $this->game->applyPlayCard($currentPlayerId, $card);
 
@@ -620,10 +620,10 @@ class AnswerQuestion extends GameState {
     public function actChooseHunterTarget(int $targetPlayerId, int $currentPlayerId) {
         $question = $this->game->getQuestion();
         if ($question->args->cardId) {
-            $card = $this->game->powerCards->getItemById($question->args->cardId);
+            $card = $this->game->powerCards->getCardById($question->args->cardId);
             $this->game->powerCards->setActivatedKeywordTarget($card, $targetPlayerId);
         } else if ($question->args->evolutionId) {
-            $card = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+            $card = $this->game->powerUpExpansion->evolutionCards->getCardById($question->args->evolutionId);
             $this->game->powerUpExpansion->evolutionCards->setActivatedKeywordTarget($card, $targetPlayerId);
         }
         
@@ -634,7 +634,7 @@ class AnswerQuestion extends GameState {
     #[PossibleAction]
     public function actDrawStrangeEvolution(int $targetPlayerId, int $currentPlayerId) {
         $question = $this->game->getQuestion();
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->args->evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($question->args->evolutionId);
 
         $evolution->applyEffect(new Context($this->game, $currentPlayerId, targetPlayerId: $targetPlayerId));
     }
@@ -712,7 +712,7 @@ class AnswerQuestion extends GameState {
     ): void {
         /** @var Question */
         $question = $this->game->getQuestion();
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($question->evolutionId);
         $evolution->actAnswerEnergyInfusedMonster(new Context($this->game, $currentPlayerId), $question, $diceIds);
     }
     
@@ -723,7 +723,7 @@ class AnswerQuestion extends GameState {
     ): void {
         /** @var Question */
         $question = $this->game->getQuestion();
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getItemById($question->evolutionId);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($question->evolutionId);
         $evolution->actAnswerEnergyInfusedMonsterSelectExtraDie(new Context($this->game, $currentPlayerId), $question, $face);
     }
 
@@ -736,7 +736,7 @@ class AnswerQuestion extends GameState {
         foreach ($playerCardIds as $cardId) {
             $choice = $crabClawChoices[$cardId] ?? '';
 
-            $card = $this->game->powerCards->getItemById($cardId);
+            $card = $this->game->powerCards->getCardById($cardId);
             if ($choice === 'pay') {
                 $mustPay++;
                 $this->notify->all('log', clienttranslate('${player_name} pays 1[Energy] to ${player_name2} to keep ${card_name}'), [

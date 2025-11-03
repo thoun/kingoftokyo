@@ -128,7 +128,7 @@ trait CardsArgTrait {
             ],
         ];
         if ($canPick > 0) {
-            $pickCards = $this->powerCards->getCardsOnTop($canPick, 'deck');
+            $pickCards = $this->powerCards->getCardsOnTopOldOrder($canPick, 'deck');
             $this->setMadeInALabCardIds($playerId, array_map(fn($card) => $card->id, $pickCards));
 
             foreach ($pickCards as $card) {
@@ -156,7 +156,7 @@ trait CardsArgTrait {
         // scavenger
         $canBuyFromDiscard = $this->countCardOfType($playerId, SCAVENGER_CARD);
         if ($canBuyFromDiscard > 0) {
-            $discardCards = $this->powerCards->getCardsInLocation('discard');
+            $discardCards = $this->powerCards->getCardsInLocationOldOrder('discard');
 
             foreach ($discardCards as $card) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);

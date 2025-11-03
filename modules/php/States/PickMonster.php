@@ -87,7 +87,7 @@ class PickMonster extends GameState {
         ]);
 
         if ($this->game->powerUpExpansion->isActive()) {
-            $this->game->powerUpExpansion->evolutionCards->moveAllItemsInLocation('monster'.($monsterId % 100), 'deck'.$playerId);
+            $this->game->powerUpExpansion->evolutionCards->moveAllCardsInLocation('monster'.($monsterId % 100), 'deck'.$playerId);
             $this->game->powerUpExpansion->evolutionCards->shuffle('deck'.$playerId);
         }
     }

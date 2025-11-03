@@ -121,26 +121,24 @@ class ItemManagerDbService {
  * @template T of object
  */
 class ItemManager {
-    protected ItemManagerDbService $db;
+    public ItemManagerDbService $db;
 
     /**
      * The DB table name.
      */
-    protected string $tableName;
+    private string $tableName;
 
     /**
      * The Item object fields
      * @var ItemField[]
      */
-    protected array $fields = [];
+    private array $fields = [];
 
     /**
      * @param class-string<T> $className The Item object class. Defaults to stdClass.
-     * @param ItemLocation[] $locations The different possible locations, used for autoReshuffle.
      */
     public function __construct(
-        protected string $className = \stdClass::class,
-        protected array $locations = [],
+        private string $className = \stdClass::class,
     ) {
         $this->readTableName();
         $this->readFields();
@@ -157,7 +155,7 @@ class ItemManager {
     /**
      * Read the DB table name with #[Item]
      */
-    protected function readTableName(): void {
+    private function readTableName(): void {
         $reflectionClass = new \ReflectionClass($this->className);
         $attributes = $reflectionClass->getAttributes(Item::class);
         if (empty($attributes)) {
@@ -175,7 +173,7 @@ class ItemManager {
     /**
      * Read the fields of the item with #[ItemField]
      */
-    protected function readFields(): void {
+    private function readFields(): void {
         $reflectionClass = new \ReflectionClass($this->className);
         foreach ($reflectionClass->getProperties() as $property) {
             $attributes = $property->getAttributes(ItemField::class);
@@ -290,32 +288,6 @@ class ItemManager {
         );
     }
 
-    /**
-     * Shuffle the order of the items in a location.
-     */
-    public function shuffle(string $location, ?int $locationArg = null): void {
-        $idField = $this->getItemFieldByKind('id');
-        $locationField = $this->getItemFieldByKind('location');
-        $locationArgField = $this->getItemFieldByKind('location_arg');
-        $orderField = $this->getItemFieldByKind('order');
-
-        $where = $this->db->sqlEqualValue($locationField, $location);
-        if ($locationArg !== NULL) {
-            $where .= " AND ".$this->db->sqlEqualValue($locationArgField, $locationArg);
-        }
-        $item_ids = $this->db->sqlGetList("`{$idField->dbField}`", $where);
-        $item_ids = array_values(array_map(fn($dbObject) => intval($dbObject[$idField->dbField]), $item_ids));
-        
-        array_shuffle_bga_rand( $item_ids );
-        
-        foreach( $item_ids as $index => $item_id ) {
-            $this->db->sqlUpdate(
-                $this->db->sqlEqualValue($orderField, $index), 
-                $this->db->sqlEqualValue($idField, $item_id)
-            );
-        }
-    }
-
     public function moveAllItemsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
@@ -358,16 +330,6 @@ class ItemManager {
      */
     public function pickItemsForLocation(int $number, string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): array {
         $items = $this->getItemsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
-        if (count($items) < $number) {
-            $itemLocation = array_find($this->locations, fn($location) => $location->name === $fromLocation);
-            if ($itemLocation && $itemLocation->autoReshuffleFrom !== null) {
-                // reshuffle
-                $this->moveAllItemsInLocation($itemLocation->autoReshuffleFrom, $fromLocation);
-                $this->shuffle($fromLocation);
-
-                $items = array_merge($items, $this->getItemsInLocation($fromLocation, reversed: true, limit: ($number - count($items))));
-            }
-        }
         if (count($items) > 0) {
             $this->moveItems($items, $toLocation, $toLocationArg);
         }
@@ -573,22 +535,22 @@ class ItemManager {
         $this->db->sqlUpdate(implode(",", $changes), '1');
     }
 
-    protected function getItemField(string $name): ?ItemField {
+    public function getItemField(string $name): ?ItemField {
         return array_find($this->fields, fn($field) => $field->name === $name);
     }
 
-    protected function getItemFieldByKind(string $kind): ?ItemField {
+    public function getItemFieldByKind(string $kind): ?ItemField {
         return array_find($this->fields, fn($field) => $field->kind === $kind);
     }
 
-    protected function getClassName(?array $dbItem): ?string {
+    public function getClassName(?array $dbItem): ?string {
         return $this->className;
     }
 
     /**
      * @return T|null An object of the type specified by $this->className, or null if no item is picked.
      */
-    protected function getItemFromDb(?array $dbItem): ?object {
+    public function getItemFromDb(?array $dbItem): ?object {
         if (!$dbItem) {
             return null;
         }

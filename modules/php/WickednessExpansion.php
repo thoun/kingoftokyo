@@ -50,7 +50,7 @@ class WickednessExpansion {
     }
 
     public function removeWickednessTiles(int $playerId, array $tiles) {
-        $this->game->wickednessTiles->moveItems($tiles, 'discard');
+        $this->game->wickednessTiles->moveCards($tiles, 'discard');
 
         $this->game->notify->all("removeWickednessTiles", '', [
             'playerId' => $playerId,

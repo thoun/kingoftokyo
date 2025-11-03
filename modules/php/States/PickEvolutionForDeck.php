@@ -53,13 +53,13 @@ class PickEvolutionForDeck extends GameState {
         int $currentPlayerId,
         #[IntParam(name: 'id')] int $cardId,
     ) {
-        $card = $this->game->powerUpExpansion->evolutionCards->getItemById($cardId);
+        $card = $this->game->powerUpExpansion->evolutionCards->getCardById($cardId);
 
         if (strpos($card->location, 'mutant') !== 0) {
             throw new \BgaUserException('Card is not selectable');
         }
 
-        $this->game->powerUpExpansion->evolutionCards->moveItem($card, 'deck'.$currentPlayerId);
+        $this->game->powerUpExpansion->evolutionCards->moveCard($card, 'deck'.$currentPlayerId);
 
         $this->notify->player($currentPlayerId, 'evolutionPickedForDeck', '', [
             'card' => $card,

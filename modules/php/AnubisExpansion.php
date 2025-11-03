@@ -37,8 +37,8 @@ class AnubisExpansion {
     public function fillResult(array &$result): void {
         $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
         $result['curseCard'] = $this->curseCards->getCurrent();
-        $result['hiddenCurseCardCount'] = intval($this->curseCards->countItemsInLocation('deck'));
-        $result['visibleCurseCardCount'] = intval($this->curseCards->countItemsInLocation('table')) + intval($this->curseCards->countItemsInLocation('discard'));
+        $result['hiddenCurseCardCount'] = $this->curseCards->countCardsInLocation('deck');
+        $result['visibleCurseCardCount'] = $this->curseCards->countCardsInLocation('table') + $this->curseCards->countCardsInLocation('discard');
         $result['topCurseDeckCard'] = $this->curseCards->getTopDeck();
     }
 
@@ -232,13 +232,13 @@ class AnubisExpansion {
 
         $this->removeCursePermanentEffectOnReplace();
 
-        $this->curseCards->moveAllItemsInLocation('table', 'discard');
+        $this->curseCards->moveAllCardsInLocation('table', 'discard');
 
-        $card = $this->curseCards->pickItemForLocation('deck', null, 'table');
+        $card = $this->curseCards->pickCardForLocation('deck', null, 'table');
 
         $this->game->notify->all('changeCurseCard', clienttranslate('Die of fate is on [dieFateEye], Curse card is changed'), [
             'card' => $card,
-            'hiddenCurseCardCount' => $this->curseCards->countItemsInLocation('deck'),
+            'hiddenCurseCardCount' => $this->curseCards->countCardsInLocation('deck'),
             'topCurseDeckCard' => $this->curseCards->getTopDeck(),
         ]);
 
