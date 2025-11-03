@@ -97,17 +97,17 @@ trait UtilTrait {
         }
     }
 
-    function isUsedCard(int $cardId) {
+    function isUsedCard(int $cardId): bool {
         $cardsIds = $this->getUsedCard();
         return in_array($cardId, $cardsIds);
     }
 
-    function countUsedCard(int $cardId) {
+    function countUsedCard(int $cardId): int {
         $cardsIds = $this->getUsedCard();
-        return count(array_filter($cardsIds, fn($id) => $id == $cardId));
+        return Arrays::count($cardsIds, fn($id) => $id == $cardId);
     }
 
-    function setUsedCard(int $cardId) {
+    function setUsedCard(int $cardId): void {
         $cardsIds = $this->getUsedCard();
         $cardsIds[] = $cardId;
         $this->setGlobalVariable(USED_CARDS, $cardsIds);
@@ -117,7 +117,7 @@ trait UtilTrait {
         return $this->getGlobalVariable(USED_CARDS, true) ?? [];
     }
 
-    function resetUsedCards() {
+    function resetUsedCards(): void {
         $this->setGlobalVariable(USED_CARDS, []);
     }
 
@@ -125,31 +125,31 @@ trait UtilTrait {
         $this->DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
     }
 
-    function getMaxPlayerScore() {
+    function getMaxPlayerScore(): int {
         return intval($this->getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }
 
-    function getPlayerScore(int $playerId) {
+    function getPlayerScore(int $playerId): int {
         return min(20, intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId")));
     }
 
-    function getPlayerHealth(int $playerId) {
+    function getPlayerHealth(int $playerId): int {
         return intval($this->getUniqueValueFromDB("SELECT player_health FROM player where `player_id` = $playerId"));
     }
 
-    function getMinPlayerHealth() {
+    function getMinPlayerHealth(): int {
         return intval($this->getUniqueValueFromDB("SELECT min(player_health) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
     }
 
-    function getMaxPlayerEnergy() {
+    function getMaxPlayerEnergy(): int {
         return intval($this->getUniqueValueFromDB("SELECT max(player_energy) FROM player"));
     }
 
-    function getPlayerEnergy(int $playerId) {
+    function getPlayerEnergy(int $playerId): int {
         return intval($this->getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
 
-    function getPlayerPotentialEnergy(int $playerId) {
+    function getPlayerPotentialEnergy(int $playerId): int {
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->cthulhuExpansion->isActive()) {
             $cultists = $this->cthulhuExpansion->getPlayerCultists($playerId);
@@ -161,15 +161,15 @@ trait UtilTrait {
         return $potentialEnergy;
     }
 
-    function getPlayerPoisonTokens(int $playerId) {
+    function getPlayerPoisonTokens(int $playerId): int {
         return intval($this->getUniqueValueFromDB("SELECT player_poison_tokens FROM player where `player_id` = $playerId"));
     }
 
-    function getPlayerShrinkRayTokens(int $playerId) {
+    function getPlayerShrinkRayTokens(int $playerId): int {
         return intval($this->getUniqueValueFromDB("SELECT player_shrink_ray_tokens FROM player where `player_id` = $playerId"));
     }
 
-    function getRollNumber(int $playerId) {
+    function getRollNumber(int $playerId): int {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $ignisFatus = 0;
@@ -219,7 +219,7 @@ trait UtilTrait {
         return $rollNumber;
     }
 
-    function getPlayerMaxHealth(int $playerId) {
+    function getPlayerMaxHealth(int $playerId): int {
         $add = 0;
         $remove = 0;
 
@@ -243,30 +243,30 @@ trait UtilTrait {
         return min(12, 10 + $add - $remove);
     }
 
-    function isZombified(int $playerId) {
+    function isZombified(int $playerId): bool {
         return $this->isDarkEdition() && boolval($this->getUniqueValueFromDB( "SELECT player_zombified FROM player WHERE player_id = $playerId"));
     }
 
-    function getRemainingPlayers() {
+    function getRemainingPlayers(): int {
         return intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
     }
 
-    function tokyoBayUsed() {
+    function tokyoBayUsed(): bool {
         return $this->getRemainingPlayers() > 4;
     }
 
-    function isTokyoEmpty(bool $bay) {
+    function isTokyoEmpty(bool $bay): bool {
         $location = $bay ? 2 : 1;
         $players = intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_location = $location"));
         return $players == 0;
     }
         
-    function tokyoHasFreeSpot() {
+    function tokyoHasFreeSpot(): bool {
         return $this->isTokyoEmpty(false) || ($this->tokyoBayUsed() && $this->isTokyoEmpty(true));
     }
 
 
-    function moveToTokyo(int $playerId, bool $bay) {
+    function moveToTokyo(int $playerId, bool $bay): void {
         if (!$this->canEnterTokyo($playerId)) {
             return;
         }
@@ -356,7 +356,7 @@ trait UtilTrait {
         }
     }
 
-    function moveToTokyoFreeSpot(int $playerId) {
+    function moveToTokyoFreeSpot(int $playerId): void {
         if ($this->isTokyoEmpty(false)) {
             $this->moveToTokyo($playerId, false);
         } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
@@ -440,7 +440,7 @@ trait UtilTrait {
         ]);
     }
 
-    function inTokyo(int $playerId) {
+    function inTokyo(int $playerId): bool {
         $location = intval($this->getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
     }

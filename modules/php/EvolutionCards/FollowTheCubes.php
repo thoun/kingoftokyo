@@ -15,10 +15,6 @@ class FollowTheCubes extends EvolutionCard
         $this->mindbugKeywords = [HUNTER];
     }
 
-    public function addSmashesOrder(): int {
-        return 1;
-    }
-
     public function addSmashes(Context $context): int {
         if (!$this->activated) {
             return 0;

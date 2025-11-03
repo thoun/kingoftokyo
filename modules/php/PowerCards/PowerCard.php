@@ -14,6 +14,11 @@ const MINDBUG_KEYWORDS_START_TURN = [HUNTER, SNEAKY];
 const MINDBUG_KEYWORDS_WOUNDED = [POISON, TOUGH];
 const MINDBUG_KEYWORDS_END_TURN = [FRENZY];
 
+interface AddSmashesPowerCard {
+    function addSmashesOrder();
+    function addSmashes();
+}
+
 #[Item('card')]
 class PowerCard {
     #[ItemField(kind: 'id', dbField: 'card_id')]

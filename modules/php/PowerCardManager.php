@@ -484,6 +484,8 @@ class PowerCardManager extends CardManager {
 
     /**
      * Return cards, ordered by location_arg for legacy purposes.
+     * 
+     * @return PowerCard[]
      */
     public function getCardsInLocationOldOrder(string $location, ?int $locationArg = null) {
         $cards = $this->getCardsInLocation($location, $locationArg);
@@ -500,6 +502,9 @@ class PowerCardManager extends CardManager {
         return $onlyPublic ? PowerCard::onlyId($card) : $card;
     }
 
+    /**
+     * @return PowerCard[]
+     */
     public function getCardsOnTopOldOrder(int $number, string $location): array {
         $cards = $this->getCardsInLocationOldOrder($location);
         return count($cards) > 0 ? array_slice($cards, -$number) : [];
@@ -510,14 +515,23 @@ class PowerCardManager extends CardManager {
         return count($cards) > 0 ? $cards[0] : null;
     }
 
+    /**
+     * @return PowerCard[]
+     */
     public function getCardsOfType(int $type): array {
         return $this->getCardsByFieldName('type', [$type]);
     }
 
+    /**
+     * @return PowerCard[]
+     */
     public function getPlayerCardsOfType(int $type, int $playerId): array {
         return Arrays::filter($this->getCardsByFieldName('type', [$type]), fn($card) => $card->location === 'hand' && $card->location_arg === $playerId);
     }
 
+    /**
+     * @return PowerCard
+     */
     public function pickCardForLocationOldOrder(string $fromLocation, string $toLocation, int $toLocationArg = 0) {
         $item = $this->getCardOnTopOldOrder($fromLocation);
         if ($item === null && $fromLocation === 'deck') {
@@ -532,6 +546,9 @@ class PowerCardManager extends CardManager {
         return $item;
     }
 
+    /**
+     * @return PowerCard[]
+     */
     public function getTable(): array {
         return $this->getCardsInLocationOldOrder('table');
     }
@@ -539,6 +556,8 @@ class PowerCardManager extends CardManager {
     /**
      * Returns all real power cards the player have.
      * Includes disabled Keep cards.
+     * 
+     * @return PowerCard[]
      */
     public function getPlayerReal(int $playerId): array {
         return $this->getCardsInLocation('hand', $playerId);
@@ -548,6 +567,8 @@ class PowerCardManager extends CardManager {
      * Returns all virtual power cards the player have (an evolution copied with Mimick or Fluxling will be returned as a power card).
      * A virtual card will have a negative id.
      * Excludes disabled Keep cards.
+     * 
+     * @return PowerCard[]
      */
     function getPlayerVirtual(int $playerId, bool $virtualFirst = false): array {
         $cards = $this->getPlayerReal($playerId);
@@ -592,11 +613,17 @@ class PowerCardManager extends CardManager {
         return $cards;
     }
 
+    /**
+     * @return PowerCard[]
+     */
     public function getReserved(int $playerId, ?int $locationArg = null): array {
         return $this->getCardsInLocation('reserved'.$playerId, $locationArg);
     }
 
-    function applyEffects(PowerCard $card, int $playerId, int $stateAfter) { // return $damages
+    /**
+     * @return Damage[]|null
+     */
+    function applyEffects(PowerCard $card, int $playerId, int $stateAfter) { // return ?$damages
         $cardType = $card->type;
         if ($cardType < 100 && !$this->game->keepAndEvolutionCardsHaveEffect()) {
             return;
@@ -618,7 +645,22 @@ class PowerCardManager extends CardManager {
 
         foreach ($cards as $card) {
             if (method_exists($card, 'incDieRollCount')) {
+                /** @disregard */
                 $inc += $card->incDieRollCount($context);
+            }
+        }
+
+        return $inc;
+    }
+
+    public function onIncDieCount(Context $context): int {
+        $cards = $this->getPlayerVirtual($context->currentPlayerId);
+        $inc = 0;
+
+        foreach ($cards as $card) {
+            if (method_exists($card, 'incDieCount')) {
+                /** @disregard */
+                $inc += $card->incDieCount($context);
             }
         }
 
@@ -627,17 +669,19 @@ class PowerCardManager extends CardManager {
 
     public function onAddSmashes(Context $context): array {
         $cards = $this->getPlayerVirtual($context->currentPlayerId);
-        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashesOrder') && method_exists($card, 'addSmashes'));
+        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashes'));
         $addedByCards = 0;
         $addingCards = [];
 
         // to make sure antimatter beam multiplication is done after barbs addition
+        /** @var AddSmashesPowerCard[] $cards */
         usort($cards, 
             // Sort by the return value of addSmashesOrder, smaller order first
-            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+            fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1) <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
         );
 
         foreach ($cards as $card) {
+            /** @disregard */
             $addedByCard = $card->addSmashes($context);
             $addedByCards += $addedByCard;
             $context->addedSmashes += $addedByCard;

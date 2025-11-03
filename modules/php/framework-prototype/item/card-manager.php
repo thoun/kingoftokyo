@@ -17,7 +17,15 @@ class CardManager extends ItemManager {
         string $className = \stdClass::class,
         protected array $locations = [],
     ) {
-        $this->itemManager = new ItemManager($className);
+        $this->itemManager = new class($className, $this) extends ItemManager {
+            public function __construct(string $className, private CardManager $manager) {
+                parent::__construct($className);
+            }
+
+            public function getClassName(?array $dbItem): ?string {
+                return $this->manager->getClassName($dbItem);
+            }
+        };
     }
 
     /**
@@ -204,7 +212,7 @@ class CardManager extends ItemManager {
      * Update the DB value based on the Item fields.
      * Set $fields to set which fields to update (all if null)
      */
-    public function updateCard(object $item, ?array $fields = null): void {
+    public function updateCard(object $item, array|string|null $fields = null): void {
         $this->itemManager->updateItem($item, $fields);
     }
 
@@ -225,7 +233,7 @@ class CardManager extends ItemManager {
     }
 
     public function getClassName(?array $dbItem): ?string {
-        return $this->itemManager->getClassName($dbItem);
+        return null;
     }
 
     /**

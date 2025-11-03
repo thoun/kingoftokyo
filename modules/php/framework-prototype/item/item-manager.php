@@ -340,7 +340,7 @@ class ItemManager {
         $orderField = $this->getItemFieldByKind('order');
 
         $item->{$orderField->name} = $order;
-        $this->updateItem($item, [$orderField->name]);
+        $this->updateItem($item, $orderField->name);
     }
 
     public function moveItem(object $item, string $toLocation, int $toLocationArg = 0, ?int $order = null): void {
@@ -497,8 +497,11 @@ class ItemManager {
      * Update the DB value based on the Item fields.
      * Set $fields to set which fields to update (all if null)
      */
-    public function updateItem(object $item, ?array $fields = null): void {
+    public function updateItem(object $item, array|string|null $fields = null): void {
         $idField = $this->getItemFieldByKind('id');
+        if (gettype($fields) === 'string') {
+            $fields = [$fields];   
+        }
 
         $changes = [];
 

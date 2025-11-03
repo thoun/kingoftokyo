@@ -15,10 +15,6 @@ class Barbs extends WickednessTile {
         }
     }
 
-    public function addSmashesOrder(): int {
-        return 1;
-    }
-
     public function addSmashes(Context $context): int {
         if ($context->dieSmashes + $context->addedSmashes >= 2) {
             return 1;

@@ -340,7 +340,6 @@ class MindbugExpansion {
             if (gettype($newDamages) === 'array') {
                 $damages = array_merge($damages, $newDamages);
             }
-            debug($damages, $newDamages);
         }
         $this->cleanActivatedCards($playerId, FRENZY);
         return $damages;

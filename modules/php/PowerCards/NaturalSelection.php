@@ -12,4 +12,8 @@ class NaturalSelection extends PowerCard {
 
         // TODO endTurn effect : move here, but also make it dodgeable with Wings? Confirm with publisher?
     }
+    
+    public function incDieCount(Context $context) {
+        return 1;
+    }
 }

@@ -17,6 +17,8 @@ use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
 
 /**
@@ -202,7 +204,7 @@ trait DiceUtilTrait {
             return intval($this->getGameStateValue(DICE_NUMBER)) + intval($this->getGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED));
         }
 
-        $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD) + $this->countCardOfType($playerId, NATURAL_SELECTION_CARD);
+        $add = $this->powerCards->onIncDieCount(new Context($this, currentPlayerId: $playerId));
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
         if ($this->wickednessExpansion->isActive()) {
@@ -954,14 +956,6 @@ trait DiceUtilTrait {
             $cardsAddingSmashes[] = CHEERLEADER_CARD;
         }
 
-        // no brain
-        $countNoBrain = $this->countCardOfType($playerId, NO_BRAIN_CARD);
-        if ($countNoBrain > 0) {
-            $addedSmashes += $countNoBrain;
-
-            for ($i=0; $i<$countNoBrain; $i++) { $cardsAddingSmashes[] = NO_BRAIN_CARD; }
-        }
-
         // Jet club
         if ($isPowerUpExpansion && $playerInTokyo) {
             $jetClubEvolutions = $this->getEvolutionsOfType($playerId, JET_CLUB_EVOLUTION);
@@ -969,16 +963,6 @@ trait DiceUtilTrait {
                 $addedSmashes += 1;
                     
                 $cardsAddingSmashes[] = 3000 + JET_CLUB_EVOLUTION;
-            }
-        }
-
-        // burrowing
-        if ($playerInTokyo) {
-            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                $addedSmashes += $countBurrowing;
-
-                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = BURROWING_CARD; }
             }
         }
 
@@ -1038,41 +1022,42 @@ trait DiceUtilTrait {
                     for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
                 }
             }
+        }
 
-            // TODO migrate all of the above in their respective card class like AcidAttack/FollowTheCubes/Barbs
-            [$addedByCards, $addingCards] = $this->powerCards->onAddSmashes(new Context(
+        // TODO migrate all of the above in their respective card class like AcidAttack/FollowTheCubes/Barbs
+        [$addedByCards, $addingCards] = $this->powerCards->onAddSmashes(new Context(
+            $this, 
+            currentPlayerId: $playerId,
+            dieSmashes: $diceCounts[6],
+            addedSmashes: $addedSmashes,
+            currentPlayerInTokyo: $playerInTokyo,
+        ));
+
+        $addedSmashes += $addedByCards;
+        $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingCards);
+
+        if ($this->wickednessExpansion->isActive()) {
+            [$addedByTiles, $addingTiles] = $this->wickednessTiles->onAddSmashes(new Context(
                 $this, 
                 currentPlayerId: $playerId,
                 dieSmashes: $diceCounts[6],
                 addedSmashes: $addedSmashes,
             ));
 
-            $addedSmashes += $addedByCards;
-            $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingCards);
+            $addedSmashes += $addedByTiles;
+            $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingTiles);
+        }
 
-            if ($this->wickednessExpansion->isActive()) {
-                [$addedByTiles, $addingTiles] = $this->wickednessTiles->onAddSmashes(new Context(
-                    $this, 
-                    currentPlayerId: $playerId,
-                    dieSmashes: $diceCounts[6],
-                    addedSmashes: $addedSmashes,
-                ));
+        if ($this->powerUpExpansion->isActive()) {
+            [$addedByEvolutions, $addingEvolutions] = $this->powerUpExpansion->evolutionCards->onAddSmashes(new Context(
+                $this, 
+                currentPlayerId: $playerId,
+                dieSmashes: $diceCounts[6],
+                addedSmashes: $addedSmashes,
+            ));
 
-                $addedSmashes += $addedByTiles;
-                $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingTiles);
-            }
-
-            if ($this->powerUpExpansion->isActive()) {
-                [$addedByEvolutions, $addingEvolutions] = $this->powerUpExpansion->evolutionCards->onAddSmashes(new Context(
-                    $this, 
-                    currentPlayerId: $playerId,
-                    dieSmashes: $diceCounts[6],
-                    addedSmashes: $addedSmashes,
-                ));
-
-                $addedSmashes += $addedByEvolutions;
-                $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingEvolutions);
-            }
+            $addedSmashes += $addedByEvolutions;
+            $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingEvolutions);
         }
 
         $detail = new \stdClass();

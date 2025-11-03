@@ -300,15 +300,15 @@ class EvolutionCardManager extends CardManager {
 
     public function onAddSmashes(Context $context): array {
         $cards = $this->getPlayerVirtual($context->currentPlayerId, true, false);
-        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashesOrder') && method_exists($card, 'addSmashes'));
+        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashes'));
         $addedByCards = 0;
         $addingCards = [];
 
         // to make sure antimatter beam multiplication is done after barbs addition
+        /** @var AddSmashesPowerCard[] $cards */
         usort($cards, 
             // Sort by the return value of addSmashesOrder, smaller order first
-            /** @disregard */
-            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+            fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1) <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
         );
 
         foreach ($cards as $card) {

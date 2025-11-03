@@ -103,10 +103,16 @@ class WickednessTileManager extends CardManager {
         return $namespace . '\\' . WICKEDNESS_TILE_CLASSES[$cardType];
     }
 
+    /**
+     * @return WickednessTile[]
+     */
     public function getTable(?int $level = null): array {
         return $this->getCardsInLocation('table', $level);
     }
 
+    /**
+     * @return WickednessTile[]
+     */
     public function getPlayerTiles(int $playerId): array {
         return $this->getCardsInLocation('hand', $playerId);
     }
@@ -123,6 +129,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'startTurnEffect')) {
+                /** @disregard */
                 $tile->startTurnEffect($context);
             }
         }
@@ -134,6 +141,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'incDieCount')) {
+                /** @disregard */
                 $inc += $tile->incDieCount($context);
             }
         }
@@ -147,6 +155,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'incDieRollCount')) {
+                /** @disregard */
                 $inc += $tile->incDieRollCount($context);
             }
         }
@@ -160,6 +169,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'incMaxHealth')) {
+                /** @disregard */
                 $inc += $tile->incMaxHealth($context);
             }
         }
@@ -172,6 +182,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'resolvingDiceEffect')) {
+                /** @disregard */
                 $tile->resolvingDiceEffect($context);
             }
         }
@@ -182,6 +193,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'enteringTokyoEffect')) {
+                /** @disregard */
                 $tile->enteringTokyoEffect($context);
             }
         }
@@ -193,6 +205,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'incPowerCardsReduction')) {
+                /** @disregard */
                 $inc += $tile->incPowerCardsReduction($context);
             }
         }
@@ -205,6 +218,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'winOnElimination')) {
+                /** @disregard */
                 if ($tile->winOnElimination($context)) {
                     return $tile;
                 }
@@ -216,14 +230,15 @@ class WickednessTileManager extends CardManager {
 
     public function onAddSmashes(Context $context): array {
         $tiles = $this->getPlayerTiles($context->currentPlayerId);
-        $tiles = Arrays::filter($tiles, fn($tile) => method_exists($tile, 'addSmashesOrder') && method_exists($tile, 'addSmashes'));
+        $tiles = Arrays::filter($tiles, fn($tile) => method_exists($tile, 'addSmashes'));
         $addedByTiles = 0;
         $addingTiles = [];
 
         // to make sure antimatter beam multiplication is done after barbs addition
+        /** @var AddSmashesPowerCard[] $tiles */
         usort($tiles, 
             // Sort by the return value of addSmashesOrder, smaller order first
-            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+            fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1) <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
         );
 
         foreach ($tiles as $tile) {
@@ -244,6 +259,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'addSmashTokens')) {
+                /** @disregard */
                 $result->add($tile->addSmashTokens($context));
             }
         }
@@ -256,6 +272,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'onApplyDamageEffect')) {
+                /** @disregard */
                 $tile->onApplyDamageEffect($context);
             }
         }
@@ -266,6 +283,7 @@ class WickednessTileManager extends CardManager {
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'buyCardEffect')) {
+                /** @disregard */
                 $tile->buyCardEffect($context);
             }
         }
