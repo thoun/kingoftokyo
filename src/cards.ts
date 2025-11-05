@@ -385,7 +385,7 @@ class CardsManager extends CardManager<Card> {
 
     public toggleActivated(card: Card) {
         const div = this.getCardElement(card);
-        div.classList.toggle('activated', !!card.activated);
+        div?.classList.toggle('activated', !!card.activated);
     }
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {

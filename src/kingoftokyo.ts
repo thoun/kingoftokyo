@@ -3680,6 +3680,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
         this.tableCenter.setTopDeckCard(args.topDeckCard, args.deckCardsCount);
 
+        this.cardsManager.toggleActivated(card);
+
         this.tableManager.tableHeightChange(); // adapt to new card
     }
 

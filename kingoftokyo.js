@@ -2608,7 +2608,7 @@ var CardsManager = /** @class */ (function (_super) {
     }
     CardsManager.prototype.toggleActivated = function (card) {
         var div = this.getCardElement(card);
-        div.classList.toggle('activated', !!card.activated);
+        div === null || div === void 0 ? void 0 : div.classList.toggle('activated', !!card.activated);
     };
     CardsManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
@@ -9782,6 +9782,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             this.cardsManager.placeTokensOnCard(card, playerId);
         }
         this.tableCenter.setTopDeckCard(args.topDeckCard, args.deckCardsCount);
+        this.cardsManager.toggleActivated(card);
         this.tableManager.tableHeightChange(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_reserveCard = function (args) {
