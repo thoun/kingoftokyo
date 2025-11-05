@@ -4542,7 +4542,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
+        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-mindbug\" class=\"token-wrapper mindbug\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
         if (game.isPowerUpExpansion()) {
             html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            ");
             // TODOPUBG
@@ -4576,6 +4576,7 @@ var PlayerTable = /** @class */ (function () {
             this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+            this.setMindbugTokens(Number(player.mindbugTokens));
         }
         if (this.game.isKingkongExpansion()) {
             dojo.place("<div id=\"tokyo-tower-".concat(player.id, "\" class=\"tokyo-tower-wrapper\"></div>"), "player-table-".concat(player.id));
@@ -4760,11 +4761,12 @@ var PlayerTable = /** @class */ (function () {
         this.setPoints(0);
         this.setHealth(this.game.getPlayerHealth(this.playerId));
     };
-    PlayerTable.prototype.getPlaceToken = function (placed) {
+    PlayerTable.prototype.getPlaceToken = function (placed, horizontal) {
         var _this = this;
+        if (horizontal === void 0) { horizontal = false; }
         var newPlace = {
-            x: 16,
-            y: Math.random() * 138 + 16,
+            x: horizontal ? Math.random() * 50 + 16 : 16,
+            y: horizontal ? 16 : Math.random() * 138 + 16,
         };
         var protection = 0;
         while (protection < 1000 && placed.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
@@ -4787,7 +4789,7 @@ var PlayerTable = /** @class */ (function () {
         placed.splice(tokens, placed.length - tokens);
         // add tokens
         for (var i = placed.length; i < tokens; i++) {
-            var newPlace = this.getPlaceToken(placed);
+            var newPlace = this.getPlaceToken(placed, true);
             placed.push(newPlace);
             var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"").concat(type, " token\"></div>");
             dojo.place(html, divId);
@@ -4800,6 +4802,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setShrinkRayTokens = function (tokens) {
         this.setTokens('shrink-ray', tokens);
+    };
+    PlayerTable.prototype.setMindbugTokens = function (tokens) {
+        this.setTokens('mindbug', tokens);
     };
     PlayerTable.prototype.getTokyoTower = function () {
         return this.tokyoTower;
@@ -8368,7 +8373,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 _this.setPoisonTokens(playerId, player.poisonTokens);
                 _this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
-                _this.setPlayerTokens(playerId, player.mindbugTokens, 'mindbug');
+                _this.setMindbugTokens(playerId, player.mindbugTokens);
             }
             dojo.place("<div id=\"player-board-monster-figure-".concat(player.id, "\" class=\"monster-figure monster").concat(player.monster, "\"><div class=\"kot-token\"></div></div>"), "player_board_".concat(player.id));
             if (player.location > 0) {
@@ -10121,7 +10126,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     KingOfTokyo.prototype.notif_setPlayerCounter = function (args) {
         var name = args.name, playerId = args.playerId, value = args.value;
         if (name === 'mindbugTokens') {
-            this.setPlayerTokens(playerId, value, 'mindbug');
+            this.setMindbugTokens(playerId, value);
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
@@ -10198,6 +10203,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.setPlayerTokens(playerId, tokens, 'poison');
         (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setPoisonTokens(tokens);
     };
+    KingOfTokyo.prototype.setMindbugTokens = function (playerId, tokens) {
+        var _a;
+        this.setPlayerTokens(playerId, tokens, 'mindbug');
+        (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setMindbugTokens(tokens);
+    };
     KingOfTokyo.prototype.setCultists = function (playerId, cultists, isMaxHealth) {
         var _a;
         this.cultistCounters[playerId].toValue(cultists);
@@ -10250,7 +10260,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             this.removeAutoLeaveUnderButton();
         }
         this.setShrinkRayTokens(playerId, 0);
-        this.setPlayerTokens(playerId, 0, 'mindbug');
+        this.setMindbugTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
         if (this.isCthulhuExpansion()) {
             this.setCultists(playerId, 0, false);

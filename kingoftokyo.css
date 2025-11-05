@@ -2370,6 +2370,12 @@ body > .card {
 #table .player-table .token-wrapper.shrink-ray .token {
   box-shadow: 0 0 4px 4px #d7e2a1;
 }
+#table .player-table .token-wrapper.mindbug {
+  top: -16px;
+  right: 50px;
+  height: 32px;
+  width: 50px;
+}
 #table .player-table .player-wickedness-tiles {
   width: 100%;
 }

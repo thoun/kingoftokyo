@@ -199,6 +199,12 @@
                 box-shadow: 0 0 4px 4px #d7e2a1;
             }
         }
+        &.mindbug {
+            top: -16px;
+            right: 50px;
+            height: 32px;
+            width: 50px;
+        }
     }
     
     .player-wickedness-tiles {

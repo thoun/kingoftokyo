@@ -6,7 +6,7 @@ const POINTS_DEG_DARK_EDITION = [44, 62, 76, 91, 106, 121, 136, 148, 161, 174, 1
 const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 const HEALTH_DEG_DARK_EDITION = [360, 332, 305, 279, 255, 230, 204, 177, 153, 124, 101, 69, 48];
 const SPLIT_ENERGY_CUBES = 6;
-type TokenType = 'poison' | 'shrink-ray';
+type TokenType = 'poison' | 'shrink-ray' | 'mindbug';
 
 class PlayerTable {
     public playerId: number;
@@ -47,6 +47,7 @@ class PlayerTable {
                 </div>
                 <div id="token-wrapper-${this.playerId}-poison" class="token-wrapper poison"></div>
                 <div id="token-wrapper-${this.playerId}-shrink-ray" class="token-wrapper shrink-ray"></div>
+                <div id="token-wrapper-${this.playerId}-mindbug" class="token-wrapper mindbug"></div>
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
@@ -98,6 +99,7 @@ class PlayerTable {
             this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+            this.setMindbugTokens(Number(player.mindbugTokens))
         }
 
         if (this.game.isKingkongExpansion()) {
@@ -330,10 +332,10 @@ class PlayerTable {
         this.setHealth(this.game.getPlayerHealth(this.playerId));
     }
 
-    private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {
+    private getPlaceToken(placed: PlacedTokens[], horizontal: boolean = false): PlacedTokens {
         const newPlace = {
-            x: 16,
-            y: Math.random() * 138 + 16,
+            x: horizontal ? Math.random() * 50 + 16 : 16,
+            y: horizontal ? 16 : Math.random() * 138 + 16,
         };
         let protection = 0;
         while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
@@ -360,7 +362,7 @@ class PlayerTable {
 
         // add tokens
         for (let i = placed.length; i < tokens; i++) {
-            const newPlace = this.getPlaceToken(placed);
+            const newPlace = this.getPlaceToken(placed, true);
 
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="${type} token"></div>`;
@@ -378,6 +380,10 @@ class PlayerTable {
 
     public setShrinkRayTokens(tokens: number) {
         this.setTokens('shrink-ray', tokens);
+    }
+
+    public setMindbugTokens(tokens: number) {
+        this.setTokens('mindbug', tokens);
     }
     
     public getTokyoTower() {

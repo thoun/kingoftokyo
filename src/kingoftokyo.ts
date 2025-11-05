@@ -1968,7 +1968,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 this.setPoisonTokens(playerId, player.poisonTokens);
                 this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
-                this.setPlayerTokens(playerId, player.mindbugTokens, 'mindbug');
+                this.setMindbugTokens(playerId, player.mindbugTokens);
             }
 
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${player.monster}"><div class="kot-token"></div></div>`, `player_board_${player.id}`);
@@ -4090,7 +4090,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     notif_setPlayerCounter(args) {
         const { name, playerId, value } = args;
         if (name === 'mindbugTokens') {
-            this.setPlayerTokens(playerId, value, 'mindbug');
+            this.setMindbugTokens(playerId, value);
         }
     }
     
@@ -4172,6 +4172,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         this.setPlayerTokens(playerId, tokens, 'poison');
         this.getPlayerTable(playerId)?.setPoisonTokens(tokens);
     }
+
+    private setMindbugTokens(playerId: number, tokens: number) {
+        this.setPlayerTokens(playerId, tokens, 'mindbug');
+        this.getPlayerTable(playerId)?.setMindbugTokens(tokens);
+    }
     
     private setCultists(playerId: number, cultists: number, isMaxHealth: boolean) {
         this.cultistCounters[playerId].toValue(cultists);
@@ -4231,7 +4236,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
         
         this.setShrinkRayTokens(playerId, 0);
-        this.setPlayerTokens(playerId, 0, 'mindbug');
+        this.setMindbugTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
         if (this.isCthulhuExpansion()) {
             this.setCultists(playerId, 0, false);
