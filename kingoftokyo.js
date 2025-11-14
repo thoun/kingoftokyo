@@ -6915,6 +6915,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringSelectExtraDie(args.args);
                 break;
+            case 'AskMindbug':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringPrepareResolveDice(args.args, false);
+                break;
             case 'discardKeepCard':
                 this.onEnteringDiscardKeepCard(args.args);
                 break;

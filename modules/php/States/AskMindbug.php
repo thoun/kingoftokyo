@@ -27,12 +27,18 @@ class AskMindbug extends GameState {
         $canUseToken = $result['canUseToken'];
         $canUseEvasiveMindbug = $result['canUseEvasiveMindbug'];
 
+        $dice = $this->game->getPlayerRolledDice($activePlayerId, false, false, false);
+        $canHealWithDice = $this->game->canHealWithDice($activePlayerId);
+
         return [
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'canMindbug' => $canMindbug,
             'canUseToken' => $canUseToken,
             'canUseEvasiveMindbug' => $canUseEvasiveMindbug,
             '_no_notify' => count($canMindbug) === 0,
+            'dice' => $dice,
+            'canHealWithDice' => $canHealWithDice,
+            'frozenFaces' => $this->game->frozenFaces($activePlayerId),
         ];
     }
 
