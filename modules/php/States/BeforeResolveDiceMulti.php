@@ -6,6 +6,7 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
 class BeforeResolveDiceMulti extends GameState {
@@ -47,9 +48,10 @@ class BeforeResolveDiceMulti extends GameState {
         $this->game->removeDiscardCards($activePlayerId);
 
         $playersIds = $this->game->getPlayersIds();
+        $otherPlayersIds = Arrays::diff($playersIds, [$activePlayerId]);
         $playersWithPotentialEvolution = $this->game->getPlayersIdsWhoCouldPlayEvolutions(
-            $playersIds,
-            $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_MULTI,
+            $otherPlayersIds,
+            $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_MULTI_OTHERS,
         );
 
         $activePlayersWithPotentialEvolution = $this->game->getPlayersIdsWhoCouldPlayEvolutions(
