@@ -743,22 +743,54 @@ button, a {
 }
 
 #help-popin {
-    .help-section {    
-        margin: 5px;
+  .help-consumable {  
+    margin: 5px;
+    background: white;
+    padding: 5px;
+    border-radius: 15px;
+    margin-top: 20px;
 
-        &>div:first-child {
-            background: var(--color);
-            color: white;
-            text-transform: uppercase;
-            display: inline-block;
-            padding: 5px;
-            font-weight: bold;
-        } 
-        &>div:not(:first-child) {
-            border: 2px solid var(--color);
-            color: black;
-            padding: 8px;
-            border-radius: 0 15px 15px 15px;
-        } 
+    .card-consumable-text {
+      font-size: 16pt;
     }
+  }
+
+  .help-mindbug-token {    
+    margin: 5px;
+    border: 2px solid #d83884;
+    color: black;
+    padding: 8px;
+    border-radius: 0 15px 15px 15px;
+    margin-top: 20px;
+
+    &>div:first-child {
+      text-transform: uppercase;
+      display: inline-block;
+      padding: 5px;
+      font-weight: bold;
+      text-align: center; 
+      margin-top: -22px; 
+      background: white; 
+      border-radius: 8px;
+    } 
+  }
+
+  .help-section {    
+    margin: 5px;
+
+    &>div:first-child {
+      background: var(--color);
+      color: white;
+      text-transform: uppercase;
+      display: inline-block;
+      padding: 5px;
+      font-weight: bold;
+    } 
+    &>div:not(:first-child) {
+      border: 2px solid var(--color);
+      color: black;
+      padding: 8px;
+      border-radius: 0 15px 15px 15px;
+    } 
+  }
 }

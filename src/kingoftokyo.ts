@@ -3402,6 +3402,21 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
+            <div class="help-consumable">
+                <div style="text-align: center; margin-top: -15px;">
+                ${formatTextIcons('<CONSUMABLE>')}
+                </div>
+                ${_('A Power card that must be discarded to activate its effect. Until you decide to activate its power, it has no effect.')}
+            </div>
+            <div class="help-mindbug-token">
+                <div>${_('Mindbug token')}</div>
+                <div>
+                    ${_('Each player starts the game with 1 Mindbug token.')}
+                    <br><br>
+                    ${_('Discard a Mindbug token when a Monster has finished their Roll to immediately resolve the Roll as if it were your own. Carry out a <strong>3. Enter Tokyo</strong> phase if necessary, then a <strong>4. Buy Power Cards</strong> phase if you would like. The Mindbugged player then continues their turn with a new <strong>1. Roll Dice</strong> phase.')}
+                </div>
+            </div>
+
             <div class="help-section" style="--color: #de511e;">
                 <div>${_('On your turn, before rolling dice')}</div>
                 <div>
