@@ -65,7 +65,7 @@ class MindbugExpansion {
 
         $this->game->globals->set(MINDBUGGED_PLAYER, $mindbuggedPlayerId);
 
-        $this->game->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} mindbugs ${player_name2}!'), [
+        $this->game->notify->all("mindbugPlayer", clienttranslate('${player_name} mindbugs ${player_name2}!'), [
             'activePlayerId' => $newActivePlayerId,
             'mindbuggedPlayerId' => $mindbuggedPlayerId,
             'player_name' => $this->game->getPlayerNameById($newActivePlayerId),

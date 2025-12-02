@@ -22,7 +22,7 @@ class EndMindbug extends GameState {
         
         $this->game->globals->set(MINDBUGGED_PLAYER, null);
 
-        $this->game->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at the Roll dice phase'), [
+        $this->game->notify->all("mindbugPlayer", clienttranslate('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at the Roll dice phase'), [
             'activePlayerId' => $activePlayerId,
             'mindbuggedPlayerId' => null,
             'player_name' => $this->game->getPlayerNameById($activePlayerId),

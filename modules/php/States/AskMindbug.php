@@ -16,8 +16,8 @@ class AskMindbug extends GameState {
             id: ST_MULTIPLAYER_ASK_MINDBUG,
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
 
-            description: /*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug ${player_name}'),
-            descriptionMyTurn: /*TODOMB clienttranslate*/('${you} can mindbug ${player_name}'),
+            description: clienttranslate('Player with Mindbug tokens can mindbug ${player_name}'),
+            descriptionMyTurn: clienttranslate('${you} can mindbug ${player_name}'),
         );
     }
 
