@@ -20,25 +20,18 @@ class NeutralizingLook extends EvolutionCard
             throw new UserException('You cannot use this Evolution on yourself');
         }
         $dice = $context->game->getPlayerRolledDice($activePlayerId, false, false, false);
-        $countBefore = count($dice);
-        $dice = Arrays::filter($dice, fn($die) => $die->value == 6);
-        if (count($dice) === 0) {
+        $diceToDiscard = Arrays::filter($dice, fn($die) => $die->type == 0 && $die->value == 6 && !$die->discarded);
+        if (count($diceToDiscard) === 0) {
             return;
         }
-        $removed = $countBefore - count($dice);
 
-        $diceCounts = $context->game->getGlobalVariable(DICE_COUNTS, true);
-        $diceCounts[6] -= $removed;
-        $context->game->setGlobalVariable(DICE_COUNTS, $diceCounts);
-
-        $dice = Arrays::filter($dice, fn($die) => !$die->discarded);
-        $context->game->DbQuery("UPDATE dice SET `discarded` = true WHERE `dice_id` IN (".implode(',', Arrays::pluck($dice, 'id')).")");
-        foreach ($dice as &$die) {
+        $context->game->DbQuery("UPDATE dice SET `discarded` = true WHERE `dice_id` IN (".implode(',', Arrays::pluck($diceToDiscard, 'id')).")");
+        foreach ($diceToDiscard as &$die) {
             $die->discarded = true;
         }
 
         $context->game->notify->all("discardedDice", clienttranslate('Dice ${dieFace} are discarded'), [
-            'dice' => $dice,
+            'dice' => $diceToDiscard,
             'dieFace' => $context->game->getDieFaceLogName(6, 0),
         ]);
     }

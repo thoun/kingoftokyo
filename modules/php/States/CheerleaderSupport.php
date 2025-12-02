@@ -19,7 +19,7 @@ class CheerleaderSupport extends GameState {
             description: clienttranslate('Player with Cheerleader can support monster'),
             descriptionMyTurn: clienttranslate('${you} can support monster'),
             transitions: [
-                'end' => \ST_MULTIPLAYER_ASK_MINDBUG,
+                'end' => \ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI,
             ],
         );
     }

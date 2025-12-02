@@ -9,12 +9,12 @@ use Bga\GameFramework\StateType;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
-class BeforeResolveDiceMulti extends GameState {
+class DuringResolveDice extends GameState {
     public function __construct(protected Game $game)
     {
         parent::__construct(
             $game,
-            id: \ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI,
+            id: \ST_PLAYER_DURING_RESOLVE_DICE,
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
             name: 'beforeResolveDice',
             description: clienttranslate('Some players may activate an Evolution card'),
@@ -27,7 +27,7 @@ class BeforeResolveDiceMulti extends GameState {
 
         $highlighted = [];
         if ($isPowerUpExpansion) {
-            $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE);
+            $highlighted = $this->game->powerUpExpansion->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE);
         }
 
         return [
@@ -42,21 +42,22 @@ class BeforeResolveDiceMulti extends GameState {
 
     public function onEnteringState(int $activePlayerId, array $args) {
         if ($args['_no_notify']) {
-            return AskMindbug::class;
+            return ResolveNumberDice::class;
         }
 
         $this->game->removeDiscardCards($activePlayerId);
 
         $playersIds = $this->game->getPlayersIds();
         $otherPlayersIds = Arrays::diff($playersIds, [$activePlayerId]);
+        $playersWithPotentialEvolution = [];
         $playersWithPotentialEvolution = $this->game->getPlayersIdsWhoCouldPlayEvolutions(
             $otherPlayersIds,
-            $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_MULTI_OTHERS,
+            $this->game->EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE_MULTI_OTHERS,
         );
 
-        /*$activePlayersWithPotentialEvolution = $this->game->getPlayersIdsWhoCouldPlayEvolutions(
+        $activePlayersWithPotentialEvolution = $this->game->getPlayersIdsWhoCouldPlayEvolutions(
             [$activePlayerId],
-            $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_ACTIVE,
+            $this->game->EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE_ACTIVE,
         );
 
         $activePlayersWithPotentialEvolution = array_values(
@@ -65,18 +66,18 @@ class BeforeResolveDiceMulti extends GameState {
 
         if (!empty($activePlayersWithPotentialEvolution) && !in_array($activePlayerId, $playersWithPotentialEvolution, true)) {
             $playersWithPotentialEvolution[] = $activePlayerId;
-        }*/
+        }
 
         $playersWithPotentialEvolution = array_values(array_unique($playersWithPotentialEvolution));
 
-        $playersToActivate = $playersWithPotentialEvolution;
+        $playersToactivate = $playersWithPotentialEvolution;
 
-        $this->gamestate->setPlayersMultiactive($playersToActivate, AskMindbug::class, true);
+        $this->gamestate->setPlayersMultiactive($playersToactivate, ResolveNumberDice::class, true);
     }
 
     #[PossibleAction]
     public function actSkipBeforeResolveDice(int $currentPlayerId) {
-        $this->gamestate->setPlayerNonMultiactive($currentPlayerId, AskMindbug::class);
+        $this->gamestate->setPlayerNonMultiactive($currentPlayerId, ResolveNumberDice::class);
     }
 
     public function zombie(int $playerId) {

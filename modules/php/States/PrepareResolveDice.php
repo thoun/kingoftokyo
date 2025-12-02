@@ -87,10 +87,8 @@ class PrepareResolveDice extends GameState {
     function redirectAfterPrepareResolveDice() {
         if ($this->game->isHalloweenExpansion()) {
             return ST_MULTIPLAYER_CHEERLEADER_SUPPORT;
-        } else if ($this->game->mindbugExpansion->isActive()) {
-            return ST_MULTIPLAYER_ASK_MINDBUG;
         } else {
-            return ST_RESOLVE_DIE_OF_FATE;
+            return ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI;
         }
     }
 }

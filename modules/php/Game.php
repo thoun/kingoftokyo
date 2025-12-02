@@ -78,8 +78,10 @@ class Game extends \Bga\GameFramework\Table {
     public array $EVOLUTION_TO_PLAY_BEFORE_START_TEMPORARY;
     public array $EVOLUTION_TO_PLAY_BEFORE_START;
     public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_MULTI_OTHERS;
-    public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_ACTIVE;
     public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE;
+    public array $EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE_ACTIVE;
+    public array $EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE_MULTI_OTHERS;
+    public array $EVOLUTION_TO_PLAY_DURING_RESOLVE_DICE;
     public array $EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO;
     public array $EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO;
     public array $EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO;
@@ -494,7 +496,7 @@ class Game extends \Bga\GameFramework\Table {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
             $result['EVOLUTION_CARDS_SINGLE_STATE'] = [ // only temporary, to show them as disabled
                 'beforeStartTurn' => $this->EVOLUTION_TO_PLAY_BEFORE_START_TEMPORARY, // ST_PLAYER_BEFORE_START_TURN
-                'beforeResolveDice' => $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE, // ST_PLAYER_BEFORE_RESOLVE_DICE
+                'beforeResolveDice' => $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE, // ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI
                 'beforeEnteringTokyo' => $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO, // ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO
                 'afterEnteringTokyo' => $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO + $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO, // ST_PLAYER_AFTER_ENTERING_TOKYO
                 'cardIsBought' => $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT, // ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT
@@ -558,7 +560,7 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->powerUpExpansion->evolutionCards->countCardsInLocation('hand', $currentPlayerId) == 0) {
             $stateId = $this->gamestate->getCurrentMainStateId();
 
-            if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_BEFORE_RESOLVE_DICE])) {
+            if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_DURING_RESOLVE_DICE])) {
                 $this->goToState($stateId);
             }
         }
