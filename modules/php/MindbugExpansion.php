@@ -167,7 +167,14 @@ class MindbugExpansion {
         $activatedFrenzyCards = $keyword === FRENZY ? $this->getActivatedCards($playerId, FRENZY) : [];
 
         $this->game->powerCards->activateKeyword($card, $keyword);
-        $this->game->notify->all('activatedKeywordCard', '', [ 'card' => $card ]);
+        $this->game->notify->all('activatedKeywordCard', clienttranslate('${player_name} activates ${keyword} card ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->game->getPlayerNameById($playerId),
+            'card' => $card,
+            'keyword' => $keyword,
+            'card_name' => $card->type,
+            'i18n' => ['keyword'],
+        ]);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
@@ -197,7 +204,14 @@ class MindbugExpansion {
         $this->game->playEvolutionToTable($playerId, $card);
 
         $this->game->powerUpExpansion->evolutionCards->activateKeyword($card, $keyword);
-        $this->game->notify->all('activatedKeywordEvolution', '', [ 'card' => $card, 'keyword' => $keyword, ]);
+        $this->game->notify->all('activatedKeywordEvolution', clienttranslate('${player_name} activates ${keyword} Evolution ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->game->getPlayerNameById($playerId),
+            'card' => $card,
+            'keyword' => $keyword,
+            'card_name' => 3000 + $card->type,
+            'i18n' => ['keyword'],
+        ]);
 
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
