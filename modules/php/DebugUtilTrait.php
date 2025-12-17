@@ -2,6 +2,8 @@
 
 namespace Bga\Games\KingOfTokyo;
 
+use Bga\GameFramework\Actions\Debug;
+
 function debug(...$debugData) {
     if (Game::getBgaEnvironment() != 'studio') { 
         return;
@@ -308,12 +310,14 @@ trait DebugUtilTrait {
         $this->mindbugExpansion->mindbugTokens->setAll($mindbugTokens);
     }
 
+    #[Debug(reload: true)]
     function debug_SetWickednessTileInTable(int $cardType) {
         $cards = $this->wickednessTiles->getCardsByFieldName('type', [$cardType]);
         $card = $cards[0];
         $this->wickednessTiles->moveCard($card, 'table');
     }
 
+    #[Debug(reload: true)]
     function debug_SetWickednessTileInHand(int $cardType, int $playerId) {
         $cards = $this->wickednessTiles->getCardsByFieldName('type', [$cardType]);
         $card = $cards[0];
@@ -327,6 +331,7 @@ trait DebugUtilTrait {
         }
     }*/
 
+    #[Debug(reload: true)]
     function debug_SetCardInTable(int $cardType) {
         $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         if (!$card) {
@@ -351,6 +356,7 @@ trait DebugUtilTrait {
         //return $card;
     }*/
 
+    #[Debug(reload: true)]
     public function debug_SetCardInPlayerHand(int $cardType, int $playerId) {
         $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         if (!$card) {
@@ -369,18 +375,22 @@ trait DebugUtilTrait {
         return $card;
     }
 
+    #[Debug(reload: true)]
     function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId) {
         $this->debugSetEvolutionForPlayer($cardType, $playerId, false, $playerId);
     }
 
+    #[Debug(reload: true)]
     function debug_SetEvolutionInPlayerTable(int $cardType, int $playerId) {
         $this->debugSetEvolutionForPlayer($cardType, $playerId, true, $playerId);
     }
 
+    #[Debug(reload: true)]
     function debug_SetPlayerInLocation(int $playerId, int $location) {
         $this->DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
     }
 
+    #[Debug(reload: true)]
     function debug_SetHealth(int $health) {
         $this->DbQuery("UPDATE player SET `player_health` = $health");
     }
@@ -401,10 +411,12 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
     }*/
 
+    #[Debug(reload: true)]
     function debug_SetEnergy(int $energy) {
         $this->DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
+    #[Debug(reload: true)]
     function debug_SetPoints(int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points");
     }
@@ -435,6 +447,7 @@ trait DebugUtilTrait {
     // debug_SetDieFaces(4, 3)
     // debug_SetDieFaces(6, 3)
     // debug_SetDieFaces(6)
+    #[Debug(reload: true)]
     function debug_SetDieFaces(int $face, int $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }

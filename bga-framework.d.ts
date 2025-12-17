@@ -161,6 +161,36 @@ declare class StatusBar {
   removeActionButtons(): void;
 }
 
+declare class Images {
+  /**
+   * Tell the interface to not preload a specific image in your img root directory.
+   * 
+   * @param {string} image the filename
+   */
+  dontPreloadImage(image: string): void;
+
+  /**
+   * Tell the interface to not preload specific images in your img root directory.
+   * 
+   * @param {string[]} images the filenames
+   */
+  dontPreloadImages(images: string): void;
+
+  /**
+   * Tell the interface to preload a specific image in your img directory.
+   * 
+   * @param {string} image the filename
+   */
+  preloadImage(image: string): void;
+
+  /**
+   * Tell the interface to preload specific images in your img directory.
+   * 
+   * @param {string[]} images the filenames
+   */
+  preloadImages(images: string): void;
+}
+
 declare class Sounds {
   /**
    * Load a sound file to be used with play.
@@ -176,6 +206,261 @@ declare class Sounds {
    * @param {string} id the sound id
    */
   play(id: string): void;
+}
+
+declare class UserPreferences {
+  onChange?: (prefId: number, value: number) => void;
+
+  /**
+   * Get a game-specific user preference value.
+   */
+  get(prefId: number): number;
+
+  /**
+   * Method to programmatically change a game-specific user preference.
+   */
+  set(prefId: number, value: number): void;
+}
+
+declare class Players {
+  /**
+   * Return the id of the player who is looking at the game. The player may not be part of the game (i.e. spectator)
+   * @returns {number} the current player id
+   */
+  getCurrentPlayerId(): number;
+
+  /**
+   * Return the current player data stored in gamedatas.players.
+   * Can be undefined, if the player isn't at this table (spectator).
+   * 
+   * @returns {Object | undefined} the player
+   */
+  getCurrentPlayer(): Object | undefined;
+
+  /**
+   * Returns true if the player on whose browser the code is running is a spectator.
+   *
+   * @returns {boolean} is current player spectator
+   */
+  isCurrentPlayerSpectator(): boolean;
+
+  /**
+   * Returns true if the player on whose browser the code is running is currently active (it's his turn to play).
+   *
+   * @returns {boolean} is current player active
+   */
+  isCurrentPlayerActive(): boolean;
+
+  /**
+   * Returns true if the player is currently active (it's his turn to play).
+   *
+   * @param {number} player_id the player to check
+   * @returns {boolean} is specified player active
+   */
+  isPlayerActive(player_id: number): boolean;
+
+  /**
+   * Return the id of the active player, or null if we are not in an ACTIVE_PLAYER type state.
+   * @returns {number | null} the active player id
+   */
+  getActivePlayerId(): number | null;
+
+  /**
+   * Return the active player, or null if we are not in an ACTIVE_PLAYER type state.
+   * 
+   * @returns {Object | null} the active player
+   */
+  getActivePlayer(): Object | null;
+
+  /**
+   * Return the player data stored in gamedatas.players.
+   * Can be undefined, if the player isn't at this table (spectator).
+   * 
+   * @returns {Object | undefined} the player
+   */
+  getPlayer(playerId: number) : Object | undefined;
+
+  /**
+   * Return the HTML code for a player name, colored and with optional background.
+   * Set params `replaceByYou: true` to write "You" in current player's language instead of the player's name.
+   *
+   * @param {number} playerId the player id
+   * @param {Object} params the call parameters, by default { replaceByYou: false }.
+   * @return {string} the formatted player name
+   */
+  getFormattedPlayerName(playerId: number, params?: {
+    replaceByYou?: boolean;
+  }): string;
+
+  /**
+   * Get the list of current active players ids
+   * @returns {number[]} the active player ids
+   */
+  getActivePlayerIds(): number[];
+}
+
+declare class Actions {
+  /**
+   * Trigger an ajax call for a game action.
+   *
+   * @param {string} action the action name
+   * @param {Object} args the action arguments
+   * @param {Object} params the call parameters, by default { lock: true, checkAction: true, checkPossibleActions: false, ignoreDefaultErrorHandler: false }. Must be overriden to disable interface lock, or to disable checkAction.
+   * @returns Promise of the ajax call, or undefined if there is no call (prevented by checkAction/checkPossibleActions)
+   */
+  performAction(action: string, args?: any, params?: {
+    lock?: boolean;
+    checkAction?: boolean;
+    checkPossibleActions?: boolean; 
+    ignoreDefaultErrorHandler?: boolean;
+  }): Promise<any>;
+
+  /**
+   * Check if player can do the specified action by taking into account:
+   *  - if interface is locked it will return false and show message "An action is already in progress", unless nomessage set to true
+   *  - if player is not active it will return false and show message "This is not your turn", unless nomessage set to true
+   *  - if action is not in list of possible actions (defined by "possibleaction" in current game state) it will return false and show "This move is not authorized now" error (unconditionally).
+   *  - otherwise returns true
+   *
+   * @param {string} action the action to test
+   * @param {boolean} nomessage if we want a silent check
+   * @returns {boolean} the action is possible
+   */
+  checkAction(action: string, nomessage?: boolean): boolean;
+
+  /**
+   * This is independent of the player being active, so can be used instead of this.checkAction(). This is particularly useful for multiplayer states when the player is not active in a 'player may like to change their mind' scenario. Unlike this.checkAction, this function does NOT take interface locking into account
+   * if action is not in list of possible actions (defined by "possibleaction" in current game state) it will return false and show "This move is not authorized now" error (unconditionally).
+   * otherwise returns true
+   *
+   * @param {string} action the action to test
+   * @returns {boolean} the action is possible
+   */
+  checkPossibleActions(action: string): boolean;
+}
+
+declare class Notifications {
+    /**
+     * Auto-detect all notifications declared on the game object (functions starting with `notif_`)
+     * and register them with dojo.subscribe.
+     * Registered notifications will be synchronous and will have a minimum duration (if animations are active, by default 500ms with text and 1ms without).
+     * If the notification function returns a Promise, the notification will end when the promise AND the minimum durations are over.
+     * In case of a notification function returning a Promise, the dev is rsponsible to make it resolve instantaneously if animations are not active.
+     *
+     * Example of usage: `setupNotifications() { this.notifications.setupPromiseNotifications(); }`
+     * And declaration of a notif will just be :
+     * `notif_playedCard: function(args) { this.getPlayerTable(args.playerId).playCard(args.card); }`
+     *
+     * @param {Object} params the call parameters, by default { prefix: 'notif_', minDuration: 500, minDurationNoText: 1, logger: null, ignoreNotifications: [], onStart: undefined, onEnd: undefined, }.
+     */
+    setupPromiseNotifications(params?: {
+      prefix?: string;
+      minDuration?: number;
+      minDurationNoText?: number;
+      handlers?: Object[];
+      logger?: Function;
+      ignoreNotifications?: string[];
+      onStart?: (notifName: string, msg: string, args: any) => any;
+      onEnd?: (notifName: string, msg: string, args: any) => any;
+    }): void;
+}
+
+declare class GameArea {
+  /**
+   * Return the Game Area div (for all displayed game components).
+   *
+   * @returns the Game Area div element
+   */
+  getElement(): HTMLDivElement;
+
+  /**
+   * Display a banner to tell the players it's the last turn.
+   * 
+   * @param {string} message the message to display. It should be translated, so surrounded by `_()`. If unset: "This is the last turn!"
+   * @param {Object} args (optional) the args to replace in the message.
+   */
+  addLastTurnBanner(message?: string, args?: any): void;
+
+  /**
+   * Remove the last turn banner (for example if the player cancelled a move triggering the last turn).
+   */
+  removeLastTurnBanner(): void;
+
+  /**
+   * Display a banner to tell the players what win condition was reached (for games with multiple win conditions).
+   * 
+   * @param {string} message the message to display. It should be translated, so surrounded by `_()`.
+   * @param {Object} args (optional) the args to replace in the message.
+   */
+  addWinConditionBanner(message: string, args?: any): void;
+}
+
+declare class PlayerPanels {
+  /**
+   * Return the div on the player board where the dev can add counters and other game specific indicators.
+   *
+   * @param {number} playerId the player id
+   * @returns the div element for game specific content on player panels
+   */
+  getElement(playerId: number): HTMLDivElement;
+
+  /**
+   * Add a player panel for an automata.
+   *
+   * @param {number} id the automata id, used to setup scoreCtrl and playerPanels.getElement. 0 or negative value is recommended, to avoid conflict with real player ids.
+   * @param {string} name the name of the automata
+   * @param {Object} params an object with optional params: color (default black), iconClass (default unset) to set a background image (32px x 32px), score (default undefined)
+   */
+  addAutomataPlayerPanel(id: number, name: string, params: {
+      color?: string;
+      iconClass?: string;
+      score?: number;
+  }): void;
+}
+
+declare class Dialogs {
+  /**
+   * Show an information message during few seconds on page head
+   * @param {string} msg the string to display. It should be translated.
+   * @param {string} type "info", "error", "only_to_log" If set to "info", the message will be an informative message on a white background. If set to "error", the message will be an error message on a red background and it will be added to log. If set to "only_to_log", the message will be added to the game log but will not popup at the top of the screen.
+   */
+  showMessage(msg: string, type: 'info' | 'error' | 'only_to_log'): void;
+
+  /**
+   * Shows predefined user error that move is unauthorized now.
+   */
+  showMoveUnauthorized(): void;
+
+  /**
+   * When an important action with a lot of consequences is triggered by the player, you may want to propose a confirmation dialog. 
+   * 
+   * @param {string} text message will be shown to user, use _() to translate
+   * @return {Promise<boolean>} the result of the user choice
+   */
+  confirmation(text: string): Promise<boolean>;
+
+  /**
+   * You can use this dialog to give user a choice with small amount of options.
+   *
+   * @param {string} text message will be shown to user, use _() to translate
+   * @param {Object} choices associative array "value => text to display"
+   * @return {Promise<string | null>} the key of the selected choice, or null if closed
+   */
+  multipleChoice(text: string, choices: { [value: number]: string }): Promise<string | null>;
+}
+
+interface Bga<G = Gamedatas> {
+  gameui: GameGui<G>;
+  statusBar: StatusBar;
+  images: Images;
+  sounds: Sounds;
+  userPreferences: UserPreferences;
+  players: Players;
+  actions: Actions;
+  notifications: Notifications;
+  gameArea: GameArea;
+  playerPanels: PlayerPanels;
+  dialogs: Dialogs;
 }
 
 declare class GameGui<G = Gamedatas> {
@@ -203,6 +488,8 @@ declare class GameGui<G = Gamedatas> {
 
   /**
    * Flag set to true if the user at the table is a spectator (not a player). 
+   * 
+   * @deprecated use this.players.isCurrentPlayerSpectator()
    */  
   isSpectator: boolean;
 
@@ -215,6 +502,8 @@ declare class GameGui<G = Gamedatas> {
    * The player panel score counters.
    */
   scoreCtrl: {[player_id: number]: Counter};
+
+  bga: Bga;
 
   statusBar: StatusBar;
   sounds: Sounds;
@@ -294,6 +583,8 @@ declare class GameGui<G = Gamedatas> {
    * Returns true if the player on whose browser the code is running is currently active (it's his turn to play).
    * 
    * @returns {boolean} is current player active
+   * 
+   * @deprecated use this.players.isCurrentPlayerActive()
    */
   isCurrentPlayerActive(): boolean;
 
@@ -302,18 +593,24 @@ declare class GameGui<G = Gamedatas> {
    * 
    * @param {number} player_id the player to check
    * @returns {boolean} is specified player active
+   * 
+   * @deprecated use this.players.isPlayerActive
    */
   isPlayerActive(player_id: number): boolean;
 
   /**
    * Get the list of current active players ids
    * @returns {number[]} the active player ids
+   * 
+   * @deprecated use this.players.getActivePlayerIds
    */
   getActivePlayers(): number[];
 
   /**
    * Return the id of the active player, or null if we are not in an ACTIVE_PLAYER type state. 
    * @returns {number | null} the active player id
+   * 
+   * @deprecated use this.players.getActivePlayerId
    */
   getActivePlayerId(): number | null;
 
@@ -324,6 +621,8 @@ declare class GameGui<G = Gamedatas> {
    * @param {number} playerId the player id
    * @param {Object} params the call parameters, by default { replaceByYou: false }.
    * @return {string} the formatted player name
+   * 
+   * @deprecated use this.players.getFormattedPlayerName
    */
   getFormattedPlayerName(playerId: number, params?: {
     replaceByYou?: boolean;
@@ -348,7 +647,7 @@ declare class GameGui<G = Gamedatas> {
   removeActionButtons(): void;
 
   /**
-   * @deprecated use the.bgaPerformAction
+   * @deprecated use the.actions.performAction
    */
   ajaxcall(url: string, args: object, bind: GameGui, resultHandler: (result: any) => void, allHandler?: (err: any, result?: any) => void): void;
 
@@ -362,6 +661,8 @@ declare class GameGui<G = Gamedatas> {
    * @param {string} action the action to test
    * @param {boolean} nomessage if we want a silent check. default false.
    * @returns {boolean} the action is possible
+   * 
+   * @deprecated use this.actions.checkAction
    */
   checkAction(action: string, nomessage?: boolean): boolean;
 
@@ -372,22 +673,30 @@ declare class GameGui<G = Gamedatas> {
    * 
    * @param {string} action the action to test
    * @returns {boolean} the action is possible
+   * 
+   * @deprecated use this.actions.checkPossibleActions
    */
   checkPossibleActions(action: string): boolean;
 
   /**
    * Shows predefined user error that move is unauthorized now.
+   * 
+   * @deprecated use this.dialogs.showMoveUnauthorized
    */
   showMoveUnauthorized(): void;
 
   /**
    * Tell the interface to not preload a specific image in your img root directory. 
    * @param {string} image the filename
+   * 
+   * @deprecated use this.images.dontPreloadImage / dontPreloadImages
    */
   dontPreloadImage(image: string): void;
 
   /**
    * Ensure some specific images are loaded.
+   * 
+   * @deprecated use this.images.preloadImage / preloadImages
    */
   ensureSpecificGameImageLoading( imagelist: string[]): void;
 
@@ -420,6 +729,8 @@ declare class GameGui<G = Gamedatas> {
    * `notif_playedCard: function(args) { this.getPlayerTable(args.playerId).playCard(args.card); }`
    * 
    * @param {Object} params the call parameters, by default { prefix: 'notif_', minDuration: 500, minDurationNoText: 1, logger: null, ignoreNotifications: [], onStart: undefined, onEnd: undefined, }.
+   * 
+   * @deprecated use this.notifications.setupPromiseNotifications
    */
   bgaSetupPromiseNotifications(params?: {
     prefix?: string;
@@ -440,17 +751,12 @@ declare class GameGui<G = Gamedatas> {
   bgaPlayDojoAnimation(anim: DojoAnimation): Promise<any>;
 
   /**
-   * A callback that can be set by games to know when a user preference changes
-   */
-  onGameUserPreferenceChanged?: (pref_id: number, pref_value: number) => void;
-
-  /**
-   * Get a game-specific user preference value.
+   * @deprecated use this.userPreferences.get(pref_id)
    */
   getGameUserPreference(pref_id: number): number;
 
   /**
-   * Method to programmatically change a game-specific user preference.
+   * @deprecated use this.userPreferences.set(pref_id, value)
    */
   setGameUserPreference(pref_id: number, value: number): void;
 
@@ -461,6 +767,8 @@ declare class GameGui<G = Gamedatas> {
    * @param {Object} args the action arguments
    * @param {Object} params the call parameters, by default { lock: true, checkAction: true, checkPossibleActions: false }. Must be overriden to disable interface lock, or to disable checkAction.
    * @returns Promise of the ajax call, or undefined if there is no call (prevented by checkAction/checkPossibleActions)
+   * 
+   * @deprecated use the.actions.performAction, note that the result of the catch is now `{ message, args }` instead of `message`
    */
   bgaPerformAction(action: string, args?: any, params?: {
     lock?: boolean;
@@ -472,6 +780,8 @@ declare class GameGui<G = Gamedatas> {
    * Return the Game Area div (for all displayed game components).
    * 
    * @returns the Game Area div element
+   * 
+   * @deprecated use this.gameArea.getElement()
    */
   getGameAreaElement(): HTMLDivElement;
 
@@ -480,6 +790,8 @@ declare class GameGui<G = Gamedatas> {
    * 
    * @param {number} playerId the player id
    * @returns the div element for game specific content on player panels
+   * 
+   * @deprecated use this.playerPanels.getElement
    */
   getPlayerPanelElement(playerId: number): HTMLDivElement;
 
@@ -504,6 +816,8 @@ declare class GameGui<G = Gamedatas> {
    * Show an information message during few seconds on page head
    * @param {string} msg the string to display. It should be translated.
    * @param {string} type "info", "error", "only_to_log" If set to "info", the message will be an informative message on a white background. If set to "error", the message will be an error message on a red background and it will be added to log. If set to "only_to_log", the message will be added to the game log but will not popup at the top of the screen.
+   * 
+   * @deprecated use this.dialogs.showMessage
    */
   showMessage(msg: string, type: 'info' | 'error' | 'only_to_log'): void;
 
@@ -622,6 +936,8 @@ declare class GameGui<G = Gamedatas> {
    * @param {string} text message will be shown to user, use _() to translate
    * @param {Function} callback callback if confirmed
    * @param {Function} callback_cancel callback if cancelled
+   * 
+   * @deprecated use this.dialogs.confirmation. Note that signature changed and it now uses Promise.
    */
   confirmationDialog(text: string, callback: Function, callback_cancel?: Function): void;
 
@@ -631,6 +947,8 @@ declare class GameGui<G = Gamedatas> {
    * @param {string} text message will be shown to user, use _() to translate
    * @param {Object} choices associative array "value => text to display"
    * @param {Function} callback callback returning the choice
+   * 
+   * @deprecated use this.dialogs.multipleChoice. Note that signature changed and it now uses Promise.
    */
   multipleChoiceDialog(text: string, choices: { [value: number]: string }, callback: Function): void;
 
@@ -681,12 +999,41 @@ declare class GameGui<G = Gamedatas> {
    * @param {number} id the automata id, used to setup scoreCtrl and getPlayerPanelElement. 0 or negative value is recommended, to avoid conflict with real player ids.
    * @param {string} name the name of the automata
    * @param {Object} params an object with optional params: color (default black), iconClass (default unset) to set a background image (32px x 32px), score (default undefined)
+   * 
+   * @deprecated use this.players.addAutomataPlayerPanel
    */
   addAutomataPlayerPanel(id: number, name: string, params: {
       color?: string;
       iconClass?: string;
       score?: number;
   }): void;
+
+  /**
+   * Display a banner to tell the players it's the last turn.
+   * 
+   * @param {string} message the message to display. It should be translated, so surrounded by `_()`. If unset: "This is the last turn!"
+   * @param {Object} args (optional) the args to replace in the message.
+   * 
+   * @deprecated use this.gameArea.addLastTurnBanner
+   */
+  addLastTurnBanner(message?: string, args?: any): void;
+
+  /**
+   * Remove the last turn banner (for example if the player cancelled a move triggering the last turn).
+   * 
+   * @deprecated use this.gameArea.removeLastTurnBanner
+   */
+  removeLastTurnBanner(): void;
+
+  /**
+   * Display a banner to tell the players what win condition was reached (for games with multiple win conditions).
+   * 
+   * @param {string} message the message to display. It should be translated, so surrounded by `_()`.
+   * @param {Object} args (optional) the args to replace in the message.
+   * 
+   * @deprecated use this.gameArea.addWinConditionBanner
+   */
+  addWinConditionBanner(message: string, args?: any): void;
 }
 
 declare interface Notif<T = any> {
@@ -839,7 +1186,7 @@ declare class Stock {
     removeAllTo(to: string): void;
     unselectItem(id: string): void;
     setOverlap(horizontal_percent: number, vertical_percent: number): void;
-    onItemCreate(itemDiv: HTMLElement, itemType, itemDivId: string): any; 
+    onItemCreate(itemDiv: HTMLElement, itemType: number, itemDivId: string): any; 
     onChangeSelection(control_name: string, item_id?: string ): any;
 }
 
@@ -869,7 +1216,7 @@ interface Dojo {
     clone: Function;
     fadeIn: Function;
     trim: Function;
-    stopEvent: (evt) => void;
+    stopEvent: (evt: Event) => void;
     destroy: (nodeId: string) => void;
     forEach: Function;
     empty: (nodeId: ElementOrId) => void;

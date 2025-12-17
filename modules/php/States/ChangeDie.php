@@ -152,11 +152,11 @@ class ChangeDie extends GameState {
                 $this->game->setGlobalVariable(USED_CARDS, Arrays::filter($usedCards, fn($usedId) => $usedId != $sneakyAlloyCard->id)); // using "used card" in reverse
             }
         } else if ($cardType == 3000 + \SAURIAN_ADAPTABILITY_EVOLUTION) {
-            $saurianAdaptabilityCard = $this->game->getEvolutionsOfType($currentPlayerId, \SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
+            $saurianAdaptabilityCard = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
             $this->game->playEvolutionToTable($currentPlayerId, $saurianAdaptabilityCard, '');
             $this->game->removeEvolution($currentPlayerId, $saurianAdaptabilityCard, false, 5000);
         } else if ($cardType == 3000 + \GAMMA_BREATH_EVOLUTION) {
-            $gammaBreathCards = $this->game->getEvolutionsOfType($currentPlayerId, \GAMMA_BREATH_EVOLUTION, true, true);
+            $gammaBreathCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \GAMMA_BREATH_EVOLUTION, true, true);
             $gammaBreathCard = Arrays::find($gammaBreathCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $gammaBreathCards[0];
 
             if ($gammaBreathCard->location === 'hand') {
@@ -164,7 +164,7 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $gammaBreathCard->id);
         } else if ($cardType == 3000 + \TAIL_SWEEP_EVOLUTION) {
-            $tailSweepCards = $this->game->getEvolutionsOfType($currentPlayerId, \TAIL_SWEEP_EVOLUTION, true, true);
+            $tailSweepCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \TAIL_SWEEP_EVOLUTION, true, true);
             $tailSweepCard = Arrays::find($tailSweepCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tailSweepCards[0];
 
             if ($tailSweepCard->location === 'hand') {
@@ -172,7 +172,7 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $tailSweepCard->id);
         } else if ($cardType == 3000 + \TINY_TAIL_EVOLUTION) {
-            $tinyTailCards = $this->game->getEvolutionsOfType($currentPlayerId, \TINY_TAIL_EVOLUTION, true, true);
+            $tinyTailCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \TINY_TAIL_EVOLUTION, true, true);
             $tinyTailCard = Arrays::find($tinyTailCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tinyTailCards[0];
 
             if ($tinyTailCard->location === 'hand') {
@@ -180,7 +180,7 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $tinyTailCard->id);
         } else if ($cardType == 3000 + \ENERGY_DEVOURER_EVOLUTION) {
-            $energyDevourerCards = $this->game->getEvolutionsOfType($currentPlayerId, \ENERGY_DEVOURER_EVOLUTION, true, true);
+            $energyDevourerCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \ENERGY_DEVOURER_EVOLUTION, true, true);
             $energyDevourerCard = Arrays::find($energyDevourerCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $energyDevourerCards[0];
 
             if ($energyDevourerCard->location === 'hand') {
