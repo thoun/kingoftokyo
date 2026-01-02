@@ -9,8 +9,6 @@ use Bga\GameFramework\StateType;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
-use function Bga\Games\KingOfTokyo\debug;
-
 use const Bga\Games\KingOfTokyo\PowerCards\FRENZY;
 use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_END_TURN;
 
@@ -121,11 +119,13 @@ class BeforeEndTurnMulti extends GameState {
     #[PossibleAction]
     public function actActivateConsumable(int $id, string $keyword, int $activePlayerId) {
         $this->game->mindbugExpansion->activateConsumable($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+        return self::class;
     }
 
     #[PossibleAction]
     public function actActivateConsumableEvolution(int $id, string $keyword, int $activePlayerId) {
         $this->game->mindbugExpansion->activateConsumableEvolution($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+        return self::class;
     }
 
     #[PossibleAction]
