@@ -142,14 +142,14 @@ class ChangeDie extends GameState {
             $sneakyAlloyCards = $this->game->getCardsOfType($currentPlayerId, \SNEAKY_ALLOY_CARD);
             $usedCardOnThisTurn = null;
             foreach ($sneakyAlloyCards as $sneakyAlloyCard) {
-                if (in_array($sneakyAlloyCard->id, $usedCards)) {
+                if (!in_array($sneakyAlloyCard->id, $usedCards)) {
                     $usedCardOnThisTurn = $sneakyAlloyCard->id;
                 }
             }
             if ($usedCardOnThisTurn === null) {
                 throw new \BgaUserException('No unused Sneaky Alloy for this player');
             } else {
-                $this->game->setGlobalVariable(USED_CARDS, Arrays::filter($usedCards, fn($usedId) => $usedId != $sneakyAlloyCard->id)); // using "used card" in reverse
+                $this->game->setUsedCard($sneakyAlloyCard->id);
             }
         } else if ($cardType == 3000 + \SAURIAN_ADAPTABILITY_EVOLUTION) {
             $saurianAdaptabilityCard = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
