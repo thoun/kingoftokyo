@@ -14,6 +14,7 @@ function debug(...$debugData) {
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait DebugUtilTrait {
+    public MindbugExpansion $mindbugExpansion;
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Utility functions
@@ -172,10 +173,10 @@ trait DebugUtilTrait {
         // cthulhu
         if ($this->cthulhuExpansion->isActive()) {
             $this->debug_SetCultists(5);
-            //$this->debug_SetPlayerCultists(2343492, 10);
-            //$this->debug_SetPlayerCultists($playersIds[2], 1);
-            //$this->debug_SetPlayerCultists($playersIds[3], 3);
-            //$this->debug_SetPlayerCultists($playersIds[4], 2);
+            //$this->debugSetPlayerCultists(2343492, 10);
+            //$this->debugSetPlayerCultists($playersIds[2], 1);
+            //$this->debugSetPlayerCultists($playersIds[3], 3);
+            //$this->debugSetPlayerCultists($playersIds[4], 2);
         }
 
         // anubis
@@ -406,10 +407,10 @@ trait DebugUtilTrait {
     function debug_SetPlayerPoints(int $playerId, int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
     }
-
-    function debug_SetPlayerCultists(int $playerId, int $cultists) {
+*/
+    function debugSetPlayerCultists(int $playerId, int $cultists) {
         $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
-    }*/
+    }
 
     #[Debug(reload: true)]
     function debug_SetEnergy(int $energy) {
@@ -479,5 +480,30 @@ trait DebugUtilTrait {
 
     public function debug_goToState(int $state = ST_NEXT_PLAYER) {
         $this->gamestate->jumpToState($state);
+    }
+
+    #[Debug(reload: true)]
+    public function debug_fillPlayerBoardTokens(int $playerId) {
+        $this->debug_SetPlayerInLocation($playerId, 1);
+
+        $this->DbQuery("UPDATE player SET `player_energy` = 7 where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 3 where `player_id` = $playerId");
+
+        if ($this->cthulhuExpansion->isActive()) {
+            $this->debugSetPlayerCultists($playerId, 3);
+        }
+        if ($this->kingKongExpansion->isActive()) {
+            $this->kingKongExpansion->changeTokyoTowerOwner($playerId, 1);
+            $this->kingKongExpansion->changeTokyoTowerOwner($playerId, 2);
+        }
+
+        if ($this->cybertoothExpansion->isActive()) {
+            $this->cybertoothExpansion->setPlayerBerserk($playerId, true);
+        }
+
+        if ($this->mindbugExpansion->isActive()) {
+            $this->mindbugExpansion->applyGetMindbugTokens($playerId, 2, 0);
+        }
     }
 }

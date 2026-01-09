@@ -39,7 +39,7 @@ class CybertoothExpansion {
         return boolval($this->game->getUniqueValueFromDB("SELECT player_berserk FROM `player` where `player_id` = $playerId"));
     }
 
-    private function setPlayerBerserk(int $playerId, bool $active): void {
+    public function setPlayerBerserk(int $playerId, bool $active): void {
         $this->game->DbQuery("UPDATE player SET `player_berserk` = ".intval($active)." where `player_id` = $playerId");
 
         $message = $active ? 

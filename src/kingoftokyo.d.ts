@@ -226,7 +226,7 @@ interface KingOfTokyoGamedatas {
     mindbug: NotifMindbugPlayerArgs | null;
 }
 
-interface KingOfTokyoGame extends GameGui {
+interface KingOfTokyoGame {
     isOrigins(): boolean;
     isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
@@ -237,6 +237,7 @@ interface KingOfTokyoGame extends GameGui {
     isAnubisExpansion(): boolean;
     isWickednessExpansion(): boolean;
     isPowerUpExpansion(): boolean;
+    isMindbugExpansion(): boolean;
     isDefaultFont(): boolean;
     
     tableManager: TableManager;
@@ -248,6 +249,7 @@ interface KingOfTokyoGame extends GameGui {
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
     CULTIST_TOOLTIP: string;
+    MINDBUG_TOOLTIP: string;
 
     changeDie: (id: number, value: number, card: number, cardId?: number) => void;
     psychicProbeRollDie: (id: number) => void;

@@ -2370,12 +2370,6 @@ body > .card {
 #table .player-table .token-wrapper.shrink-ray .token {
   box-shadow: 0 0 4px 4px #d7e2a1;
 }
-#table .player-table .token-wrapper.mindbug {
-  top: -16px;
-  right: 50px;
-  height: 32px;
-  width: 50px;
-}
 #table .player-table .player-wickedness-tiles {
   width: 100%;
 }
@@ -2423,6 +2417,25 @@ body > .card {
 }
 #table .player-table .berserk-token[data-visible=true] {
   display: initial;
+}
+#table .player-table .mindbug-tokens {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  width: 155px;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  flex-direction: row-reverse;
+}
+#table .player-table .mindbug-tokens .mindbug-token {
+  background: url("img/mindbug-token.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 64px;
+  height: 64px;
+  border-radius: 5px;
+  margin: 0 5px;
+  margin-left: -50px;
 }
 #table .player-table .cultist-tokens {
   position: absolute;

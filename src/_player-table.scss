@@ -199,12 +199,6 @@
                 box-shadow: 0 0 4px 4px #d7e2a1;
             }
         }
-        &.mindbug {
-            top: -16px;
-            right: 50px;
-            height: 32px;
-            width: 50px;
-        }
     }
     
     .player-wickedness-tiles {
@@ -265,6 +259,28 @@
 
         &[data-visible="true"] {
             display: initial;
+        }
+    }
+
+    .mindbug-tokens {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        width: 155px;
+
+        display: flex;
+        flex-wrap: wrap-reverse;
+        flex-direction: row-reverse;
+
+        .mindbug-token {
+            background: url("img/mindbug-token.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 64px;
+            height: 64px;
+            border-radius: 5px;
+            margin: 0 5px;
+            margin-left: -50px;
         }
     }
 

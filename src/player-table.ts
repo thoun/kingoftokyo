@@ -6,7 +6,7 @@ const POINTS_DEG_DARK_EDITION = [44, 62, 76, 91, 106, 121, 136, 148, 161, 174, 1
 const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 const HEALTH_DEG_DARK_EDITION = [360, 332, 305, 279, 255, 230, 204, 177, 153, 124, 101, 69, 48];
 const SPLIT_ENERGY_CUBES = 6;
-type TokenType = 'poison' | 'shrink-ray' | 'mindbug';
+type TokenType = 'poison' | 'shrink-ray';
 
 class PlayerTable {
     public playerId: number;
@@ -47,7 +47,6 @@ class PlayerTable {
                 </div>
                 <div id="token-wrapper-${this.playerId}-poison" class="token-wrapper poison"></div>
                 <div id="token-wrapper-${this.playerId}-shrink-ray" class="token-wrapper shrink-ray"></div>
-                <div id="token-wrapper-${this.playerId}-mindbug" class="token-wrapper mindbug"></div>
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
@@ -99,7 +98,6 @@ class PlayerTable {
             this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
-            this.setMindbugTokens(Number(player.mindbugTokens))
         }
 
         if (this.game.isKingkongExpansion()) {
@@ -115,6 +113,13 @@ class PlayerTable {
             dojo.place(`<div id="player-table-cultist-tokens-${player.id}" class="cultist-tokens"></div>`, `monster-board-${player.id}`);
             if (!eliminated) {
                 this.setCultistTokens(player.cultists);
+            }
+        }
+
+        if (this.game.isMindbugExpansion()) {
+            dojo.place(`<div id="player-table-mindbug-tokens-${player.id}" class="mindbug-tokens"></div>`, `monster-board-${player.id}`);
+            if (!eliminated) {
+                this.setMindbugTokens(player.mindbugTokens);
             }
         }
 
@@ -381,10 +386,6 @@ class PlayerTable {
     public setShrinkRayTokens(tokens: number) {
         this.setTokens('shrink-ray', tokens);
     }
-
-    public setMindbugTokens(tokens: number) {
-        this.setTokens('mindbug', tokens);
-    }
     
     public getTokyoTower() {
         return this.tokyoTower;
@@ -404,6 +405,18 @@ class PlayerTable {
     private setMonsterFigureBeastMode(beastMode: boolean) {
         if (this.monster === 12) {
             document.getElementById(`monster-figure-${this.playerId}`).classList.toggle('beast-mode', beastMode);
+        }
+    }
+
+    public setMindbugTokens(tokens: number) {
+        const containerId = `player-table-mindbug-tokens-${this.playerId}`;
+        const container = document.getElementById(containerId);
+        while (container.childElementCount > tokens) {
+            container.removeChild(container.lastChild);
+        }
+        for (let i=container.childElementCount; i<tokens; i++) {
+            dojo.place(`<div id="${containerId}-${i}" class="mindbug-token mindbug-tooltip"></div>`, containerId);
+            (this.game as any).addTooltipHtml(`${containerId}-${i}`, this.game.MINDBUG_TOOLTIP);
         }
     }
 

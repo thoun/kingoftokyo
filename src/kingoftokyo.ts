@@ -1,4 +1,3 @@
-declare const g_img_preload;
 declare const playSound;
 
 declare const board: HTMLDivElement;
@@ -10,13 +9,7 @@ const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy
 
 type FalseBlessingAnkhAction = 'actFalseBlessingReroll' | 'actFalseBlessingDiscard';
 
-// @ts-ignore
-GameGui = (function () { // this hack required so we fake extend GameGui
-  function GameGui() {}
-  return GameGui;
-})();
-
-class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGame {
+class KingOfTokyo implements KingOfTokyoGame {
     public gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
@@ -46,9 +39,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
     public CULTIST_TOOLTIP: string;
+    public MINDBUG_TOOLTIP: string;
+
+    public bga: Bga;
 
     constructor() {
-        super();
     }
     
     /*
@@ -76,24 +71,23 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        this.dontPreloadImage(`animations-halloween.jpg`);
-        this.dontPreloadImage(`animations-christmas.jpg`);
-        this.dontPreloadImage(`christmas_dice.png`);
+        this.bga.images.dontPreloadImage(`animations-halloween.jpg`);
+        this.bga.images.dontPreloadImage(`animations-christmas.jpg`);
+        this.bga.images.dontPreloadImage(`christmas_dice.png`);
         if (!gamedatas.halloweenExpansion) {
-            this.dontPreloadImage(`costume-cards.jpg`);
-            this.dontPreloadImage(`orange_dice.png`);
+            this.bga.images.dontPreloadImage(`costume-cards.jpg`);
+            this.bga.images.dontPreloadImage(`orange_dice.png`);
         }
         if (!gamedatas.powerUpExpansion) {
-            this.dontPreloadImage(`animations-powerup.jpg`);
-            this.dontPreloadImage(`powerup_dice.png`);
+            this.bga.images.dontPreloadImage(`animations-powerup.jpg`);
+            this.bga.images.dontPreloadImage(`powerup_dice.png`);
         }
 
         // load main board
         const boardDir = gamedatas.origins ? `origins` : (gamedatas.darkEdition ? `dark-edition` : `base`);
         const boardFile = gamedatas.twoPlayersVariant ? `2pvariant.jpg` : `standard.jpg`;
         const boardImgUrl = `boards/${boardDir}/${boardFile}`;
-        g_img_preload.push(boardImgUrl);
-        g_img_preload.push(`backgrounds/${this.preferencesManager.getBackgroundFilename()}`);
+        this.bga.images.preloadImages([boardImgUrl, `backgrounds/${this.preferencesManager.getBackgroundFilename()}`]);
 
 
         log( "Starting game setup" );
@@ -164,7 +158,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             <p>${_("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).")}</p>
             <p><strong>${_("Claiming the top level automatically wins the game.")}</strong></p>
             `);
-            this.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
+            this.bga.gameui.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
         }
 
         if (gamedatas.cybertoothExpansion) {
@@ -172,7 +166,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            this.addTooltipHtmlToClass('berserk-tooltip', tooltip);
+            this.bga.gameui.addTooltipHtmlToClass('berserk-tooltip', tooltip);
         }
 
         if (gamedatas.cthulhuExpansion) {
@@ -180,12 +174,20 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             <h3>${_("Cultists")}</h3>
             <p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
             <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
-            this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
+            this.bga.gameui.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
+        }
+
+        if (gamedatas.mindbugExpansion) {
+            this.MINDBUG_TOOLTIP = formatTextIcons(`
+            <h3>${_("Mindbug")}</h3>
+            <p>${_("At the end of another player’s Roll Dice phase, you can announce that you “Mindbug” their Monster.")}</p>
+            <p>${_("Resolve the rolled dice, as if they were your own and continue to the end of turn, then the Mindbugged Monster restart at Roll Dice phase.")}</p>`);
+            this.bga.gameui.addTooltipHtmlToClass('mindbug-tooltip', this.MINDBUG_TOOLTIP);
         }
 
         // override to allow icons in messages
-        const oldShowMessage = this.showMessage;
-        this.showMessage = (msg, type) => oldShowMessage(formatTextIcons(msg), type);
+        const oldShowMessage = this.bga.gameui.showMessage;
+        this.bga.gameui.showMessage = (msg, type) => oldShowMessage(formatTextIcons(msg), type);
 
         if (gamedatas.mindbug) {
             this.notif_mindbugPlayer(gamedatas.mindbug);
@@ -256,11 +258,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 break;
             case 'changeDie': 
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
+                this.onEnteringChangeDie(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             case 'prepareResolveDice': 
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringPrepareResolveDice(args.args, this.isCurrentPlayerActive());
+                this.onEnteringPrepareResolveDice(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             case 'discardDie': 
                 this.setDiceSelectorVisibility(true);
@@ -284,8 +286,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.diceManager.hideLock();
                 const argsResolveDice = args.args as EnteringResolveDiceArgs;
                 if (argsResolveDice.isInHibernation) {
-                    this.statusBar.setTitle(
-                        this.isCurrentPlayerActive() ? _('${you} can leave Hibernation') : _('${actplayer} can leave Hibernation'), 
+                    this.bga.statusBar.setTitle(
+                        this.bga.players.isCurrentPlayerActive() ? _('${you} can leave Hibernation') : _('${actplayer} can leave Hibernation'), 
                         args
                     );
                 }
@@ -303,24 +305,24 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.onEnteringResolveNumberDice(args.args);
                 break;
             case 'takeWickednessTile':
-                this.onEnteringTakeWickednessTile(args.args, this.isCurrentPlayerActive());
+                this.onEnteringTakeWickednessTile(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             case 'resolveHeartDiceAction':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
+                this.onEnteringResolveHeartDice(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             case 'resolveSmashDiceAction':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringResolveSmashDice(args.args, this.isCurrentPlayerActive());
+                this.onEnteringResolveSmashDice(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
 
             case 'chooseEvolutionCard':
-                this.onEnteringChooseEvolutionCard(args.args,  this.isCurrentPlayerActive());
+                this.onEnteringChooseEvolutionCard(args.args,  this.bga.players.isCurrentPlayerActive());
                 break;   
 
             case 'stealCostumeCard':
                 this.setDiceSelectorVisibility(false);
-                this.onEnteringStealCostumeCard(args.args, this.isCurrentPlayerActive());
+                this.onEnteringStealCostumeCard(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             
             case 'leaveTokyoExchangeCard':
@@ -329,7 +331,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
-                this.onEnteringBuyCard(args.args, this.isCurrentPlayerActive());
+                this.onEnteringBuyCard(args.args, this.bga.players.isCurrentPlayerActive());
                 break;
             case 'sellCard':
                 this.setDiceSelectorVisibility(false);
@@ -362,7 +364,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         if (this.gamedatas.gamestate.description !== `${originalState['description' + property]}`) {
             this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
             this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
-            this.updatePageTitle();
+            this.bga.gameui.updatePageTitle();
         }
     }
 
@@ -394,18 +396,18 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
         if (args.chooseEvolution && args.chooseCostume) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} must choose a Costume and an Evolution card') : _('${actplayer} must choose a Costume and an Evolution card'), 
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} must choose a Costume and an Evolution card') : _('${actplayer} must choose a Costume and an Evolution card'), 
                 args
             );
         } else if (args.chooseEvolution) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} must choose an Evolution card') : _('${actplayer} must choose an Evolution card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} must choose an Evolution card') : _('${actplayer} must choose an Evolution card'),
                 args
             );
         } else if (args.chooseCostume) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} must choose a Costume card') : _('${actplayer} must choose a Costume card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} must choose a Costume card') : _('${actplayer} must choose a Costume card'),
                 args
             );
         }
@@ -415,7 +417,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             this.tableCenter.setVisibleCardsSelectionClass(args.chooseEvolution);
         }
 
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             this.tableCenter.setVisibleCardsSelectionMode('single');
 
             if (args.chooseEvolution) {
@@ -427,7 +429,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringMindbugKeywordState(args: EnteringMindbugKeywordStateArgs) {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             if (args.canPlayConsumable) {
 
                 args.consumableCards.forEach(card => {
@@ -435,7 +437,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     if (div) {
                         div.innerHTML = '';
                         card.mindbugKeywords.forEach(keyword => 
-                            this.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
+                            this.bga.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
                         );
                     }
                 });
@@ -445,7 +447,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     if (div) {
                         div.innerHTML = '';
                         evolution.mindbugKeywords.forEach(keyword => 
-                            this.statusBar.addActionButton(_(keyword), (e: MouseEvent) => { this.onConsumableEvolutionKeywordClick(evolution, keyword); e.stopPropagation() }, { destination: div })
+                            this.bga.statusBar.addActionButton(_(keyword), (e: MouseEvent) => { this.onConsumableEvolutionKeywordClick(evolution, keyword); e.stopPropagation() }, { destination: div })
                         );
                     }
                 });
@@ -454,25 +456,25 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onLeavingMindbugKeywordState() {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             document.querySelectorAll('.card-keyword-buttons button, .evolution-keyword-buttons button').forEach(elem => elem.remove());
         }
     }
 
     private onEnteringBeforeStartTurn(args: EnteringBeforeStartTurnArgs) {
         if (args.canPlayConsumable && args.couldPlayEvolution) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'),
                 args
             );
         } else if (args.canPlayConsumable) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'),
                 args
             );
         } else if (args.couldPlayEvolution) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'),
                 args
             );
         }
@@ -481,8 +483,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     private onEnteringStepEvolution(args: EnteringStepEvolutionArgs) {
-        console.log('onEnteringStepEvolution', args, this.isCurrentPlayerActive());
-        if (this.isCurrentPlayerActive()) {
+        console.log('onEnteringStepEvolution', args, this.bga.players.isCurrentPlayerActive());
+        if (this.bga.players.isCurrentPlayerActive()) {
             const playerId = this.getPlayerId();
             this.getPlayerTable(playerId).highlightHiddenEvolutions(args.highlighted.filter(card => card.location_arg === playerId));
         }
@@ -490,18 +492,18 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private onEnteringBeforeEndTurn(args: EnteringBeforeEndTurnArgs) {
         if (args.canPlayConsumable && args.couldPlayEvolution) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'),
                 args
             );
         } else if (args.canPlayConsumable) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'),
                 args
             );
         } else if (args.couldPlayEvolution) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'),
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'),
                 args
             );
         }
@@ -522,14 +524,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
         if (args.throwNumber >= args.maxThrowNumber) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} must resolve dice') : _('${actplayer} must resolve dice'), 
+            this.bga.statusBar.setTitle(
+                this.bga.players.isCurrentPlayerActive() ? _('${you} must resolve dice') : _('${actplayer} must resolve dice'), 
                 args
             );
         }
         this.diceManager.showLock();
 
-        const isCurrentPlayerActive = this.isCurrentPlayerActive();
+        const isCurrentPlayerActive = this.bga.players.isCurrentPlayerActive();
 
         this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         
@@ -538,7 +540,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber-args.throwNumber }) + orbOfDoomsSuffix, () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
 
-                this.addTooltip(
+                this.bga.gameui.addTooltip(
                     'rethrow_button', 
                     _("Click on dice you want to keep to lock them, then click this button to reroll the others"),
                     `${_("Ctrl+click to move all dice with same value")}<br>
@@ -609,7 +611,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     private onEnteringPsychicProbeRollDie(args: EnteringPsychicProbeRollDieArgs) {
         this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 
-        if (args.dice && args.rethrow3?.hasCard && this.isCurrentPlayerActive()) {
+        if (args.dice && args.rethrow3?.hasCard && this.bga.players.isCurrentPlayerActive()) {
             if (document.getElementById('rethrow3psychicProbe_button')) {
                 dojo.toggleClass('rethrow3psychicProbe_button', 'disabled', !args.rethrow3.hasDice3);
             } else {
@@ -652,7 +654,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringDiscardKeepCard(args: EnteringDiscardKeepCardArgs) {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
@@ -701,31 +703,31 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
         if (args.canPlayConsumable) {
             if (!args.canCancelDamage && args.canHealToAvoidDeath) {
-                this.statusBar.setTitle(
-                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])'), 
+                this.bga.statusBar.setTitle(
+                    this.bga.players.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])'), 
                     args
                 );
             } else if (args.canCancelDamage) {
-                this.statusBar.setTitle(
-                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])'), 
+                this.bga.statusBar.setTitle(
+                    this.bga.players.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])'), 
                     args
                 );
             } else {
-                this.statusBar.setTitle(
-                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card (${damage}[Heart])'), 
+                this.bga.statusBar.setTitle(
+                    this.bga.players.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card (${damage}[Heart])'), 
                     args
                 );
             }
 
         } else {
             if (!args.canCancelDamage && args.canHealToAvoidDeath) {
-                this.statusBar.setTitle(
-                    this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), 
+                this.bga.statusBar.setTitle(
+                    this.bga.players.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), 
                     args
                 );
             } else if (args.canCancelDamage) {
-                this.statusBar.setTitle(
-                    this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), 
+                this.bga.statusBar.setTitle(
+                    this.bga.players.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), 
                     args
                 );
             }
@@ -743,13 +745,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             }
 
             if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
-                this.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+                this.bga.gameui.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
             } else if (!args.canThrowDices && document.getElementById('throwCamouflageDice_button')) {
                 dojo.destroy('throwCamouflageDice_button');
             }
 
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cardsManager.getCardName(48, 'text-only')})), () => this.useWings());
+                this.bga.gameui.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cardsManager.getCardName(48, 'text-only')})), () => this.useWings());
                 document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
@@ -757,15 +759,15 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             }
 
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                this.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
+                this.bga.gameui.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
             }
 
             if (args.canUseRabbitsFoot && !document.getElementById('useRabbitsFoot_button')) {
-                this.addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
+                this.bga.gameui.addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
             if (args.canUseCandy && !document.getElementById('useCandy_button')) {
-                this.addActionButton('useCandy_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(88, 'text-only')}), () => this.useCandyEvolution());
+                this.bga.gameui.addActionButton('useCandy_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(88, 'text-only')}), () => this.useCandyEvolution());
             }
 
             if (args.countSuperJump > 0 && !document.getElementById('useSuperJump1_button')) {
@@ -775,7 +777,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
                     const id = `useSuperJump${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(53, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useSuperJump(energyCost));
+                        this.bga.gameui.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(53, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useSuperJump(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -789,7 +791,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
                     const id = `useRobot${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(210, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useRobot(energyCost));
+                        this.bga.gameui.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(210, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useRobot(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -803,7 +805,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
                     const id = `useElectricArmor${energyCost}_button`;
                     if (!document.getElementById(id) && energyCost == 1) {
-                        this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(58, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useElectricArmor(energyCost));
+                        this.bga.gameui.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(58, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useElectricArmor(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -815,7 +817,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     const id = `useAncestralDefense${i}_button`;
                     if (!document.getElementById(id)) {
                         const energyCost = i*2;
-                        this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ` : +${i}[Heart] (${energyCost}[Energy])`, { 'card_name': this.cardsManager.getCardName(409, 'text-only')})), () => this.bgaPerformAction('actUseAncestralDefense', { gain: i }), { id });
+                        this.bga.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ` : +${i}[Heart] (${energyCost}[Energy])`, { 'card_name': this.cardsManager.getCardName(409, 'text-only')})), () => this.bga.actions.performAction('actUseAncestralDefense', { gain: i }), { id });
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -824,12 +826,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 const canAvoidDeath = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
-                this.addActionButton(
+                this.bga.gameui.addActionButton(
                     'skipWings_button', 
                     args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cardsManager.getCardName(48, 'text-only')}) : _("Skip"), 
                     () => {
                         if (canAvoidDeath) {
-                            this.confirmationDialog(
+                            this.bga.gameui.confirmationDialog(
                                 formatTextIcons(_("Are you sure you want to Skip? It means [Skull]")), 
                                 () => this.skipWings()
                             );
@@ -865,7 +867,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
                     if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2*rapidHealingCount <= args.playerEnergy) {
                         const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
-                        this.addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
+                        this.bga.gameui.addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
                     }
                 }
             }
@@ -937,14 +939,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringChooseMimickedCard(args: EnteringBuyCardArgs) {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             this.setBuyDisabledCard(args);
         }
     }
 
     private onEnteringSellCard(args: EnteringBuyCardArgs) {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
@@ -954,7 +956,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         const question = args.question;
         this.gamedatas.gamestate.description = question.description; 
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn; 
-        this.updatePageTitle();
+        this.bga.gameui.updatePageTitle();
 
         switch (question.code) {
             case 'ChooseMimickedCard':
@@ -962,17 +964,17 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 break;
             case 'Bamboozle':
                 const bamboozleArgs = question.args as BamboozleQuestionArgs;
-                this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.isCurrentPlayerActive());
+                this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.bga.players.isCurrentPlayerActive());
                 break;
 
             case 'GazeOfTheSphinxSnake':
-                if (this.isCurrentPlayerActive()) {
+                if (this.bga.players.isCurrentPlayerActive()) {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode('single');
                 }
                 break;
 
             case 'IcyReflection':
-                if (this.isCurrentPlayerActive()) {
+                if (this.bga.players.isCurrentPlayerActive()) {
                     const icyReflectionArgs = question.args as IcyReflectionQuestionArgs;
                     this.playerTables.forEach(playerTable => playerTable.visibleEvolutionCards.setSelectionMode('single'));
                     icyReflectionArgs.disabledEvolutions.forEach(evolution => {
@@ -1026,24 +1028,24 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 argsFreezeRayChooseOpponent.smashedPlayersIds.forEach(playerId => {
                     const player = this.gamedatas.players[playerId];
                     const label = `<div class="monster-icon monster${player.monster}" style="background-color: ${player.monster > 100 ? 'unset' : '#'+player.color};"></div> ${player.name}`;
-                    this.addActionButton(`freezeRayChooseOpponent_button_${playerId}`, label, () => this.freezeRayChooseOpponent(playerId));
+                    this.bga.gameui.addActionButton(`freezeRayChooseOpponent_button_${playerId}`, label, () => this.freezeRayChooseOpponent(playerId));
                 });
                 break;
             case 'InterdimensionalPortal':
-                this.statusBar.addActionButton(
+                this.bga.statusBar.addActionButton(
                     formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 2})}`),
-                    () => this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 5 }),
+                    () => this.bga.actions.performAction('actAnswerInterdimensionalPortal', { type: 5 }),
                 );
-                this.statusBar.addActionButton(
+                this.bga.statusBar.addActionButton(
                     formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 2})}`), 
-                    () => this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 4 }),
+                    () => this.bga.actions.performAction('actAnswerInterdimensionalPortal', { type: 4 }),
                 );
                 break;
             case 'MindControl':
                 const mindControlArgs = question.args as MindControlQuestionArgs;
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollDice(mindControlArgs);
-                this.statusBar.addActionButton(_("Reroll selected dice"), () => this.bgaPerformAction('actAnswerMindControl', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
+                this.bga.statusBar.addActionButton(_("Reroll selected dice"), () => this.bga.actions.performAction('actAnswerMindControl', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
                 dojo.addClass('rerollDice_button', 'disabled');
                 break;
             case 'CrabClaw':
@@ -1054,14 +1056,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'EnergyInfusedMonster':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollDice(question.args);
-                this.statusBar.addActionButton(_("Discard selected dice"), () => this.bgaPerformAction('actAnswerEnergyInfusedMonster', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
+                this.bga.statusBar.addActionButton(_("Discard selected dice"), () => this.bga.actions.performAction('actAnswerEnergyInfusedMonster', { ids: this.diceManager.getSelectedDiceIds().join(',') }), { id: 'rerollDice_button' });
                 dojo.addClass('rerollDice_button', 'disabled');
                 break;
             case 'EnergyInfusedMonsterSelectExtraDie':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringSelectExtraDie(question.args);
                 for (let face=1; face<=6; face++) {
-                    this.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.bgaPerformAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face }));
+                    this.bga.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.bga.actions.performAction('actAnswerEnergyInfusedMonsterSelectExtraDie', { face }));
                 }
                 break;
         }
@@ -1233,7 +1235,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onLeavingSellCard() {
-        if (this.isCurrentPlayerActive()) {
+        if (this.bga.players.isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('none'));
             dojo.query('.stockitem').removeClass('disabled');
         }
@@ -1251,13 +1253,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 break;
     
             case 'GazeOfTheSphinxSnake':
-                if (this.isCurrentPlayerActive()) {
+                if (this.bga.players.isCurrentPlayerActive()) {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode('none');
                 }
                 break;
 
             case 'IcyReflection':
-                if (this.isCurrentPlayerActive()) {
+                if (this.bga.players.isCurrentPlayerActive()) {
                     this.playerTables.forEach(playerTable => playerTable.visibleEvolutionCards.setSelectionMode('none'));
                     dojo.query('.stockitem').removeClass('disabled');
                 }
@@ -1323,15 +1325,15 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'cancelDamage':
                 const argsCancelDamage = args as EnteringCancelDamageArgs;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);                
-                this.onEnteringCancelDamage(argsCancelDamage, this.isCurrentPlayerActive());
+                this.onEnteringCancelDamage(argsCancelDamage, this.bga.players.isCurrentPlayerActive());
                 break;
         }
 
-        if(this.isCurrentPlayerActive()) {
+        if(this.bga.players.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'chooseInitialCard':
                     if (this.isInitialCardDoubleSelection()) {
-                        this.addActionButton('confirmInitialCards_button', _("Confirm"), () => this.chooseInitialCard(
+                        this.bga.gameui.addActionButton('confirmInitialCards_button', _("Confirm"), () => this.chooseInitialCard(
                             Number(this.tableCenter.getVisibleCards().getSelection()[0]?.id),
                             Number(this.getPlayerTable(this.getPlayerId()).pickEvolutionCards.getSelection()[0]?.id),
                         ));
@@ -1339,20 +1341,20 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     }
                     break;
                 case 'beforeStartTurn':
-                    this.statusBar.addActionButton(_("Skip"), () => this.bgaPerformAction('actSkipBeforeStartTurn'));
+                    this.bga.statusBar.addActionButton(_("Skip"), () => this.bga.actions.performAction('actSkipBeforeStartTurn'));
                     break;
                 case 'beforeEndTurn':
-                    this.statusBar.addActionButton(_("Skip"), () => this.bgaPerformAction('actSkipBeforeEndTurn'));
+                    this.bga.statusBar.addActionButton(_("Skip"), () => this.bga.actions.performAction('actSkipBeforeEndTurn'));
                     break;
                 case 'changeMimickedCardWickednessTile':
-                    this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"),  () => this.skipChangeMimickedCardWickednessTile());
+                    this.bga.gameui.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"),  () => this.skipChangeMimickedCardWickednessTile());
 
                     if (!args.canChange) {
                         this.startActionTimer('skipChangeMimickedCardWickednessTile_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'changeMimickedCard':
-                    this.addActionButton('skipChangeMimickedCard_button', _("Skip"), () => this.skipChangeMimickedCard());
+                    this.bga.gameui.addActionButton('skipChangeMimickedCard_button', _("Skip"), () => this.skipChangeMimickedCard());
 
                     if (!args.canChange) {
                         this.startActionTimer('skipChangeMimickedCard_button', ACTION_TIMER_DURATION);
@@ -1362,7 +1364,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     const argsGiveSymbolToActivePlayer = args as EnteringGiveSymbolToActivePlayerArgs;
                     const SYMBOL_AS_STRING = ['[Heart]', '[Energy]', '[Star]'];
                     [4,5,0].forEach((symbol, symbolIndex) => {
-                        this.addActionButton(`giveSymbolToActivePlayer_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbolToActivePlayer(symbol));
+                        this.bga.gameui.addActionButton(`giveSymbolToActivePlayer_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbolToActivePlayer(symbol));
                         if (!argsGiveSymbolToActivePlayer.canGive[symbol]) {
                             dojo.addClass(`giveSymbolToActivePlayer_button${symbol}`, 'disabled');
                         }
@@ -1370,7 +1372,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     document.getElementById(`giveSymbolToActivePlayer_button5`).dataset.enableAtEnergy = '1';
                     break;
                 case 'throwDice':
-                    this.addActionButton('goToChangeDie_button', _("Resolve dice"), () => this.goToChangeDie(), null, null, 'red');
+                    this.bga.gameui.addActionButton('goToChangeDie_button', _("Resolve dice"), () => this.goToChangeDie(), null, null, 'red');
 
                     const argsThrowDice = args as EnteringThrowDiceArgs;
                     if (!argsThrowDice.hasActions) {
@@ -1380,27 +1382,27 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 case 'changeDie':
                     const argsChangeDie = args as EnteringChangeDieArgs;
                     if (argsChangeDie.hasYinYang) {
-                        this.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.bgaPerformAction('actUseYinYang'));
+                        this.bga.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.bga.actions.performAction('actUseYinYang'));
                     }
                     if (argsChangeDie.hasEnergyInfusedMonster) {
-                        this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(613, 'text-only') }) + ' (1[Energy])'), () => this.bgaPerformAction('actUseEnergyInfusedMonster', { id: argsChangeDie.hasEnergyInfusedMonster }));
+                        this.bga.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(613, 'text-only') }) + ' (1[Energy])'), () => this.bga.actions.performAction('actUseEnergyInfusedMonster', { id: argsChangeDie.hasEnergyInfusedMonster }));
                     }
 
-                    this.addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
+                    this.bga.gameui.addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
                     break;
                 case 'changeActivePlayerDie': case 'psychicProbeRollDie':
-                    this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), () => this.changeActivePlayerDieSkip());
+                    this.bga.gameui.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), () => this.changeActivePlayerDieSkip());
                     break;
                 case 'cheerleaderSupport':
-                    this.statusBar.addActionButton(formatTextIcons(_("Support (add [diceSmash] )")), () => this.bgaPerformAction('actSupport'));
-                    this.statusBar.addActionButton(_("Don't support"), () => this.bgaPerformAction('actDontSupport'));
+                    this.bga.statusBar.addActionButton(formatTextIcons(_("Support (add [diceSmash] )")), () => this.bga.actions.performAction('actSupport'));
+                    this.bga.statusBar.addActionButton(_("Don't support"), () => this.bga.actions.performAction('actDontSupport'));
                     break;
                 case 'giveGoldenScarab':
                     const argsGiveGoldenScarab = args as EnteringGiveGoldenScarabArgs;
                     argsGiveGoldenScarab.playersIds.forEach(playerId => {
                         const player = this.gamedatas.players[playerId];
                         const label = `<div class="monster-icon monster${player.monster}" style="background-color: ${player.monster > 100 ? 'unset' : '#'+player.color};"></div> ${player.name}`;
-                        this.addActionButton(`giveGoldenScarab_button_${playerId}`, label, () => this.giveGoldenScarab(playerId));
+                        this.bga.gameui.addActionButton(`giveGoldenScarab_button_${playerId}`, label, () => this.giveGoldenScarab(playerId));
                     });
                     break;
                 case 'giveSymbols':
@@ -1408,71 +1410,71 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     
                     argsGiveSymbols.combinations.forEach((combination, combinationIndex) => {
                         const symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
-                        this.addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), () => this.giveSymbols(combination));
+                        this.bga.gameui.addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), () => this.giveSymbols(combination));
                     });
                     break;
                 case 'selectExtraDie':
                     for (let face=1; face<=6; face++) {
-                        this.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
+                        this.bga.statusBar.addActionButton(formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
                     }
                     break;
                 case 'rerollOrDiscardDie':
-                    this.addActionButton('falseBlessingReroll_button', _("Reroll"), () => {
+                    this.bga.gameui.addActionButton('falseBlessingReroll_button', _("Reroll"), () => {
                         dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         this.falseBlessingAnkhAction = 'actFalseBlessingReroll';
                     }, null, null, 'gray');
-                    this.addActionButton('falseBlessingDiscard_button', _("Discard"), () => {
+                    this.bga.gameui.addActionButton('falseBlessingDiscard_button', _("Discard"), () => {
                         dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         this.falseBlessingAnkhAction = 'actFalseBlessingDiscard';
                     }, null, null, 'gray');
-                    this.addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
+                    this.bga.gameui.addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
                     break;
                 case 'rerollDice':
                     const argsRerollDice = args as EnteringRerollDiceArgs;
-                    this.statusBar.addActionButton(_("Reroll selected dice"), () => this.rerollDice(this.diceManager.getSelectedDiceIds()), { id: 'rerollDice_button' });
+                    this.bga.statusBar.addActionButton(_("Reroll selected dice"), () => this.rerollDice(this.diceManager.getSelectedDiceIds()), { id: 'rerollDice_button' });
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
-                        this.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
+                        this.bga.statusBar.addActionButton(_("Skip"), () => this.rerollDice([]));
                     }
                     break;
 
                 case 'AskMindbug':
                     const argsAskMindbug = args as EnteringAskMindbugArgs;
                     if (argsAskMindbug.canUseToken.includes(this.getPlayerId())) {
-                        this.statusBar.addActionButton(/*TODOMB_*/('Mindbug!'), () => this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }), { color: 'alert' });
+                        this.bga.statusBar.addActionButton(_('Mindbug!'), () => this.bga.actions.performAction('actMindbug', { useEvasiveMindbug: false }), { color: 'alert' });
                     }
                     if (argsAskMindbug.canUseEvasiveMindbug.includes(this.getPlayerId())) {
-                        this.statusBar.addActionButton(/*TODOMB_*/('Mindbug with ${card_name}').replace('${card_name}', this.cardsManager.getCardName(68, 'text-only')), () => this.bgaPerformAction('actMindbug', { useEvasiveMindbug: true }), { color: 'alert' });
+                        this.bga.statusBar.addActionButton(_('Mindbug with ${card_name}').replace('${card_name}', this.cardsManager.getCardName(68, 'text-only')), () => this.bga.actions.performAction('actMindbug', { useEvasiveMindbug: true }), { color: 'alert' });
                     }
-                    this.statusBar.addActionButton(_('Skip'), () => this.bgaPerformAction('actPassMindbug'));
+                    this.bga.statusBar.addActionButton(_('Skip'), () => this.bga.actions.performAction('actPassMindbug'));
                     break;
                 
                 case 'resolveDice': 
                     const argsResolveDice = args as EnteringResolveDiceArgs;
                     if (argsResolveDice.isInHibernation) {
-                        this.addActionButton('stayInHibernation_button',_("Stay in Hibernation"), () => this.stayInHibernation());
+                        this.bga.gameui.addActionButton('stayInHibernation_button',_("Stay in Hibernation"), () => this.stayInHibernation());
                         if (argsResolveDice.canLeaveHibernation) {
-                            this.addActionButton('leaveHibernation_button',_("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
+                            this.bga.gameui.addActionButton('leaveHibernation_button',_("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
                         }
                     }
                     break;
                 case 'prepareResolveDice':
                     const argsPrepareResolveDice = args as EnteringPrepareResolveDiceArgs;
                     if (argsPrepareResolveDice.hasEncasedInIce) {
-                        this.statusBar.addActionButton(_("Skip"), () => this.skipFreezeDie());
+                        this.bga.statusBar.addActionButton(_("Skip"), () => this.skipFreezeDie());
                     }
                     break;
                 case 'beforeResolveDice':
-                    this.statusBar.addActionButton(_("Skip"), () => this.skipBeforeResolveDice());
+                    this.bga.statusBar.addActionButton(_("Skip"), () => this.skipBeforeResolveDice());
                     break;
                 case 'takeWickednessTile':
                     const argsTakeWickednessTile = args as EnteringTakeWickednessTileArgs;
-                    this.statusBar.addActionButton(
+                    this.bga.statusBar.addActionButton(
                         _("Skip"), 
                         () => this.skipTakeWickednessTile(), 
-                        { autoclick: !argsTakeWickednessTile.canTake && this.getGameUserPreference(202) != 2 }
+                        { autoclick: !argsTakeWickednessTile.canTake && this.bga.userPreferences.get(202) != 2 }
                     );
                     break;
                 case 'leaveTokyo':
@@ -1485,10 +1487,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                          
                         this.smashedPlayersStillInTokyo.forEach(playerId => {
                             const player = this.gamedatas.players[playerId];
-                            this.addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
+                            this.bga.gameui.addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
                         });
                         if (this.smashedPlayersStillInTokyo.length) {
-                            this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                            this.bga.gameui.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(45, 'text-only')}), () => this.skipChestThumping());
                         }
                     } else {
                         const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
@@ -1496,10 +1498,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                         if (playerHasJets || playerHasSimianScamper) {
                             label += formatTextIcons(` (- ${argsLeaveTokyo.jetsDamage} [heart])`);
                         }
-                        this.addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
-                        this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
+                        this.bga.gameui.addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
+                        this.bga.gameui.addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
                         if (playerHasSimianScamper) {
-                            this.addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
+                            this.bga.gameui.addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
                         }
                         if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                             this.startActionTimer('stayInTokyo_button', ACTION_TIMER_DURATION);
@@ -1511,7 +1513,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 case 'stealCostumeCard':
                     const argsStealCostumeCard = args as EnteringStealCostumeCardArgs;
 
-                    this.addActionButton('endStealCostume_button', _("Skip"), () => this.endStealCostume(), null, null, 'red');
+                    this.bga.gameui.addActionButton('endStealCostume_button', _("Skip"), () => this.endStealCostume(), null, null, 'red');
 
                     if (!argsStealCostumeCard.canBuyFromPlayers && !argsStealCostumeCard.canGiveGift) {
                         this.startActionTimer('endStealCostume_button', ACTION_TIMER_DURATION);
@@ -1519,14 +1521,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     break;
                 case 'changeForm':
                     const argsChangeForm = args as EnteringChangeFormArgs;
-                    this.addActionButton('changeForm_button',   dojo.string.substitute(_("Change to ${otherForm}"), {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
-                    this.addActionButton('skipChangeForm_button', _("Don't change form"), () => this.skipChangeForm());
+                    this.bga.gameui.addActionButton('changeForm_button',   dojo.string.substitute(_("Change to ${otherForm}"), {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
+                    this.bga.gameui.addActionButton('skipChangeForm_button', _("Don't change form"), () => this.skipChangeForm());
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
                     document.getElementById(`changeForm_button`).dataset.enableAtEnergy = '1';
                     break;
                 case 'leaveTokyoExchangeCard':
                     const argsExchangeCard = args as EnteringExchangeCardArgs;
-                    this.addActionButton('skipExchangeCard_button', _("Skip"), () => this.skipExchangeCard());
+                    this.bga.gameui.addActionButton('skipExchangeCard_button', _("Skip"), () => this.skipExchangeCard());
 
                     if (!argsExchangeCard.canExchange) {
                         this.startActionTimer('skipExchangeCard_button', ACTION_TIMER_DURATION);
@@ -1539,19 +1541,19 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
 
                     if (argsBeforeEnteringTokyo.canUseFelineMotor.includes(this.getPlayerId())) {
-                        this.addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(36, 'text-only') }), () => this.useFelineMotor());
+                        this.bga.gameui.addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(36, 'text-only') }), () => this.useFelineMotor());
                     } 
 
-                    this.addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
+                    this.bga.gameui.addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
 
                     break;
                 case 'afterEnteringTokyo':
-                    this.addActionButton('skipAfterEnteringTokyo_button', _("Skip"), () => this.skipAfterEnteringTokyo());
+                    this.bga.gameui.addActionButton('skipAfterEnteringTokyo_button', _("Skip"), () => this.skipAfterEnteringTokyo());
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
                     if (argsBuyCard.canUseMiraculousCatch) {
-                        this.addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(12, 'text-only')}), () => this.useMiraculousCatch());
+                        this.bga.gameui.addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(12, 'text-only')}), () => this.useMiraculousCatch());
                         if (!argsBuyCard.unusedMiraculousCatch) {
                             dojo.addClass('useMiraculousCatch_button', 'disabled');
                         }
@@ -1563,32 +1565,32 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                         if (!discardCards.length) {
                             label += ` (${/*_TODOORI*/('discard is empty')})`;
                         }
-                        this.addActionButton('useScavenger_button', label, () => this.showDiscardCards(discardCards, args));
+                        this.bga.gameui.addActionButton('useScavenger_button', label, () => this.showDiscardCards(discardCards, args));
                         if (!discardCards.length) {
                             dojo.addClass('useScavenger_button', 'disabled');
                         }
                     }
 
                     if (argsBuyCard.canUseAdaptingTechnology) {
-                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.renewPowerCards(3024));
+                        this.bga.gameui.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.renewPowerCards(3024));
                     }
-                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.renewPowerCards(4));
+                    this.bga.gameui.addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.renewPowerCards(4));
                     document.getElementById('renew_button').dataset.enableAtEnergy = '2';
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
                     if (argsBuyCard.canSell) {
-                        this.addActionButton('goToSellCard_button', _("End turn and sell cards"), 'goToSellCard');
+                        this.bga.gameui.addActionButton('goToSellCard_button', _("End turn and sell cards"), 'goToSellCard');
                     }
 
-                    this.addActionButton('endTurn_button', argsBuyCard.canSell ? _("End turn without selling") : _("End turn"), 'onEndTurn', null, null, 'red');
+                    this.bga.gameui.addActionButton('endTurn_button', argsBuyCard.canSell ? _("End turn without selling") : _("End turn"), 'onEndTurn', null, null, 'red');
 
                     if (!argsBuyCard.canBuyOrNenew && !argsBuyCard.canSell) {
                         this.startActionTimer('endTurn_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'opportunistBuyCard':
-                    this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+                    this.bga.gameui.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
 
                     if (!args.canBuy) {
                         this.startActionTimer('opportunistSkip_button', ACTION_TIMER_DURATION);
@@ -1600,10 +1602,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'cardIsBought':
-                    this.addActionButton('skipCardIsBought_button', _("Skip"), () => this.skipCardIsBought());
+                    this.bga.gameui.addActionButton('skipCardIsBought_button', _("Skip"), () => this.skipCardIsBought());
                     break;
                 case 'sellCard':
-                    this.statusBar.addActionButton(_("End turn"), () => this.bgaPerformAction('actEndSell'), { color: 'alert' });
+                    this.bga.statusBar.addActionButton(_("End turn"), () => this.bga.actions.performAction('actEndSell'), { color: 'alert' });
                     break;
 
                 case 'answerQuestion':
@@ -1622,8 +1624,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 const substituteParams = { card_name: this.evolutionCardsManager.getCardName(136, 'text-only')};
                 const putLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), {...substituteParams, number: 1});
                 const takeLabel = dojo.string.substitute(_("Take all [Energy] from ${card_name}"), substituteParams);
-                this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
-                this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
+                this.bga.gameui.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
+                this.bga.gameui.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
                 const bambooSupplyQuestionArgs = question.args as BambooSupplyQuestionArgs;
                 if (!bambooSupplyQuestionArgs.canTake) {
                     dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
@@ -1631,12 +1633,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 break;
 
             case 'GazeOfTheSphinxAnkh':
-                this.addActionButton('gazeOfTheSphinxDrawEvolution_button', _("Draw Evolution"), () => this.gazeOfTheSphinxDrawEvolution());
-                this.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxGainEnergy());
+                this.bga.gameui.addActionButton('gazeOfTheSphinxDrawEvolution_button', _("Draw Evolution"), () => this.gazeOfTheSphinxDrawEvolution());
+                this.bga.gameui.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxGainEnergy());
                 break;
 
             case 'GazeOfTheSphinxSnake':
-                this.addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxLoseEnergy());
+                this.bga.gameui.addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxLoseEnergy());
                 const gazeOfTheSphinxLoseEnergyQuestionArgs = question.args as GazeOfTheSphinxSnakeQuestionArgs;
                 if (!gazeOfTheSphinxLoseEnergyQuestionArgs.canLoseEnergy) {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
@@ -1647,7 +1649,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 const giveSymbolPlayerId = this.getPlayerId();
                 const giveSymbolQuestionArgs = question.args as GiveSymbolQuestionArgs;
                 giveSymbolQuestionArgs.symbols.forEach((symbol) => {
-                    this.addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol]})), () => this.giveSymbol(symbol));
+                    this.bga.gameui.addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol]})), () => this.giveSymbol(symbol));
                     if (!question.args[`canGive${symbol}`].includes(giveSymbolPlayerId)) {
                         dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
                     }
@@ -1661,7 +1663,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'GiveEnergyOrLoseHearts':
                 const giveEnergyOrLoseHeartsPlayerId = this.getPlayerId();
                 const giveEnergyOrLoseHeartsQuestionArgs = question.args as GiveEnergyOrLoseHeartsQuestionArgs;
-                this.addActionButton(`giveSymbol_button5`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5]})), () => this.giveSymbol(5));
+                this.bga.gameui.addActionButton(`giveSymbol_button5`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5]})), () => this.giveSymbol(5));
                 const giveEnergyButton = document.getElementById(`giveSymbol_button5`);
                 giveEnergyButton.dataset.enableAtEnergy = '1';                   
                 this.updateEnableAtEnergy(this.getPlayerId());
@@ -1669,20 +1671,20 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     giveEnergyButton.classList.add('disabled');
                     
                 }
-                this.addActionButton(`loseHearts_button`, formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: `${giveEnergyOrLoseHeartsQuestionArgs.heartNumber}[Heart]`})), () => this.loseHearts());
+                this.bga.gameui.addActionButton(`loseHearts_button`, formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: `${giveEnergyOrLoseHeartsQuestionArgs.heartNumber}[Heart]`})), () => this.loseHearts());
                 break;
             case 'FreezeRay':
                 for (let face=1; face<=6; face++) {
-                    this.addActionButton(`selectFrozenDieFace_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.chooseFreezeRayDieFace(face));
+                    this.bga.gameui.addActionButton(`selectFrozenDieFace_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.chooseFreezeRayDieFace(face));
                 }
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
+                this.bga.gameui.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
                 if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
-                    this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
+                    this.bga.gameui.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
-                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
+                this.bga.gameui.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
 
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
                 dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs.cost);
@@ -1690,72 +1692,72 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'DeepDive':
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
                 deepDiveCatchArgs.cards.forEach(card => {
-                    this.addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
+                    this.bga.gameui.addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
                 });
                 break;
             case 'Treasure':
                 const treasureArgs = question.args as TreasureQuestionArgs;
                 treasureArgs.cards.forEach(card => {
-                    this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bgaPerformAction('actTreasure', { id: card.id }));
+                    this.bga.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bga.actions.performAction('actTreasure', { id: card.id }));
                 });
-                this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction('actPassTreasure'), { color: 'secondary' });
+                this.bga.statusBar.addActionButton(_('Pass'), () => this.bga.actions.performAction('actPassTreasure'), { color: 'secondary' });
                 break;
             case 'ArcaneScepter':
                 const arcaneScepterArgs = question.args as TreasureQuestionArgs;
                 arcaneScepterArgs.cards.forEach(card => {
-                    this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Take ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bgaPerformAction('actArcaneScepter', { id: card.id }));
+                    this.bga.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Take ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bga.actions.performAction('actArcaneScepter', { id: card.id }));
                 });
                 break;
             case 'ExoticArms':
                 const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });
                 
-                this.addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), () => this.useExoticArms());
-                this.addActionButton('skipExoticArms_button', _('Skip'), () => this.skipExoticArms());
+                this.bga.gameui.addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), () => this.useExoticArms());
+                this.bga.gameui.addActionButton('skipExoticArms_button', _('Skip'), () => this.skipExoticArms());
                 dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
                 document.getElementById('useExoticArms_button').dataset.enableAtEnergy = '2';
                 break;
             case 'TargetAcquired':
                 const targetAcquiredCatchArgs = question.args as TargetAcquiredQuestionArgs;
-                this.addActionButton('giveTarget_button', dojo.string.substitute(_("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
-                this.addActionButton('skipGiveTarget_button', _('Skip'), () => this.skipGiveTarget());
+                this.bga.gameui.addActionButton('giveTarget_button', dojo.string.substitute(_("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
+                this.bga.gameui.addActionButton('skipGiveTarget_button', _('Skip'), () => this.skipGiveTarget());
                 break;
             case 'LightningArmor':
-                this.addActionButton('useLightningArmor_button', _("Throw dice"), () => this.useLightningArmor());
-                this.addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
+                this.bga.gameui.addActionButton('useLightningArmor_button', _("Throw dice"), () => this.useLightningArmor());
+                this.bga.gameui.addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
                 break;
             case 'EnergySword':
-                this.addActionButton('useEnergySword_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(147, 'text-only') }), () => this.answerEnergySword(true));
-                this.addActionButton('skipEnergySword_button', _('Skip'), () => this.answerEnergySword(false));
+                this.bga.gameui.addActionButton('useEnergySword_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(147, 'text-only') }), () => this.answerEnergySword(true));
+                this.bga.gameui.addActionButton('skipEnergySword_button', _('Skip'), () => this.answerEnergySword(false));
                 dojo.toggleClass('useEnergySword_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
                 document.getElementById('useEnergySword_button').dataset.enableAtEnergy = '2';
                 break;
             case 'SunkenTemple':
-                this.addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
-                this.addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
+                this.bga.gameui.addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
+                this.bga.gameui.addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
                 break;
             case 'ElectricCarrot':
-                this.addActionButton('answerElectricCarrot5_button',  formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]'})), () => this.answerElectricCarrot(5));
+                this.bga.gameui.addActionButton('answerElectricCarrot5_button',  formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]'})), () => this.answerElectricCarrot(5));
                 dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 1);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
-                this.addActionButton('answerElectricCarrot4_button',  formatTextIcons(_("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
+                this.bga.gameui.addActionButton('answerElectricCarrot4_button',  formatTextIcons(_("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
                 break;
             case 'SuperiorAlienTechnology':
-                this.statusBar.addActionButton(_('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
+                this.bga.statusBar.addActionButton(_('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
                 break;
             case 'Hunter':
                 const hunterArgs = question.args as HunterQuestionArgs;
-                hunterArgs.playerIds?.forEach(targetPlayerId => this.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), {'player_name': this.getPlayer(targetPlayerId).name}), () => this.bgaPerformAction('actChooseHunterTarget', { targetPlayerId })));
+                hunterArgs.playerIds?.forEach(targetPlayerId => this.bga.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), {'player_name': this.getPlayer(targetPlayerId).name}), () => this.bga.actions.performAction('actChooseHunterTarget', { targetPlayerId })));
                 break;
             case 'MindbugsOverlord':
-                this.statusBar.addActionButton(_("Declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }));
-                this.statusBar.addActionButton(_("Don't declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }));
+                this.bga.statusBar.addActionButton(_("Declare allegiance"), () => this.bga.actions.performAction('actAnswerMindbugsOverlord', { declare: true }));
+                this.bga.statusBar.addActionButton(_("Don't declare allegiance"), () => this.bga.actions.performAction('actAnswerMindbugsOverlord', { declare: false }));
                 break;
             case 'MindbugsOverlordChoosePlayer':
                 const mindbugsOverlordArgs = question.args as MindbugsOverlordQuestionArgs;
-                mindbugsOverlordArgs.declaredAllegiance?.forEach(targetPlayerId => this.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bgaPerformAction('actAnswerMindbugsOverlordChoosePlayer', { targetPlayerId })));
+                mindbugsOverlordArgs.declaredAllegiance?.forEach(targetPlayerId => this.bga.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bga.actions.performAction('actAnswerMindbugsOverlordChoosePlayer', { targetPlayerId })));
                 break;
             case 'StrangeEvolution':
-                question.args.otherPlayerIds?.forEach(targetPlayerId => this.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bgaPerformAction('actDrawStrangeEvolution', { targetPlayerId })));
+                question.args.otherPlayerIds?.forEach(targetPlayerId => this.bga.statusBar.addActionButton(this.getPlayer(targetPlayerId).name, () => this.bga.actions.performAction('actDrawStrangeEvolution', { targetPlayerId })));
                 break;
         }
     }
@@ -1767,7 +1769,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     ///////////////////////////////////////////////////
 
     public getPlayerId(): number {
-        return Number(this.player_id);
+        return this.bga.players.getCurrentPlayerId();
     }
 
     public isHalloweenExpansion(): boolean {
@@ -1802,6 +1804,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         return this.gamedatas.powerUpExpansion;
     }
 
+    public isMindbugExpansion(): boolean {
+        return this.gamedatas.mindbugExpansion;
+    }
+
     public isOrigins(): boolean {
         return this.gamedatas.origins;
     }
@@ -1811,7 +1817,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public isDefaultFont(): boolean {
-        return this.getGameUserPreference(201) == 1;
+        return this.bga.userPreferences.get(201) == 1;
     }
 
     public getPlayer(playerId: number): KingOfTokyoPlayer {
@@ -1819,7 +1825,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false, dojoPlace: string = undefined): HTMLElement {
-        return this.statusBar.addActionButton(text, callback, {
+        return this.bga.statusBar.addActionButton(text, callback, {
             id,
             classes: disabled ? 'disabled' : '',
             destination: $(destinationId),
@@ -1828,7 +1834,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private addTwoPlayerVariantNotice(gamedatas: KingOfTokyoGamedatas) {
         // 2-players variant notice
-        if (Object.keys(gamedatas.players).length == 2 && this.getGameUserPreference(203) == 1) {
+        if (Object.keys(gamedatas.players).length == 2 && this.bga.userPreferences.get(203) == 1) {
             dojo.place(`
                     <div id="board-corner-highlight"></div>
                     <div id="twoPlayersVariant-message">
@@ -1839,7 +1845,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     </div>
                 `, 'board');
 
-            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => this.setGameUserPreference(203, 2));
+            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => this.bga.userPreferences.set(203, 2));
         }
     }
 
@@ -1874,10 +1880,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             html += `</div>`;
             dojo.place(html, `player_board_${player.id}`);
 
-            this.addTooltipHtml(`health-counter-wrapper-${player.id}`, _("Health"));
-            this.addTooltipHtml(`energy-counter-wrapper-${player.id}`, _("Energy"));
+            this.bga.gameui.addTooltipHtml(`health-counter-wrapper-${player.id}`, _("Health"));
+            this.bga.gameui.addTooltipHtml(`energy-counter-wrapper-${player.id}`, _("Energy"));
             if (gamedatas.wickednessExpansion) {
-                this.addTooltipHtml(`wickedness-counter-wrapper-${player.id}`, _("Wickedness points"));
+                this.bga.gameui.addTooltipHtml(`wickedness-counter-wrapper-${player.id}`, _("Wickedness points"));
             }
 
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
@@ -1956,7 +1962,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 handCounter.setValue(player.hiddenEvolutions.length);
                 this.handCounters[playerId] = handCounter;
 
-                this.addTooltipHtml(`playerhand-counter-wrapper-${player.id}`, _("Number of Evolution cards in hand."));
+                this.bga.gameui.addTooltipHtml(`playerhand-counter-wrapper-${player.id}`, _("Number of Evolution cards in hand."));
 
                 document.getElementById(`see-monster-evolution-player-${playerId}`).addEventListener('click', () => this.showPlayerEvolutions(playerId));
             }
@@ -1985,8 +1991,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             }
         });
 
-        this.addTooltipHtmlToClass('shrink-ray-tokens', this.SHINK_RAY_TOKEN_TOOLTIP);
-        this.addTooltipHtmlToClass('poison-tokens', this.POISON_TOKEN_TOOLTIP);
+        this.bga.gameui.addTooltipHtmlToClass('shrink-ray-tokens', this.SHINK_RAY_TOKEN_TOOLTIP);
+        this.bga.gameui.addTooltipHtmlToClass('poison-tokens', this.POISON_TOKEN_TOOLTIP);
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
@@ -2034,13 +2040,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     private removeMonsterChoice() {
         if (document.getElementById('monster-pick')) {
-            this.fadeOutAndDestroy('monster-pick');
+            this.bga.gameui.fadeOutAndDestroy('monster-pick');
         }
     }
 
     private removeMutantEvolutionChoice() {
         if (document.getElementById('mutant-evolution-choice')) {
-            this.fadeOutAndDestroy('mutant-evolution-choice');
+            this.bga.gameui.fadeOutAndDestroy('mutant-evolution-choice');
         }
     }
 
@@ -2065,11 +2071,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public onConsumableKeywordClick(card: Card, keyword: string) {
-        this.bgaPerformAction('actActivateConsumable', { id: card.id, keyword });
+        this.bga.actions.performAction('actActivateConsumable', { id: card.id, keyword });
     }
 
     public onConsumableEvolutionKeywordClick(evolution: EvolutionCard, keyword: string) {
-        this.bgaPerformAction('actActivateConsumableEvolution', { id: evolution.id, keyword });
+        this.bga.actions.performAction('actActivateConsumableEvolution', { id: evolution.id, keyword });
     }
 
     public onVisibleCardClick(stock: CardStock<Card>, card: Card, from: number = 0, warningChecked: boolean = false) { // from : player id
@@ -2105,12 +2111,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             const buyCardArgs = this.gamedatas.gamestate.args as EnteringBuyCardArgs;
             const warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
             if (!warningChecked && buyCardArgs.noExtraTurnWarning.includes(card.type)) {
-                this.confirmationDialog(
+                this.bga.gameui.confirmationDialog(
                     this.getNoExtraTurnWarningMessage(), 
                     () => this.onVisibleCardClick(stock, card, from, true)
                 );
             } else if (warningIcon) {
-                this.confirmationDialog(
+                this.bga.gameui.confirmationDialog(
                     formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
                     () => this.onVisibleCardClick(stock, card, from, true)
                 );
@@ -2132,7 +2138,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                         keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })));
                     }
 
-                    this.multipleChoiceDialog(
+                    this.bga.gameui.multipleChoiceDialog(
                         dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCardsManager.getCardName(28, 'text-only')}), 
                         keys, 
                         (choice: string) => {
@@ -2218,7 +2224,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         
         const args = this.gamedatas.gamestate.args as EnteringStepEvolutionArgs;
         if (args.noExtraTurnWarning?.includes(card.type)) {
-            this.confirmationDialog(
+            this.bga.gameui.confirmationDialog(
                 this.getNoExtraTurnWarningMessage(), 
                 () => this.playEvolution(card.id)
             );
@@ -2279,7 +2285,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
     // called on state enter and when energy number is changed
     private setBuyDisabledCard(args: EnteringBuyCardArgs | EnteringStealCostumeCardArgs = null, playerEnergy: number = null) {
-        if (!this.isCurrentPlayerActive()) {
+        if (!this.bga.players.isCurrentPlayerActive()) {
             return;
         }
         
@@ -2774,40 +2780,40 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public pickMonster(monster: number): void {
-        this.bgaPerformAction('actPickMonster', {
+        this.bga.actions.performAction('actPickMonster', {
             monster
         });
     }
 
     public pickEvolutionForDeck(id: number) {
-        this.bgaPerformAction('actPickEvolutionForDeck', {
+        this.bga.actions.performAction('actPickEvolutionForDeck', {
             id
         });
     }
 
     public chooseInitialCard(id: number | null, evolutionId: number | null) {
-        this.bgaPerformAction('actChooseInitialCard', {
+        this.bga.actions.performAction('actChooseInitialCard', {
             id,
             evolutionId,
         });
     }
 
     public skipBeforeEnteringTokyo() {
-        this.bgaPerformAction('actSkipBeforeEnteringTokyo');
+        this.bga.actions.performAction('actSkipBeforeEnteringTokyo');
     }
 
     public skipAfterEnteringTokyo() {
-        this.bgaPerformAction('actSkipAfterEnteringTokyo');
+        this.bga.actions.performAction('actSkipAfterEnteringTokyo');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {
-        this.bgaPerformAction('actGiveSymbolToActivePlayer', {
+        this.bga.actions.performAction('actGiveSymbolToActivePlayer', {
             symbol
         });
     }
 
     public giveSymbol(symbol: number) {
-        this.bgaPerformAction('actGiveSymbol', {
+        this.bga.actions.performAction('actGiveSymbol', {
             symbol
         });
     }
@@ -2817,7 +2823,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public rethrowDice(diceIds: number[]) {
-        this.bgaPerformAction('actRethrow', {
+        this.bga.actions.performAction('actRethrow', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2825,7 +2831,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public rethrow3() {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.bgaPerformAction('actRethrow3', {
+        this.bga.actions.performAction('actRethrow3', {
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }
@@ -2833,7 +2839,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public rerollDie(id: number) {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.bgaPerformAction('actRerollDie', {
+        this.bga.actions.performAction('actRerollDie', {
             id,
             diceIds: lockedDice.map(die => die.id).join(',')
         });
@@ -2842,7 +2848,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public actUseIntergalacticGenius() {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.bgaPerformAction('actUseIntergalacticGenius', {
+        this.bga.actions.performAction('actUseIntergalacticGenius', {
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }
@@ -2850,27 +2856,27 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     /*public actUseEnergyDevourer() {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.bgaPerformAction('actUseEnergyDevourer', {
+        this.bga.actions.performAction('actUseEnergyDevourer', {
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }*/
 
     public rethrow3camouflage() {
-        this.bgaPerformAction('actRethrow3Camouflage');
+        this.bga.actions.performAction('actRethrow3Camouflage');
     }
 
     public rethrow3psychicProbe() {
-        this.bgaPerformAction('actRethrow3PsychicProbe');
+        this.bga.actions.performAction('actRethrow3PsychicProbe');
     }
 
     public rethrow3changeDie() {
-        this.bgaPerformAction('actRethrow3ChangeDie');
+        this.bga.actions.performAction('actRethrow3ChangeDie');
     }
 
     public buyEnergyDrink() {
         const diceIds = this.diceManager.destroyFreeDice();
 
-        this.bgaPerformAction('actBuyEnergyDrink', {
+        this.bga.actions.performAction('actBuyEnergyDrink', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2878,7 +2884,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public useSmokeCloud() {
         const diceIds = this.diceManager.destroyFreeDice();
         
-        this.bgaPerformAction('actUseSmokeCloud', {
+        this.bga.actions.performAction('actUseSmokeCloud', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2886,31 +2892,31 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public useCultist() {
         const diceIds = this.diceManager.destroyFreeDice();
         
-        this.bgaPerformAction('actUseCultist', {
+        this.bga.actions.performAction('actUseCultist', {
             diceIds: diceIds.join(',')
         });
     }
 
     public useRapidHealing() {
-        this.bgaPerformAction('actUseRapidHealing', null, { lock: false, checkAction: false });
+        this.bga.actions.performAction('actUseRapidHealing', null, { lock: false, checkAction: false });
     }
 
     public useMothershipSupport() {
-        this.bgaPerformAction('actUseMothershipSupport', null, { lock: false, checkAction: false });
+        this.bga.actions.performAction('actUseMothershipSupport', null, { lock: false, checkAction: false });
     }
 
     public useRapidCultist(type: number) { // 4 for health, 5 for energy
-       this.bgaPerformAction('actUseRapidCultist', { type }, { lock: false, checkAction: false });
+       this.bga.actions.performAction('actUseRapidCultist', { type }, { lock: false, checkAction: false });
     }
 
     public setSkipBuyPhase(skipBuyPhase: boolean) {
-        this.bgaPerformAction('actSetSkipBuyPhase', {
+        this.bga.actions.performAction('actSetSkipBuyPhase', {
             skipBuyPhase: skipBuyPhase
         }, { lock: false, checkAction: false });
     }
 
     public changeDie(id: number, value: number, card: number, cardId?: number) {
-        this.bgaPerformAction('actChangeDie', {
+        this.bga.actions.performAction('actChangeDie', {
             id,
             value,
             card,
@@ -2919,7 +2925,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public psychicProbeRollDie(id: number) {
-        this.bgaPerformAction('actChangeActivePlayerDie', {
+        this.bga.actions.performAction('actChangeActivePlayerDie', {
             id
         });
     }
@@ -2927,22 +2933,22 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public goToChangeDie(confirmed: boolean = false) {
         const args = this.gamedatas.gamestate.args as EnteringThrowDiceArgs;
         if (!confirmed && args.throwNumber == 1 && args.maxThrowNumber > 1) {
-            this.confirmationDialog(
+            this.bga.gameui.confirmationDialog(
                 formatTextIcons(_('Are you sure you want to resolve dice without any reroll? If you want to change your dice, click on the dice you want to keep and use "Reroll dice" button to reroll the others.')), 
                 () => this.goToChangeDie(true)
             );
             return;
         }
 
-        this.bgaPerformAction('actGoToChangeDie');
+        this.bga.actions.performAction('actGoToChangeDie');
     }
 
     public resolveDice() {
-        this.bgaPerformAction('actResolve');
+        this.bga.actions.performAction('actResolve');
     }
 
     public discardDie(id: number) {
-        this.bgaPerformAction('actDiscardDie', {
+        this.bga.actions.performAction('actDiscardDie', {
             id: id
         });
     }
@@ -2952,118 +2958,118 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             return;
         }
 
-        this.bgaPerformAction(this.falseBlessingAnkhAction, {
+        this.bga.actions.performAction(this.falseBlessingAnkhAction, {
             id
         });
     }
 
     public freezeDie(id: number) {
-        this.bgaPerformAction('actFreezeDie', {
+        this.bga.actions.performAction('actFreezeDie', {
             id
         });
     }
 
     public skipFreezeDie() {
-        this.bgaPerformAction('actSkipFreezeDie');
+        this.bga.actions.performAction('actSkipFreezeDie');
     }
 
     public discardKeepCard(id: number) {
-        this.bgaPerformAction('actDiscardKeepCard', {
+        this.bga.actions.performAction('actDiscardKeepCard', {
             id
         });
     }
 
     public giveGoldenScarab(playerId: number) {
-        this.bgaPerformAction('actGiveGoldenScarab', {
+        this.bga.actions.performAction('actGiveGoldenScarab', {
             playerId
         });
     }
 
     public giveSymbols(symbols: number[]) {
-        this.bgaPerformAction('actGiveSymbols', {
+        this.bga.actions.performAction('actGiveSymbols', {
             symbols: symbols.join(',')
         });
     }
 
     public selectExtraDie(face: number) {
-        this.bgaPerformAction('actSelectExtraDie', {
+        this.bga.actions.performAction('actSelectExtraDie', {
             face
         });
     }
 
     public falseBlessingReroll(id: number) {
-        this.bgaPerformAction('actFalseBlessingReroll', {
+        this.bga.actions.performAction('actFalseBlessingReroll', {
             id
         });
     }
 
     public falseBlessingDiscard(id: number) {
-        this.bgaPerformAction('actFalseBlessingDiscard', {
+        this.bga.actions.performAction('actFalseBlessingDiscard', {
             id
         });
     }
 
     public falseBlessingSkip() {
-        this.bgaPerformAction('actFalseBlessingSkip');
+        this.bga.actions.performAction('actFalseBlessingSkip');
     }
 
     public rerollDice(diceIds: number[]) {
-        this.bgaPerformAction('actRerollDice', {
+        this.bga.actions.performAction('actRerollDice', {
             ids: diceIds.join(',')
         });
     }
 
     public takeWickednessTile(id: number) {
-        this.bgaPerformAction('actTakeWickednessTile', {
+        this.bga.actions.performAction('actTakeWickednessTile', {
             id,
         });
     }
 
     public skipTakeWickednessTile() {
-        this.bgaPerformAction('actSkipTakeWickednessTile');
+        this.bga.actions.performAction('actSkipTakeWickednessTile');
     }
 
     public applyHeartActions(selections: HeartActionSelection[]) {
-        this.bgaPerformAction('actApplyHeartDieChoices', {
+        this.bga.actions.performAction('actApplyHeartDieChoices', {
             heartDieChoices: JSON.stringify(selections)
         });
     }
 
     public applySmashActions(selections: { [playerId: number]: SmashAction } ) {
-        this.bgaPerformAction('actApplySmashDieChoices', {
+        this.bga.actions.performAction('actApplySmashDieChoices', {
             smashDieChoices: JSON.stringify(selections)
         });
     }
 
     public chooseEvolutionCard(id: number) {
-        this.bgaPerformAction('actChooseEvolutionCard', {
+        this.bga.actions.performAction('actChooseEvolutionCard', {
             id
         });
     }
 
     public onStayInTokyo() {
-        this.bgaPerformAction('actStay');
+        this.bga.actions.performAction('actStay');
     }
     public onLeaveTokyo(useCard?: number) {
-        this.bgaPerformAction('actLeave', { useCard });
+        this.bga.actions.performAction('actLeave', { useCard });
     }
 
     public stealCostumeCard(id: number) {
-        this.bgaPerformAction('actStealCostumeCard', {
+        this.bga.actions.performAction('actStealCostumeCard', {
             id
         });
     }
 
     public changeForm() {
-        this.bgaPerformAction('actChangeForm');
+        this.bga.actions.performAction('actChangeForm');
     }
 
     public skipChangeForm() {
-        this.bgaPerformAction('actSkipChangeForm');
+        this.bga.actions.performAction('actSkipChangeForm');
     }
 
     public buyCard(id: number, from: number, useSuperiorAlienTechnology: boolean = false, useBobbingForApples: boolean = false) {
-        this.bgaPerformAction('actBuyCard', {
+        this.bga.actions.performAction('actBuyCard', {
             id,
             from,
             useSuperiorAlienTechnology,
@@ -3072,302 +3078,302 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public buyCardBamboozle(id: number, from: number) {
-        this.bgaPerformAction('actBuyCardBamboozle', {
+        this.bga.actions.performAction('actBuyCardBamboozle', {
             id,
             from
         });
     }
 
     public chooseMimickedCard(id: number) {
-        this.bgaPerformAction('actChooseMimickedCard', {
+        this.bga.actions.performAction('actChooseMimickedCard', {
             id
         });
     }
 
     public chooseMimickedEvolution(id: number) {
-        this.bgaPerformAction('actChooseMimickedEvolution', {
+        this.bga.actions.performAction('actChooseMimickedEvolution', {
             id: id
         });
     }
 
     public changeMimickedCard(id: number) {
-        this.bgaPerformAction('actChangeMimickedCard', {
+        this.bga.actions.performAction('actChangeMimickedCard', {
             id
         });
     }
 
     public chooseMimickedCardWickednessTile(id: number) {
-        this.bgaPerformAction('actChooseMimickedCardWickednessTile', {
+        this.bga.actions.performAction('actChooseMimickedCardWickednessTile', {
             id
         });
     }
 
     public changeMimickedCardWickednessTile(id: number) {
-        this.bgaPerformAction('actChangeMimickedCardWickednessTile', {
+        this.bga.actions.performAction('actChangeMimickedCardWickednessTile', {
             id
         });
     }
 
     public sellCard(id: number) {
-        this.bgaPerformAction('actSellCard', {
+        this.bga.actions.performAction('actSellCard', {
             id
         });
     }
 
     public renewPowerCards(cardType: number) {
-        this.bgaPerformAction('actRenewPowerCards', {
+        this.bga.actions.performAction('actRenewPowerCards', {
             cardType
         });
     }
 
     public skipCardIsBought() {
-        this.bgaPerformAction('actSkipCardIsBought');
+        this.bga.actions.performAction('actSkipCardIsBought');
     }
 
     public goToSellCard() {
-        this.bgaPerformAction('actGoToSellCard');
+        this.bga.actions.performAction('actGoToSellCard');
     }
 
     public opportunistSkip() {
-        this.bgaPerformAction('actOpportunistSkip');
+        this.bga.actions.performAction('actOpportunistSkip');
     }
 
     public changeActivePlayerDieSkip() {
-        this.bgaPerformAction('actChangeActivePlayerDieSkip');
+        this.bga.actions.performAction('actChangeActivePlayerDieSkip');
     }
 
     public skipChangeMimickedCard() {
-        this.bgaPerformAction('actSkipChangeMimickedCard');
+        this.bga.actions.performAction('actSkipChangeMimickedCard');
     }
 
     public skipChangeMimickedCardWickednessTile() {
-        this.bgaPerformAction('actSkipChangeMimickedCardWickednessTile');
+        this.bga.actions.performAction('actSkipChangeMimickedCardWickednessTile');
     }
 
     public endStealCostume() {
-        this.bgaPerformAction('actEndStealCostume');
+        this.bga.actions.performAction('actEndStealCostume');
     }
 
     public onEndTurn() {
-        this.bgaPerformAction('actEndTurn');
+        this.bga.actions.performAction('actEndTurn');
     }
 
     public throwCamouflageDice() {
-        this.bgaPerformAction('actThrowCamouflageDice');
+        this.bga.actions.performAction('actThrowCamouflageDice');
     }
 
     public useWings() {
-        this.bgaPerformAction('actUseWings');
+        this.bga.actions.performAction('actUseWings');
     }
 
     public useInvincibleEvolution(evolutionType: number) {
-        this.bgaPerformAction('actUseInvincibleEvolution', {
+        this.bga.actions.performAction('actUseInvincibleEvolution', {
             evolutionType
         });
     }
 
     public useCandyEvolution() {
-        this.bgaPerformAction('actUseCandyEvolution');
+        this.bga.actions.performAction('actUseCandyEvolution');
     }
 
     public skipWings() {
-        this.bgaPerformAction('actSkipWings');
+        this.bga.actions.performAction('actSkipWings');
     }
 
     public useRobot(energy: number) {
-        this.bgaPerformAction('actUseRobot', {
+        this.bga.actions.performAction('actUseRobot', {
             energy
         });
     }
 
     public useElectricArmor(energy: number) {
-        this.bgaPerformAction('actUseElectricArmor', {
+        this.bga.actions.performAction('actUseElectricArmor', {
             energy
         });
     }
 
     public useSuperJump(energy: number) {
-        this.bgaPerformAction('actUseSuperJump', {
+        this.bga.actions.performAction('actUseSuperJump', {
             energy
         });
     }
 
     public useRapidHealingSync(cultistCount: number, rapidHealingCount: number) {
-        this.bgaPerformAction('actUseRapidHealingSync', {
+        this.bga.actions.performAction('actUseRapidHealingSync', {
             cultistCount, 
             rapidHealingCount
         });
     }
 
     public setLeaveTokyoUnder(under: number) {
-        this.bgaPerformAction('actSetLeaveTokyoUnder', {
+        this.bga.actions.performAction('actSetLeaveTokyoUnder', {
             under
         }, { lock: false, checkAction: false });
     }
 
     public setStayTokyoOver(over: number) {
-        this.bgaPerformAction('actSetStayTokyoOver', {
+        this.bga.actions.performAction('actSetStayTokyoOver', {
             over
         }, { lock: false, checkAction: false });
     }
 
     public setAskPlayEvolution(value: number) {
-        this.bgaPerformAction('actSetAskPlayEvolution', {
+        this.bga.actions.performAction('actSetAskPlayEvolution', {
             value
         }, { lock: false, checkAction: false });
     }
     
     public exchangeCard(id: number) {
-        this.bgaPerformAction('actExchangeCard', {
+        this.bga.actions.performAction('actExchangeCard', {
             id
         });
     }
 
     public skipExchangeCard() {
-        this.bgaPerformAction('actSkipExchangeCard');
+        this.bga.actions.performAction('actSkipExchangeCard');
     }
     
     public stayInHibernation() {
-        this.bgaPerformAction('actStayInHibernation');
+        this.bga.actions.performAction('actStayInHibernation');
     }
     
     public leaveHibernation() {
-        this.bgaPerformAction('actLeaveHibernation');
+        this.bga.actions.performAction('actLeaveHibernation');
     }
 
     public playEvolution(id: number) {
-        this.bgaPerformAction('actPlayEvolution', {
+        this.bga.actions.performAction('actPlayEvolution', {
             id
         }, { checkAction: false, lock: false });
     }
 
     public giveGiftEvolution(id: number, toPlayerId: number) {
-        this.bgaPerformAction('actGiveGiftEvolution', {
+        this.bga.actions.performAction('actGiveGiftEvolution', {
             id,
             toPlayerId,
         });
     }
     
     public putEnergyOnBambooSupply() {
-        this.bgaPerformAction('actPutEnergyOnBambooSupply');
+        this.bga.actions.performAction('actPutEnergyOnBambooSupply');
     }
     
     public takeEnergyOnBambooSupply() {
-        this.bgaPerformAction('actTakeEnergyOnBambooSupply');
+        this.bga.actions.performAction('actTakeEnergyOnBambooSupply');
     }
     
     public gazeOfTheSphinxDrawEvolution() {
-        this.bgaPerformAction('actGazeOfTheSphinxDrawEvolution');
+        this.bga.actions.performAction('actGazeOfTheSphinxDrawEvolution');
     }
     
     public gazeOfTheSphinxGainEnergy() {
-        this.bgaPerformAction('actGazeOfTheSphinxGainEnergy');
+        this.bga.actions.performAction('actGazeOfTheSphinxGainEnergy');
     }
     
     public gazeOfTheSphinxDiscardEvolution(id) {
-        this.bgaPerformAction('actGazeOfTheSphinxDiscardEvolution', {
+        this.bga.actions.performAction('actGazeOfTheSphinxDiscardEvolution', {
             id
         });
     }
     
     public gazeOfTheSphinxLoseEnergy() {
-        this.bgaPerformAction('actGazeOfTheSphinxLoseEnergy');
+        this.bga.actions.performAction('actGazeOfTheSphinxLoseEnergy');
     }
     
     public useChestThumping(id: number) {
-        this.bgaPerformAction('actUseChestThumping', {
+        this.bga.actions.performAction('actUseChestThumping', {
             id
         });
     }
     
     public skipChestThumping() {
-        this.bgaPerformAction('actSkipChestThumping');
+        this.bga.actions.performAction('actSkipChestThumping');
     }
     
     public chooseFreezeRayDieFace(symbol: number) {
-        this.bgaPerformAction('actChooseFreezeRayDieFace', {
+        this.bga.actions.performAction('actChooseFreezeRayDieFace', {
             symbol
         });
     }
     
     public useMiraculousCatch() {
-        this.bgaPerformAction('actUseMiraculousCatch');
+        this.bga.actions.performAction('actUseMiraculousCatch');
     }
     
     public buyCardMiraculousCatch(useSuperiorAlienTechnology: boolean = false) {
-        this.bgaPerformAction('actBuyCardMiraculousCatch', {
+        this.bga.actions.performAction('actBuyCardMiraculousCatch', {
             useSuperiorAlienTechnology,
         });
     }
     
     public skipMiraculousCatch() {
-        this.bgaPerformAction('actSkipMiraculousCatch');
+        this.bga.actions.performAction('actSkipMiraculousCatch');
     }
     
     public playCardDeepDive(id: number) {
-        this.bgaPerformAction('actPlayCardDeepDive', {
+        this.bga.actions.performAction('actPlayCardDeepDive', {
             id
         });
     }
     
     public useExoticArms() {
-        this.bgaPerformAction('actUseExoticArms');
+        this.bga.actions.performAction('actUseExoticArms');
     }
     
     public skipExoticArms() {
-        this.bgaPerformAction('actSkipExoticArms');
+        this.bga.actions.performAction('actSkipExoticArms');
     }
     
     public skipBeforeResolveDice() {
-        this.bgaPerformAction('actSkipBeforeResolveDice');
+        this.bga.actions.performAction('actSkipBeforeResolveDice');
     }
     
     public giveTarget() {
-        this.bgaPerformAction('actGiveTarget');
+        this.bga.actions.performAction('actGiveTarget');
     }
     
     public skipGiveTarget() {
-        this.bgaPerformAction('actSkipGiveTarget');
+        this.bga.actions.performAction('actSkipGiveTarget');
     }
     
     public useLightningArmor() {
-        this.bgaPerformAction('actUseLightningArmor');
+        this.bga.actions.performAction('actUseLightningArmor');
     }
     
     public skipLightningArmor() {
-        this.bgaPerformAction('actSkipLightningArmor');
+        this.bga.actions.performAction('actSkipLightningArmor');
     }
     
     public answerEnergySword(use: boolean) {
-        this.bgaPerformAction('actAnswerEnergySword', { use });
+        this.bga.actions.performAction('actAnswerEnergySword', { use });
     }
     
     public answerSunkenTemple(use: boolean) {
-        this.bgaPerformAction('actAnswerSunkenTemple', { use });
+        this.bga.actions.performAction('actAnswerSunkenTemple', { use });
     }
     
     public answerElectricCarrot(choice: 4 | 5) {
-        this.bgaPerformAction('actAnswerElectricCarrot', { choice });
+        this.bga.actions.performAction('actAnswerElectricCarrot', { choice });
     }
     
     public reserveCard(id: number) {
-        this.bgaPerformAction('actReserveCard', { id });
+        this.bga.actions.performAction('actReserveCard', { id });
     }
     
     public useFelineMotor() {
-        this.bgaPerformAction('actUseFelineMotor');
+        this.bga.actions.performAction('actUseFelineMotor');
     }
     
     public throwDieSuperiorAlienTechnology() {
-        this.bgaPerformAction('actThrowDieSuperiorAlienTechnology');
+        this.bga.actions.performAction('actThrowDieSuperiorAlienTechnology');
     }
     
     public freezeRayChooseOpponent(playerId: number) {
-        this.bgaPerformAction('actFreezeRayChooseOpponent', { playerId });
+        this.bga.actions.performAction('actFreezeRayChooseOpponent', { playerId });
     }
     
     public loseHearts() {
-        this.bgaPerformAction('actLoseHearts');
+        this.bga.actions.performAction('actLoseHearts');
     }
 
     public setFont(prefValue: number): void {
@@ -3375,7 +3381,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private startActionTimer(buttonId: string, time: number) {
-        if (this.getGameUserPreference(202) === 2) {
+        if (this.bga.userPreferences.get(202) === 2) {
             return;
         }
 
@@ -3578,10 +3584,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     notif_pickMonster(args: NotifPickMonsterArgs) {
        const monsterDiv = document.getElementById(`pick-monster-figure-${args.monster}`); 
        const destinationId = `player-board-monster-figure-${args.playerId}`;
-       const animation = this.slideToObject(monsterDiv, destinationId);
+       const animation = this.bga.gameui.slideToObject(monsterDiv, destinationId);
 
         dojo.connect(animation as any, 'onEnd', dojo.hitch(this, () => {
-            this.fadeOutAndDestroy(monsterDiv);
+            this.bga.gameui.fadeOutAndDestroy(monsterDiv);
             dojo.removeClass(destinationId, 'monster0');
             dojo.addClass(destinationId, `monster${args.monster}`);
         }));
@@ -3850,8 +3856,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     notif_updateCancelDamage(args: NotifUpdateCancelDamageArgs) {
         if (args.cancelDamageArgs) { 
             this.gamedatas.gamestate.args = args.cancelDamageArgs;
-            this.updatePageTitle();
-            this.onEnteringCancelDamage(args.cancelDamageArgs, this.isCurrentPlayerActive());
+            this.bga.gameui.updatePageTitle();
+            this.onEnteringCancelDamage(args.cancelDamageArgs, this.bga.players.isCurrentPlayerActive());
         }
     }
 
@@ -4064,7 +4070,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             const message = args.dieValue == 6 ? 
                 _('<strong>${card_name}</strong> card removed!') : 
                 _('<strong>${card_name}</strong> card kept!');
-            (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
+            (this.bga.gameui as any).doShowBubble('dice0', dojo.string.substitute(message, {
                 'card_name': this.cardsManager.getCardName(args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
         }
@@ -4082,9 +4088,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             document.getElementById('rolled-dice-and-rapid-actions').insertAdjacentHTML('afterend', `
                 <div id="mindbug-notice">
                     ${
-                        /*_TODOMB*/('${player_name} mindbugs the turn of ${player_name2}')
-                            .replace('${player_name}', this.getFormattedPlayerName(args.activePlayerId))
-                            .replace('${player_name2}', this.getFormattedPlayerName(args.mindbuggedPlayerId))
+                        _('${player_name} mindbugs the turn of ${player_name2}')
+                            .replace('${player_name}', this.bga.players.getFormattedPlayerName(args.activePlayerId))
+                            .replace('${player_name2}', this.bga.players.getFormattedPlayerName(args.mindbuggedPlayerId))
                     }
                 </div>
             `);
@@ -4116,7 +4122,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
-        this.scoreCtrl[playerId]?.toValue(points);
+        this.bga.gameui.scoreCtrl[playerId]?.toValue(points);
         this.getPlayerTable(playerId).setPoints(points, delay);
     }
     
@@ -4248,7 +4254,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         this.tableManager.tableHeightChange(); // because all player's card were removed
 
         if (document.getElementById(`player-board-monster-figure-${playerId}`)) {
-            this.fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);
+            this.bga.gameui.fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);
         }
         dojo.removeClass(`overall_player_board_${playerId}`, 'intokyo');
         dojo.removeClass(`monster-board-wrapper-${playerId}`, 'intokyo');
@@ -4257,10 +4263,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
         
         this.setShrinkRayTokens(playerId, 0);
-        this.setMindbugTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
         if (this.isCthulhuExpansion()) {
             this.setCultists(playerId, 0, false);
+        }
+        if (this.isMindbugExpansion()) {
+            this.setMindbugTokens(playerId, 0);
         }
     }
 
@@ -4307,7 +4315,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                             const tags: string[] = types.map((cardType: number) => {
                                 const cardLogId = this.cardLogId++;
 
-                                setTimeout(() => this.addTooltipHtml(`card-log-${cardLogId}`, this.getLogCardTooltip(cardType)), 500);
+                                setTimeout(() => this.bga.gameui.addTooltipHtml(`card-log-${cardLogId}`, this.getLogCardTooltip(cardType)), 500);
 
                                 return `<strong id="card-log-${cardLogId}" data-log-type="${cardType}">${this.getLogCardName(cardType)}</strong>`;
                             });
