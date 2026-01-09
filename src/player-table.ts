@@ -248,7 +248,7 @@ class PlayerTable {
         this.wickednessTiles?.removeAll();
         this.visibleEvolutionCards?.removeAll();
         if (document.getElementById(`monster-figure-${this.playerId}`)) {
-            (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
+            this.game.bga.gameui.fadeOutAndDestroy(`monster-figure-${this.playerId}`);
         }
         if (this.game.isCybertoothExpansion()) {
             this.setBerserk(false);
@@ -296,7 +296,7 @@ class PlayerTable {
 
         // remove tokens
         for (let i = energy; i < placed.length; i++) {
-            (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+            this.game.bga.gameui.fadeOutAndDestroy(`${divId}-token${i}`);
         }
         placed.splice(energy, placed.length - energy);
 
@@ -361,7 +361,7 @@ class PlayerTable {
 
         // remove tokens
         for (let i = tokens; i < placed.length; i++) {
-            (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+            this.game.bga.gameui.fadeOutAndDestroy(`${divId}-token${i}`);
         }
         placed.splice(tokens, placed.length - tokens);
 
@@ -373,7 +373,7 @@ class PlayerTable {
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="${type} token"></div>`;
             dojo.place(html, divId);
 
-            (this.game as any).addTooltipHtml(`${divId}-token${i}`, type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP)
+            this.game.bga.gameui.addTooltipHtml(`${divId}-token${i}`, type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP)
         }
 
         div.dataset.placed = JSON.stringify(placed);
@@ -416,7 +416,7 @@ class PlayerTable {
         }
         for (let i=container.childElementCount; i<tokens; i++) {
             dojo.place(`<div id="${containerId}-${i}" class="mindbug-token mindbug-tooltip"></div>`, containerId);
-            (this.game as any).addTooltipHtml(`${containerId}-${i}`, this.game.MINDBUG_TOOLTIP);
+            this.game.bga.gameui.addTooltipHtml(`${containerId}-${i}`, this.game.MINDBUG_TOOLTIP);
         }
     }
 
@@ -428,7 +428,7 @@ class PlayerTable {
         }
         for (let i=container.childElementCount; i<tokens; i++) {
             dojo.place(`<div id="${containerId}-${i}" class="cultist-token cultist-tooltip"></div>`, containerId);
-            (this.game as any).addTooltipHtml(`${containerId}-${i}`, this.game.CULTIST_TOOLTIP);
+            this.game.bga.gameui.addTooltipHtml(`${containerId}-${i}`, this.game.CULTIST_TOOLTIP);
         }
     }
 

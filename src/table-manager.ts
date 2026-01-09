@@ -43,7 +43,7 @@ class TableManager {
 
         this.setPlayerTables(playerTables);
 
-        (this.game as any).onScreenWidthChange = () => {
+        this.game.bga.gameui.onScreenWidthChange = () => {
             this.setAutoZoomAndPlacePlayerTables();
 
             // shift background for mobile

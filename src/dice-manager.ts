@@ -376,7 +376,7 @@ class DiceManager {
 
         dojo.place(html, destinationId);
 
-        (this.game as any).addTooltipHtml(`dice${die.id}`, `
+        this.game.bga.gameui.addTooltipHtml(`dice${die.id}`, `
         <strong>${_("Die of Fate effects")}</strong>
         <div><div class="anubis-icon anubis-icon1"></div> ${_("Change Curse: Discard the current Curse and reveal the next one.")}</div>
         <div><div class="anubis-icon anubis-icon2"></div> ${_("No effect. The card's permanent effect remains active, however.")}</div>
@@ -497,7 +497,7 @@ class DiceManager {
     private removeDice(die: Die, duration?: number, delay?: number) {
         this.dice.splice(this.dice.findIndex(d => d.id == die.id), 1);
         if (duration) {
-            (this.game as any).fadeOutAndDestroy(`dice${die.id}`, duration, delay);
+            this.game.bga.gameui.fadeOutAndDestroy(`dice${die.id}`, duration, delay);
         } else {
             const dieDiv = document.getElementById(`dice${die.id}`);
             dieDiv?.parentNode.removeChild(dieDiv);
@@ -822,7 +822,7 @@ class DiceManager {
     }
 
     private setSelectableDice(selectableDice: Die[] = null) {
-        const playerIsActive = (this.game as any).isCurrentPlayerActive();
+        const playerIsActive = this.game.bga.players.isCurrentPlayerActive();
         this.dice.forEach(die => this.getDieDiv(die).classList.toggle('selectable', playerIsActive && selectableDice?.some(d => d.id == die.id)));
     }
 

@@ -16,6 +16,8 @@ class PreferencesManager {
     private setupPreferences() {
         try {
             (document.getElementById('preference_control_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
+        } catch (e) {}
+        try {
             (document.getElementById('preference_fontrol_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
         } catch (e) {}
     }
@@ -38,7 +40,7 @@ class PreferencesManager {
     }
 
     public getBackgroundFilename() {
-        const prefId = this.getGameVersionNumber((this.game as any).getGameUserPreference(205));
+        const prefId = this.getGameVersionNumber(this.game.bga.userPreferences.get(205));
         return BACKGROUND_FILENAME[prefId];
     }
       
@@ -63,7 +65,7 @@ class PreferencesManager {
     }
     
     public getDiceScoringColor(): string {
-        const prefId = this.getGameVersionNumber((this.game as any).getGameUserPreference(205));
+        const prefId = this.getGameVersionNumber(this.game.bga.userPreferences.get(205));
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';

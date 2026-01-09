@@ -77,7 +77,7 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
                 div.dataset.level = `${this.getCardLevel(card.type)}`;
                 this.setDivAsCard(div as HTMLDivElement, card.type);
                 div.id = `${super.getId(card)}-front`;
-                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+                this.game.bga.gameui.addTooltipHtml(div.id, this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     this.placeTokensOnTile(card);
                 }
@@ -105,7 +105,7 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
                 } as WickednessTile);
                 tempDiv.id = `all-wickedness-tiles-${side}-${i}`;
                 evolutionRow.appendChild(tempDiv);
-                (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(side * 100 + i));
+                this.game.bga.gameui.addTooltipHtml(tempDiv.id, this.getTooltip(side * 100 + i));
             }
         })
     }
@@ -221,7 +221,7 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
         this.setDivAsCard(cardDiv, cardType); 
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
@@ -268,7 +268,7 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
     }
 
     public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
-        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(106) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(106) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
@@ -308,9 +308,9 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
         // remove tokens
         for (let i = tile.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
+                this.game.bga.gameui.slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
             } else {
-                (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+                this.game.bga.gameui.fadeOutAndDestroy(`${divId}-token${i}`);
             }
         }
         placed.splice(tile.tokens, placed.length - tile.tokens);

@@ -2570,7 +2570,7 @@ var CardsManager = /** @class */ (function (_super) {
                 else if (card.type < 999) {
                     _this.setDivAsCard(div, card.type + (card.side || 0));
                 }
-                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type, card.side));
+                _this.game.bga.gameui.addTooltipHtml(div.id, _this.getTooltip(card.type, card.side));
                 if (card.tokens > 0) {
                     _this.placeTokensOnCard(card);
                 }
@@ -2592,7 +2592,7 @@ var CardsManager = /** @class */ (function (_super) {
                 else if (FLIPPABLE_CARDS.includes(card.type)) {
                     _this.setFrontBackground(div, card.type, card.side);
                     _this.setDivAsCard(div, 301, 1);
-                    _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type, 1));
+                    _this.game.bga.gameui.addTooltipHtml(div.id, _this.getTooltip(card.type, 1));
                 }
                 else if (card.type == 999) {
                     _this.setFrontBackground(div, card.type, card.side);
@@ -2636,7 +2636,7 @@ var CardsManager = /** @class */ (function (_super) {
         var div = document.getElementById(divId);
         if (type === 'tile') {
             if (document.getElementById("".concat(divId, "-mimic-token-tile"))) {
-                this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token-tile"));
+                this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-mimic-token-tile"));
             }
             div.classList.remove('wickedness-tile-stock');
         }
@@ -2644,7 +2644,7 @@ var CardsManager = /** @class */ (function (_super) {
             var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
             cardPlaced.mimicToken = null;
             if (document.getElementById("".concat(divId, "-mimic-token"))) {
-                this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
+                this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
             }
             div.dataset.placed = JSON.stringify(cardPlaced);
         }
@@ -2685,10 +2685,10 @@ var CardsManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.bga.gameui.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -3216,7 +3216,7 @@ var CardsManager = /** @class */ (function (_super) {
         if (!FLIPPABLE_CARDS.includes(type)) {
             return;
         }
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     };
     CardsManager.prototype.getTooltip = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
@@ -3442,7 +3442,7 @@ var CardsManager = /** @class */ (function (_super) {
         return mimickedCardText;
     };
     CardsManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(27) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
     };
     CardsManager.prototype.placeSuperiorAlienTechnologyTokenOnCard = function (card) {
         var divId = this.getId(card);
@@ -3465,7 +3465,7 @@ var CurseCardsManager = /** @class */ (function (_super) {
             setupFrontDiv: function (card, div) {
                 _this.setDivAsCard(div, card.type);
                 div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
-                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+                _this.game.bga.gameui.addTooltipHtml(div.id, _this.getTooltip(card.type));
             },
             isCardVisible: function (card) { return Boolean(card.type); },
             cardWidth: 132,
@@ -3627,7 +3627,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                 div.style.backgroundPositionX = "".concat((MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1) * 100 / MONSTERS_WITH_POWER_UP_CARDS.length, "%");
                 _this.setDivAsCard(div, card.type);
                 div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
-                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+                _this.game.bga.gameui.addTooltipHtml(div.id, _this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     _this.placeTokensOnCard(card);
                 }
@@ -3665,7 +3665,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                 });
                 tempDiv.id = "all-evolution-cards-".concat(monster, "-").concat(i);
                 evolutionRow.appendChild(tempDiv);
-                _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(monster * 10 + i));
+                _this.game.bga.gameui.addTooltipHtml(tempDiv.id, _this.getTooltip(monster * 10 + i));
             }
         });
     };
@@ -4011,7 +4011,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = null;
         if (document.getElementById("".concat(divId, "-mimic-token"))) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
+            this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
         }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -4045,10 +4045,10 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if ([136, 87].includes(cardType) && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.bga.gameui.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -4128,7 +4128,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         this.setDivAsCard(cardDiv, cardType);
         cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
         cardDiv.dataset.evolutionType = '' + cardType;
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     EvolutionCardsManager.prototype.getCardTypeName = function (cardType) {
         var type = this.EVOLUTION_CARDS_TYPES[cardType];
@@ -4147,7 +4147,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         cards.forEach(function (card) {
             stock.addToStockWithId(card.type, "".concat(card.id), from);
             var cardDiv = document.getElementById("".concat(stock.container_div.id, "_item_").concat(card.id));
-            _this.game.addTooltipHtml(cardDiv.id, _this.getTooltip(card.type, card.ownerId));
+            _this.game.bga.gameui.addTooltipHtml(cardDiv.id, _this.getTooltip(card.type, card.ownerId));
         });
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(card); });
     };
@@ -4192,7 +4192,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         return mimickedCardText;
     };
     EvolutionCardsManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(18) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(18) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
     };
     return EvolutionCardsManager;
 }(CardManager));
@@ -4277,7 +4277,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
                 div.dataset.level = "".concat(_this.getCardLevel(card.type));
                 _this.setDivAsCard(div, card.type);
                 div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
-                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+                _this.game.bga.gameui.addTooltipHtml(div.id, _this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     _this.placeTokensOnTile(card);
                 }
@@ -4306,7 +4306,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
                 });
                 tempDiv.id = "all-wickedness-tiles-".concat(side, "-").concat(i);
                 evolutionRow.appendChild(tempDiv);
-                _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(side * 100 + i));
+                _this.game.bga.gameui.addTooltipHtml(tempDiv.id, _this.getTooltip(side * 100 + i));
             }
         });
     };
@@ -4409,7 +4409,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
     };
     WickednessTilesManager.prototype.setupNewCard = function (cardDiv, cardType) {
         this.setDivAsCard(cardDiv, cardType);
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     WickednessTilesManager.prototype.setDivAsCard = function (cardDiv, cardType) {
         cardDiv.classList.add('kot-tile');
@@ -4435,7 +4435,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         }
     };
     WickednessTilesManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(106) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
     };
     WickednessTilesManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
@@ -4470,10 +4470,10 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = tile.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.bga.gameui.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
             }
         }
         placed.splice(tile.tokens, placed.length - tile.tokens);
@@ -4694,7 +4694,7 @@ var PlayerTable = /** @class */ (function () {
         (_a = this.wickednessTiles) === null || _a === void 0 ? void 0 : _a.removeAll();
         (_b = this.visibleEvolutionCards) === null || _b === void 0 ? void 0 : _b.removeAll();
         if (document.getElementById("monster-figure-".concat(this.playerId))) {
-            this.game.fadeOutAndDestroy("monster-figure-".concat(this.playerId));
+            this.game.bga.gameui.fadeOutAndDestroy("monster-figure-".concat(this.playerId));
         }
         if (this.game.isCybertoothExpansion()) {
             this.setBerserk(false);
@@ -4736,7 +4736,7 @@ var PlayerTable = /** @class */ (function () {
         var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
         // remove tokens
         for (var i = energy; i < placed.length; i++) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+            this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
         }
         placed.splice(energy, placed.length - energy);
         // add tokens
@@ -4789,7 +4789,7 @@ var PlayerTable = /** @class */ (function () {
         var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
         // remove tokens
         for (var i = tokens; i < placed.length; i++) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+            this.game.bga.gameui.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
         }
         placed.splice(tokens, placed.length - tokens);
         // add tokens
@@ -4798,7 +4798,7 @@ var PlayerTable = /** @class */ (function () {
             placed.push(newPlace);
             var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"").concat(type, " token\"></div>");
             dojo.place(html, divId);
-            this.game.addTooltipHtml("".concat(divId, "-token").concat(i), type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP);
+            this.game.bga.gameui.addTooltipHtml("".concat(divId, "-token").concat(i), type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP);
         }
         div.dataset.placed = JSON.stringify(placed);
     };
@@ -4833,7 +4833,7 @@ var PlayerTable = /** @class */ (function () {
         }
         for (var i = container.childElementCount; i < tokens; i++) {
             dojo.place("<div id=\"".concat(containerId, "-").concat(i, "\" class=\"mindbug-token mindbug-tooltip\"></div>"), containerId);
-            this.game.addTooltipHtml("".concat(containerId, "-").concat(i), this.game.MINDBUG_TOOLTIP);
+            this.game.bga.gameui.addTooltipHtml("".concat(containerId, "-").concat(i), this.game.MINDBUG_TOOLTIP);
         }
     };
     PlayerTable.prototype.setCultistTokens = function (tokens) {
@@ -4844,7 +4844,7 @@ var PlayerTable = /** @class */ (function () {
         }
         for (var i = container.childElementCount; i < tokens; i++) {
             dojo.place("<div id=\"".concat(containerId, "-").concat(i, "\" class=\"cultist-token cultist-tooltip\"></div>"), containerId);
-            this.game.addTooltipHtml("".concat(containerId, "-").concat(i), this.game.CULTIST_TOOLTIP);
+            this.game.bga.gameui.addTooltipHtml("".concat(containerId, "-").concat(i), this.game.CULTIST_TOOLTIP);
         }
     };
     PlayerTable.prototype.takeGoldenScarab = function () {
@@ -4986,7 +4986,7 @@ var TableManager = /** @class */ (function () {
             this.zoom = Number(zoomStr);
         }
         this.setPlayerTables(playerTables);
-        this.game.onScreenWidthChange = function () {
+        this.game.bga.gameui.onScreenWidthChange = function () {
             _this.setAutoZoomAndPlacePlayerTables();
             // shift background for mobile
             var backgroundPositionY = 0;
@@ -5533,7 +5533,7 @@ var DiceManager = /** @class */ (function () {
         }
         html += "</div>";
         dojo.place(html, destinationId);
-        this.game.addTooltipHtml("dice".concat(die.id), "\n        <strong>".concat(_("Die of Fate effects"), "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> ").concat(_("Change Curse: Discard the current Curse and reveal the next one."), "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> ").concat(_("No effect. The card's permanent effect remains active, however."), "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> ").concat(_("Suffer the Snake effect."), "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> ").concat(_("Receive the blessing of the Ankh effect."), "</div>\n        "));
+        this.game.bga.gameui.addTooltipHtml("dice".concat(die.id), "\n        <strong>".concat(_("Die of Fate effects"), "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> ").concat(_("Change Curse: Discard the current Curse and reveal the next one."), "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> ").concat(_("No effect. The card's permanent effect remains active, however."), "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> ").concat(_("Suffer the Snake effect."), "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> ").concat(_("Receive the blessing of the Ankh effect."), "</div>\n        "));
     };
     DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, frozenFaces, destinationId) {
         var html = "<div id=\"dice".concat(die.id, "\" class=\"dice dice").concat(die.value, "\" data-dice-id=\"").concat(die.id, "\" data-dice-value=\"").concat(die.value, "\">\n        <ol class=\"die-list\" data-roll=\"").concat(die.value, "\">");
@@ -5647,7 +5647,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.removeDice = function (die, duration, delay) {
         this.dice.splice(this.dice.findIndex(function (d) { return d.id == die.id; }), 1);
         if (duration) {
-            this.game.fadeOutAndDestroy("dice".concat(die.id), duration, delay);
+            this.game.bga.gameui.fadeOutAndDestroy("dice".concat(die.id), duration, delay);
         }
         else {
             var dieDiv = document.getElementById("dice".concat(die.id));
@@ -5889,7 +5889,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setSelectableDice = function (selectableDice) {
         var _this = this;
         if (selectableDice === void 0) { selectableDice = null; }
-        var playerIsActive = this.game.isCurrentPlayerActive();
+        var playerIsActive = this.game.bga.players.isCurrentPlayerActive();
         this.dice.forEach(function (die) { return _this.getDieDiv(die).classList.toggle('selectable', playerIsActive && (selectableDice === null || selectableDice === void 0 ? void 0 : selectableDice.some(function (d) { return d.id == die.id; }))); });
     };
     return DiceManager;
@@ -5908,7 +5908,7 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
     };
     KingOfTokyoAnimationManager.prototype.resolveNumberDice = function (args) {
         var dice = this.getDice(args.diceValue);
-        this.game.displayScoring("dice".concat((dice[Math.floor(dice.length / 2)] || dice[0]).id), this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
+        this.game.bga.gameui.displayScoring("dice".concat((dice[Math.floor(dice.length / 2)] || dice[0]).id), this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     };
     KingOfTokyoAnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
         var dice = allDice.filter(function (die) { var _a; return !die.type && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
@@ -5930,7 +5930,7 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
     };
     KingOfTokyoAnimationManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
         var _this = this;
-        if (document.visibilityState === 'hidden' || this.game.instantaneousMode) {
+        if (!this.game.bga.gameui.bgaAnimationsActive()) {
             return;
         }
         var dice = this.getDice(diceValue);
@@ -6217,6 +6217,9 @@ var PreferencesManager = /** @class */ (function () {
     PreferencesManager.prototype.setupPreferences = function () {
         try {
             document.getElementById('preference_control_203').closest(".preference_choice").style.display = 'none';
+        }
+        catch (e) { }
+        try {
             document.getElementById('preference_fontrol_203').closest(".preference_choice").style.display = 'none';
         }
         catch (e) { }
@@ -6242,7 +6245,7 @@ var PreferencesManager = /** @class */ (function () {
         }
     };
     PreferencesManager.prototype.getBackgroundFilename = function () {
-        var prefId = this.getGameVersionNumber(this.game.getGameUserPreference(205));
+        var prefId = this.getGameVersionNumber(this.game.bga.userPreferences.get(205));
         return BACKGROUND_FILENAME[prefId];
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
@@ -6265,7 +6268,7 @@ var PreferencesManager = /** @class */ (function () {
         }
     };
     PreferencesManager.prototype.getDiceScoringColor = function () {
-        var prefId = this.getGameVersionNumber(this.game.getGameUserPreference(205));
+        var prefId = this.getGameVersionNumber(this.game.bga.userPreferences.get(205));
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';
@@ -6357,7 +6360,7 @@ var TableCenter = /** @class */ (function () {
             cardNumber: hiddenCurseCardCount,
             topCard: topCurseDeckCard,
         });
-        this.game.addTooltipHtml("curse-deck", "\n        <strong>".concat(_("Curse card pile."), "</strong>\n        <div> ").concat(dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }), "</div>\n        "));
+        this.game.bga.gameui.addTooltipHtml("curse-deck", "\n        <strong>".concat(_("Curse card pile."), "</strong>\n        <div> ").concat(dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }), "</div>\n        "));
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
@@ -6708,7 +6711,7 @@ var MonsterSelector = /** @class */ (function () {
                 document.getElementById("see-monster-evolution-".concat(monster)).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
             }
         });
-        var isCurrentPlayerActive = this.game.isCurrentPlayerActive();
+        var isCurrentPlayerActive = this.game.bga.players.isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     };
     MonsterSelector.prototype.showMonsterEvolutions = function (monster) {
@@ -6850,11 +6853,8 @@ var KingOfTokyo = /** @class */ (function () {
         if (gamedatas.mindbug) {
             this.notif_mindbugPlayer(gamedatas.mindbug);
         }
+        this.bga.userPreferences.onChange = function (pref_id, pref_value) { return _this.preferencesManager.onPreferenceChange(pref_id, pref_value); };
         log("Ending game setup");
-    };
-    // @ts-ignore
-    KingOfTokyo.prototype.onGameUserPreferenceChanged = function (pref_id, pref_value) {
-        this.preferencesManager.onPreferenceChange(pref_id, pref_value);
     };
     ///////////////////////////////////////////////////
     //// Game & client states

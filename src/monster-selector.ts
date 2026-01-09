@@ -63,7 +63,7 @@ class MonsterSelector {
             }
         });
 
-        const isCurrentPlayerActive = (this.game as any).isCurrentPlayerActive();
+        const isCurrentPlayerActive = this.game.bga.players.isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     }
     

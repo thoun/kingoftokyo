@@ -7,7 +7,7 @@ class CurseCardsManager extends CardManager<CurseCard> {
             setupFrontDiv: (card: CurseCard, div: HTMLElement) => {
                 this.setDivAsCard(div as HTMLDivElement, card.type);
                 div.id = `${super.getId(card)}-front`;
-                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+                this.game.bga.gameui.addTooltipHtml(div.id, this.getTooltip(card.type));
             },
             isCardVisible: card => Boolean(card.type),
             cardWidth: 132,

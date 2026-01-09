@@ -11,7 +11,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
                 div.style.backgroundPositionX = `${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1) * 100 / MONSTERS_WITH_POWER_UP_CARDS.length}%`;
                 this.setDivAsCard(div as HTMLDivElement, card.type);
                 div.id = `${super.getId(card)}-front`;
-                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+                this.game.bga.gameui.addTooltipHtml(div.id, this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     this.placeTokensOnCard(card);
                 }
@@ -51,7 +51,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
                 } as EvolutionCard);
                 tempDiv.id = `all-evolution-cards-${monster}-${i}`;
                 evolutionRow.appendChild(tempDiv);
-                (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(monster * 10 + i));
+                this.game.bga.gameui.addTooltipHtml(tempDiv.id, this.getTooltip(monster * 10 + i));
             }
         });
     }
@@ -406,7 +406,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         cardPlaced.mimicToken = null;
 
         if (document.getElementById(`${divId}-mimic-token`)) {
-            (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+            this.game.bga.gameui.fadeOutAndDestroy(`${divId}-mimic-token`);
         }
 
         div.dataset.placed = JSON.stringify(cardPlaced);
@@ -445,9 +445,9 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         // remove tokens
         for (let i = card.tokens; i < placed.length; i++) {
             if ([136, 87].includes(cardType) && playerId) {
-                (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
+                this.game.bga.gameui.slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
             } else {
-                (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+                this.game.bga.gameui.fadeOutAndDestroy(`${divId}-token${i}`);
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -554,7 +554,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         this.setDivAsCard(cardDiv, cardType); 
         cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
         cardDiv.dataset.evolutionType = ''+cardType;
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 
     private getCardTypeName(cardType: number) {
@@ -575,7 +575,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         cards.forEach(card => {
             stock.addToStockWithId(card.type, `${card.id}`, from);
             const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
-            (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(card.type, card.ownerId));
+            this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(card.type, card.ownerId));
         });
         cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(card));
     }
@@ -629,6 +629,6 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
     }
 
     public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
-        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(18) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(18) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 }

@@ -14,7 +14,7 @@ class KingOfTokyoAnimationManager {
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
         const dice = this.getDice(args.diceValue);
-        (this.game as any).displayScoring( `dice${(dice[Math.floor(dice.length / 2)] || dice[0]).id}`, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
+        this.game.bga.gameui.displayScoring( `dice${(dice[Math.floor(dice.length / 2)] || dice[0]).id}`, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     }
 
     private getDiceShowingFace(allDice: Die[], face: number) {
@@ -35,7 +35,7 @@ class KingOfTokyoAnimationManager {
     }
 
     private addDiceAnimation(diceValue: number, playerIds: number[], number: number, targetToken?: TokenType) {
-        if (document.visibilityState === 'hidden' || (this.game as any).instantaneousMode) {
+        if (!this.game.bga.gameui.bgaAnimationsActive()) {
             return;
         }
         let dice = this.getDice(diceValue);

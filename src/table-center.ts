@@ -115,7 +115,7 @@ class TableCenter {
             topCard: topCurseDeckCard,
         });
 
-        (this.game as any).addTooltipHtml(`curse-deck`, `
+        this.game.bga.gameui.addTooltipHtml(`curse-deck`, `
         <strong>${_("Curse card pile.")}</strong>
         <div> ${dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), {'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>'})}</div>
         `);

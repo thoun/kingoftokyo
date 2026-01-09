@@ -349,7 +349,7 @@ class CardsManager extends CardManager<Card> {
                 } else if (card.type < 999) {
                     this.setDivAsCard(div as HTMLDivElement, card.type + (card.side || 0));
                 }
-                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
+                this.game.bga.gameui.addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
                 if (card.tokens > 0) {
                     this.placeTokensOnCard(card);
                 }
@@ -371,7 +371,7 @@ class CardsManager extends CardManager<Card> {
                 } else if (FLIPPABLE_CARDS.includes(card.type)) {
                     this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                     this.setDivAsCard(div as HTMLDivElement, 301, 1);
-                    (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, 1));
+                    this.game.bga.gameui.addTooltipHtml(div.id, this.getTooltip(card.type, 1));
                 } else if (card.type == 999) {
                     this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                 }
@@ -420,7 +420,7 @@ class CardsManager extends CardManager<Card> {
         
         if (type === 'tile') {
             if (document.getElementById(`${divId}-mimic-token-tile`)) {
-                (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token-tile`);
+                this.game.bga.gameui.fadeOutAndDestroy(`${divId}-mimic-token-tile`);
             }
             div.classList.remove('wickedness-tile-stock');
         } else {       
@@ -428,7 +428,7 @@ class CardsManager extends CardManager<Card> {
             cardPlaced.mimicToken = null;
 
             if (document.getElementById(`${divId}-mimic-token`)) {
-                (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+                this.game.bga.gameui.fadeOutAndDestroy(`${divId}-mimic-token`);
             }
 
             div.dataset.placed = JSON.stringify(cardPlaced);
@@ -476,9 +476,9 @@ class CardsManager extends CardManager<Card> {
         // remove tokens
         for (let i = card.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
+                this.game.bga.gameui.slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
             } else {
-                (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+                this.game.bga.gameui.fadeOutAndDestroy(`${divId}-token${i}`);
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -1019,7 +1019,7 @@ class CardsManager extends CardManager<Card> {
             return;
         }
         
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
+        this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     }
 
     public getTooltip(cardTypeId: number, side: number = null) {
@@ -1264,7 +1264,7 @@ class CardsManager extends CardManager<Card> {
     }
 
     public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
-        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(27) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
+        this.game.bga.gameui.addTooltipHtml(mimicCardId, this.getTooltip(27) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 
     

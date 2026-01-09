@@ -246,6 +246,7 @@ interface KingOfTokyoGame {
     curseCardsManager: CurseCardsManager;
     wickednessTilesManager: WickednessTilesManager;
     evolutionCardsManager: EvolutionCardsManager;
+    bga: Bga;
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
     CULTIST_TOOLTIP: string;

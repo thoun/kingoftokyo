@@ -193,12 +193,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.notif_mindbugPlayer(gamedatas.mindbug);
         }
 
-        log( "Ending game setup" );
-    }
+        this.bga.userPreferences.onChange = (pref_id: number, pref_value: number) => this.preferencesManager.onPreferenceChange(pref_id, pref_value);
 
-    // @ts-ignore
-    public onGameUserPreferenceChanged(pref_id: number, pref_value: number) {
-        this.preferencesManager.onPreferenceChange(pref_id, pref_value);
+        log( "Ending game setup" );
     }
 
     ///////////////////////////////////////////////////
