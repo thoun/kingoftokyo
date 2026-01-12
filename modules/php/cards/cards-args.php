@@ -333,10 +333,6 @@ trait CardsArgTrait {
                 $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($evolution) => $evolution->type == UNDEAD_MUMMY_EVOLUTION);
             }
             $canPlayConsumable = count($consumableCards) > 0 || count($consumableEvolutions) > 0;
-            $consumableToughCards = array_merge(
-                Arrays::filter($consumableCards, fn($card) => in_array(TOUGH, $card->mindbugKeywords)),
-                Arrays::filter($consumableEvolutions, fn($evolution) => in_array(TOUGH, $evolution->mindbugKeywords)),
-            );
             $ancestralDefense = min(
                 $this->globals->get(ANCESTRAL_DEFENSE, 0),
                 (int)floor($potentialEnergy / 2)
@@ -351,10 +347,9 @@ trait CardsArgTrait {
                 $canUseCandy ||
                 ($canUseRobot && $potentialEnergy >= 1) ||
                 ($canUseElectricArmor && $potentialEnergy >= 1) ||
-                ($superJumpHearts && $potentialEnergy >= 1) ||
-                count($consumableToughCards) > 0;
+                ($superJumpHearts && $potentialEnergy >= 1);
 
-            $canHealToAvoidDeath = !$cancelHealWithEnergyCards || count($consumableToughCards) > 0;
+            $canHealToAvoidDeath = $damageToCancelToSurvive > 0 && !$cancelHealWithEnergyCards;
 
             $canDoAction = 
                 $canCancelDamage || $canHealToAvoidDeath || $canPlayConsumable || $ancestralDefense > 0;
