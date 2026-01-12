@@ -429,7 +429,8 @@ trait CardsUtilTrait {
 
         $card->activated = null;
         $this->powerCards->updateCard($card, ['activated']);
-        $this->powerCards->moveCard($card, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
+        $toVoid = ($card->type >= 300 && $card->type < 400) || ($card->type >= 900 && $card->type < 1000); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
+        $this->powerCards->moveCard($card, $toVoid ? 'void' : 'discard');
 
         if ($this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
