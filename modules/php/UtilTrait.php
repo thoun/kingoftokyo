@@ -1219,6 +1219,7 @@ trait UtilTrait {
             // damage is fully cancelled, we remove it
             array_splice($intervention->damages, $damageIndex, 1);
             array_splice($intervention->allDamages, $allDamageIndex, 1);
+            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
         } else {
             $intervention->damages[$damageIndex]->damage -= $reduceBy;
             $intervention->damages[$damageIndex]->remainingDamage -= $reduceBy;
