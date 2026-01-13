@@ -210,4 +210,12 @@ class CardManager extends ItemManager {
     public function getCardFromDb(?array $dbItem): ?object {
         return $this->itemManager->getItemFromDb($dbItem);
     }
+
+    /**
+     * Change the ids of some items.
+     * Usually, items that were visible in the front, and are put back invisible, so the user cannot track the id.
+     */
+    public function changeIdsForLocation(string $location, ?int $locationArg = null): void {
+        $this->itemManager->changeIdsForLocation($location, $locationArg);
+    }
 }

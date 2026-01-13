@@ -38,7 +38,7 @@ class ItemManagerDbService {
         Table::DbQuery("UPDATE `{$this->tableName}` SET $updates WHERE $condition");
     }
 
-    public function sqlGetValue(string $column, string $condition) {
+    public function sqlGetValue(string $column, string $condition = '1') {
         /** @disregard */
         return Table::getUniqueValueFromDB("SELECT $column FROM `{$this->tableName}` WHERE $condition");
     }
@@ -641,5 +641,61 @@ class ItemManager {
                 $this->db->sqlEqualValue($idField, $item_id)
             );
         }
+    }
+
+    /**
+     * Change the ids of some items.
+     * Usually, items that were visible in the front, and are put back invisible, so the user cannot track the id.
+     */
+    private function changeIdsByItemIds(array $itemIds): void {
+        if (empty($itemIds)) {
+            return;
+        }
+
+        $idField = $this->getItemFieldByKind('id');
+        $maxCurrentId = (int)$this->db->sqlGetValue("max(`{$idField->dbField}`)");
+        $oldIds = [];
+        $newIds = [];
+        foreach ($itemIds as $itemId) {
+            $oldIds[] = $itemId;
+            $newIds[] = $maxCurrentId + $itemId;
+        }
+        array_shuffle_bga_rand($newIds);
+
+        $cases = [];
+        foreach ($oldIds as $index => $oldId) {
+            $cases[] = "WHEN ".$this->db->getSqlValue($idField, $oldId)." THEN ".$this->db->getSqlValue($idField, $newIds[$index]);
+        }
+
+        $update = "`{$idField->dbField}` = CASE `{$idField->dbField}` ".implode(' ', $cases)." END";
+        $this->db->sqlUpdate($update, $this->db->sqlInValues($idField, $oldIds));
+    }
+
+    /**
+     * Change the ids of some items.
+     * Usually, items that were visible in the front, and are put back invisible, so the user cannot track the id.
+     */
+    public function changeIds(array $items): void {
+        $idField = $this->getItemFieldByKind('id');
+        $itemIds = array_map(fn($item) => $item->{$idField->name}, $items);
+        $this->changeIdsByItemIds($itemIds);
+    }
+
+    /**
+     * Change the ids of some items.
+     * Usually, items that were visible in the front, and are put back invisible, so the user cannot track the id.
+     */
+    public function changeIdsForLocation(string $location, ?int $locationArg = null): void {
+        $idField = $this->getItemFieldByKind('id');
+        $locationField = $this->getItemFieldByKind('location');
+        $locationArgField = $this->getItemFieldByKind('location_arg');
+
+        $where = $this->db->sqlEqualValue($locationField, $location);
+        if ($locationArg !== null) {
+            $where .= " AND ".$this->db->sqlEqualValue($locationArgField, $locationArg);
+        }
+        $dbResults = $this->db->sqlGetList($idField->dbField, $where);
+        $itemIds = array_keys($dbResults);
+        $this->changeIdsByItemIds($itemIds);
     }
 }
