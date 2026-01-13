@@ -171,7 +171,7 @@ class EvolutionCardManager extends CardManager {
         parent::__construct(
             EvolutionCard::class,
             [
-                new ItemLocation('deck', true, autoReshuffleFrom: 'discard'),
+                new ItemLocation('deck', autoReshuffleFrom: 'discard'),
             ],
         );
     }

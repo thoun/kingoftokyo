@@ -15,7 +15,7 @@ class CardManager extends ItemManager {
      */
     public function __construct(
         string $className = \stdClass::class,
-        protected array $locations = [],
+        array $locations = [],
     ) {
         $this->itemManager = new class($className, $this) extends ItemManager {
             public function __construct(string $className, private CardManager $manager) {
@@ -26,6 +26,8 @@ class CardManager extends ItemManager {
                 return $this->manager->getClassName($dbItem);
             }
         };
+
+        $this->itemManager->addLocations($locations);
     }
 
     /**
@@ -57,26 +59,7 @@ class CardManager extends ItemManager {
      * Shuffle the order of the items in a location.
      */
     public function shuffle(string $location, ?int $locationArg = null): void {
-        $idField = $this->itemManager->getItemFieldByKind('id');
-        $locationField = $this->itemManager->getItemFieldByKind('location');
-        $locationArgField = $this->itemManager->getItemFieldByKind('location_arg');
-        $orderField = $this->itemManager->getItemFieldByKind('order');
-
-        $where = $this->itemManager->db->sqlEqualValue($locationField, $location);
-        if ($locationArg !== NULL) {
-            $where .= " AND ".$this->itemManager->db->sqlEqualValue($locationArgField, $locationArg);
-        }
-        $item_ids = $this->itemManager->db->sqlGetList("`{$idField->dbField}`", $where);
-        $item_ids = array_values(array_map(fn($dbObject) => intval($dbObject[$idField->dbField]), $item_ids));
-        
-        array_shuffle_bga_rand( $item_ids );
-        
-        foreach( $item_ids as $index => $item_id ) {
-            $this->itemManager->db->sqlUpdate(
-                $this->itemManager->db->sqlEqualValue($orderField, $index), 
-                $this->itemManager->db->sqlEqualValue($idField, $item_id)
-            );
-        }
+        $this->itemManager->shuffle($location, $locationArg);
     }
 
     public function moveAllCardsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {        
@@ -94,8 +77,7 @@ class CardManager extends ItemManager {
      * @return T|null An object of the type specified by $this->className, or null if no item is picked.
      */
     public function pickCardForLocation(string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): ?object {
-        $items = $this->pickCardsForLocation(1, $fromLocation, $fromLocationArg, $toLocation, $toLocationArg);
-        return count($items) > 0 ? $items[0] : null;
+        return $this->itemManager->pickItemForLocation($fromLocation, $fromLocationArg, $toLocation, $toLocationArg);
     }
 
     /**
@@ -110,21 +92,7 @@ class CardManager extends ItemManager {
      * @return T[] An array of objects of the type specified by $this->className.
      */
     public function pickCardsForLocation(int $number, string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): array {
-        $items = $this->getCardsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
-        if (count($items) < $number) {
-            $itemLocation = array_find($this->locations, fn($location) => $location->name === $fromLocation);
-            if ($itemLocation && $itemLocation->autoReshuffleFrom !== null) {
-                // reshuffle
-                $this->moveAllCardsInLocation($itemLocation->autoReshuffleFrom, $fromLocation);
-                $this->shuffle($fromLocation);
-
-                $items = array_merge($items, $this->getCardsInLocation($fromLocation, reversed: true, limit: ($number - count($items))));
-            }
-        }
-        if (count($items) > 0) {
-            $this->moveCards($items, $toLocation, $toLocationArg);
-        }
-        return $items;
+        return $this->itemManager->pickItemsForLocation($number, $fromLocation, $fromLocationArg, $toLocation, $toLocationArg);
     }
 
     public function setCardOrder(object $item, int $order): void {

@@ -343,7 +343,7 @@ class PowerCardManager extends CardManager {
         parent::__construct(
             PowerCard::class,
             [
-                new ItemLocation('deck', true, autoReshuffleFrom: 'discard'),
+                new ItemLocation('deck', autoReshuffleFrom: 'discard'),
             ],
         );
 
@@ -510,7 +510,7 @@ class PowerCardManager extends CardManager {
         return count($cards) > 0 ? array_slice($cards, -$number) : [];
     }
 
-    public function getCardOnTopOldOrder(string $location): PowerCard {
+    public function getCardOnTopOldOrder(string $location): ?PowerCard {
         $cards = $this->getCardsOnTopOldOrder(1, $location);
         return count($cards) > 0 ? $cards[0] : null;
     }
