@@ -6212,18 +6212,8 @@ var BACKGROUND_FILENAME = {
 var PreferencesManager = /** @class */ (function () {
     function PreferencesManager(game) {
         this.game = game;
-        this.setupPreferences();
+        this.game.bga.userPreferences.toggleVisibility(203, false);
     }
-    PreferencesManager.prototype.setupPreferences = function () {
-        try {
-            document.getElementById('preference_control_203').closest(".preference_choice").style.display = 'none';
-        }
-        catch (e) { }
-        try {
-            document.getElementById('preference_fontrol_203').closest(".preference_choice").style.display = 'none';
-        }
-        catch (e) { }
-    };
     PreferencesManager.prototype.getGameVersionNumber = function (versionNumber) {
         if (versionNumber > 0) {
             return versionNumber;
@@ -6754,6 +6744,8 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', "\n           <div id=\"monster-pick\"></div>\n            <div id=\"mutant-evolution-choice\"></div>\n\n            <div id=\"kot-table\">\n                <div id=\"hand-wrapper\"></div>\n                <div id=\"rolled-dice-and-rapid-actions\">\n                    <div id=\"rolled-dice\" class=\"whiteblock\">\n                        <div id=\"locked-dice\" class=\"hide-lock\">\n                            <div id=\"lock\"></div>\n                            <div id=\"locked-dice10\"></div>\n                            <div id=\"locked-dice1\"></div>\n                            <div id=\"locked-dice2\"></div>\n                            <div id=\"locked-dice3\"></div>\n                            <div id=\"locked-dice4\"></div>\n                            <div id=\"locked-dice5\"></div>\n                            <div id=\"locked-dice6\"></div>\n                            <div id=\"locked-dice7\"></div>\n                        </div>\n                        <div id=\"dice-selector\">\n                        </div>\n                        <div id=\"dice-actions\"></div>\n                    </div>\n                    <div id=\"rapid-actions-wrapper\"></div>\n                </div>\n\n                <div id=\"zoom-wrapper\">\n                    <div id=\"table\">\n                        <div id=\"left-column\" class=\"table-column\"></div>\n                        <div id=\"center-column\" class=\"table-column\">\n                            <div id=\"table-center\" class=\"whiteblock\">\n                                <div id=\"table-cards\">\n                                    <div id=\"table-power-cards\">\n                                        <div id=\"deck-wrapper\">\n                                            <div id=\"deck\"></div>\n                                        </div>\n                                        <div id=\"visible-cards\" class=\"card-stock\">\n                                        </div>\n                                    </div>\n                                    <div id=\"table-curse-cards\"></div>\n                                </div>\n\n                                <div id=\"full-board\">\n                                    <div id=\"board\">\n                                        <div id=\"tokyo-city\"></div>\n                                        <div id=\"tokyo-bay\"></div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        <div id=\"right-column\" class=\"table-column\"></div>\n                    </div>\n                    <div id=\"zoom-controls\">\n                        <button id=\"zoom-out\"></button>\n                        <button id=\"zoom-in\" class=\"disabled\"></button>\n                    </div>\n                </div>\n            </div>\n        ");
+        this.bga.sounds.load('kot-punch', 'punch');
         if (gamedatas.origins) {
             document.getElementsByTagName('html')[0].dataset.origins = 'true';
         }
@@ -9743,11 +9735,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveEnergyDice();
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (args) {
+        var _this = this;
         this.kotAnimationManager.resolveSmashDice(args);
         this.diceManager.resolveSmashDice();
         if (args.smashedPlayersIds.length > 0) {
             for (var delayIndex = 0; delayIndex < args.number; delayIndex++) {
-                setTimeout(function () { return playSound('kot-punch'); }, ANIMATION_MS - (PUNCH_SOUND_DURATION * delayIndex - 1));
+                setTimeout(function () { return _this.bga.sounds.play('kot-punch'); }, ANIMATION_MS - (PUNCH_SOUND_DURATION * delayIndex - 1));
             }
         }
     };

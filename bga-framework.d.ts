@@ -220,6 +220,11 @@ declare class UserPreferences {
    * Method to programmatically change a game-specific user preference.
    */
   set(prefId: number, value: number): void;
+
+  /**
+   * Hide or show a game-specific user preference.
+   */
+  toggleVisibility(prefId: number, visible?: boolean): void;
 }
 
 declare class Players {
@@ -405,6 +410,14 @@ declare class PlayerPanels {
   getElement(playerId: number): HTMLDivElement;
 
   /**
+   * Return the score counter of a player.
+   *
+   * @param {number} playerId the player id
+   * @returns the score counter
+   */
+  getScoreCounter(playerId: number): Counter;
+
+  /**
    * Add a player panel for an automata.
    *
    * @param {number} id the automata id, used to setup scoreCtrl and playerPanels.getElement. 0 or negative value is recommended, to avoid conflict with real player ids.
@@ -582,6 +595,8 @@ declare class GameGui<G = Gamedatas> {
 
   /**
    * The player panel score counters.
+   * 
+   * @deprecated use this.bga.playerPanels.getScoreCounter
    */
   scoreCtrl: {[player_id: number]: Counter};
 

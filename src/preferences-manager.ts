@@ -10,16 +10,7 @@ const BACKGROUND_FILENAME = {
 class PreferencesManager {
 
     constructor(private game: KingOfTokyoGame) { 
-        this.setupPreferences();
-    }
-
-    private setupPreferences() {
-        try {
-            (document.getElementById('preference_control_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
-        } catch (e) {}
-        try {
-            (document.getElementById('preference_fontrol_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
-        } catch (e) {}
+        this.game.bga.userPreferences.toggleVisibility(203, false);
     }
 
     private getGameVersionNumber(versionNumber: number) {

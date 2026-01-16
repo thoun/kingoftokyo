@@ -632,6 +632,8 @@ namespace Bga\GameFramework {
         /**
          * This return the private state or null if not initialized or not in private state.
          * 
+         * @deprecated use getCurrentState($playerId)
+         * 
          * @param int $playerId the current player id
          * @return array the current private state for the player as an array
          */
@@ -1953,7 +1955,7 @@ namespace Bga\GameFramework {
          * 
          * @deprecated use clienttranslate instead.
          */
-        protected function _(string $text): string
+        final public function _(string $text): string
         {            
             return '';
         }
@@ -2117,7 +2119,7 @@ namespace Bga\GameFramework {
          * Apply an SQL upgrade of the tables.
          * Use DBPREFIX_<table_name> for all tables in the $sql parameter.
          */
-        function applyDbUpgradeToAllDB(string $sql): void {
+        final public function applyDbUpgradeToAllDB(string $sql): void {
         }
 
         /**
@@ -2137,7 +2139,7 @@ namespace Bga\GameFramework {
          * 
          * @return string "studio" or "prod"
          */
-        static function getBgaEnvironment(): string {
+        final public static function getBgaEnvironment(): string {
             return '';
         }
     }
