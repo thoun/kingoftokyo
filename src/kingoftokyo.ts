@@ -194,6 +194,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.bga.userPreferences.onChange = (pref_id: number, pref_value: number) => this.preferencesManager.onPreferenceChange(pref_id, pref_value);
+        
+        if ((this.bga.gameui as any).bgaInternal.flags['ingame_player_panels']) {
+            setTimeout(() => {
+                Object.keys(gamedatas.players).forEach(playerId => {
+                    const playerPanel = document.getElementById(`overall_player_board_${playerId}`)
+                    const playerTable = document.getElementById(`player-name-${playerId}`) as HTMLDivElement;
+                    playerTable.innerHTML = '';
+                    playerTable.insertAdjacentElement('beforeend', playerPanel);
+                    playerTable.style.width = '100%';
+                    playerTable.classList.remove('kot-player-name');
+                    playerTable.style.color = 'black';
+                    playerPanel.style.boxShadow = '0 3px 8px #0000004d';
+                    playerPanel.querySelector('.monster-figure').remove();
+                });
+            });
+        }
 
         log( "Ending game setup" );
     }

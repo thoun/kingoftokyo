@@ -32,7 +32,7 @@ class PlayerTable {
 
         let html = `
         <div id="player-table-${player.id}" class="player-table whiteblock ${eliminated ? 'eliminated' : ''}">
-            <div id="player-name-${player.id}" class="player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
+            <div id="player-name-${player.id}" class="kot-player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
             </div> 

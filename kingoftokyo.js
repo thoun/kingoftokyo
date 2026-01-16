@@ -4542,7 +4542,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
+        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"kot-player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
         if (game.isPowerUpExpansion()) {
             html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            ");
             // TODOPUBG
@@ -6854,6 +6854,21 @@ var KingOfTokyo = /** @class */ (function () {
             this.notif_mindbugPlayer(gamedatas.mindbug);
         }
         this.bga.userPreferences.onChange = function (pref_id, pref_value) { return _this.preferencesManager.onPreferenceChange(pref_id, pref_value); };
+        if (this.bga.gameui.bgaInternal.flags['ingame_player_panels']) {
+            setTimeout(function () {
+                Object.keys(gamedatas.players).forEach(function (playerId) {
+                    var playerPanel = document.getElementById("overall_player_board_".concat(playerId));
+                    var playerTable = document.getElementById("player-name-".concat(playerId));
+                    playerTable.innerHTML = '';
+                    playerTable.insertAdjacentElement('beforeend', playerPanel);
+                    playerTable.style.width = '100%';
+                    playerTable.classList.remove('kot-player-name');
+                    playerTable.style.color = 'black';
+                    playerPanel.style.boxShadow = '0 3px 8px #0000004d';
+                    playerPanel.querySelector('.monster-figure').remove();
+                });
+            });
+        }
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
