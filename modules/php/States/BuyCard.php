@@ -60,8 +60,6 @@ class BuyCard extends GameState {
 
     #[PossibleAction]
     function actRenewPowerCards(?int $cardType, int $activePlayerId) {
-        $this->game->powerCards->changeIdsForLocation('table');$this->notify->all('log', '');
-        return;
         if ($cardType == 3024) {
             $adaptiveTechnologyCards = $this->game->getEvolutionsOfType($activePlayerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
 

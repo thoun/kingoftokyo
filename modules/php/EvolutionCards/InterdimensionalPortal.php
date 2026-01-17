@@ -17,8 +17,8 @@ class InterdimensionalPortal extends EvolutionCard
     public function applyEffect(Context $context) {
         $question = new Question(
             'InterdimensionalPortal',
-            /* TODOMB clienttranslate*/('${actplayer} can apply Interdimensional Portal effect'),
-            /* TODOMB clienttranslate*/('${you} can apply Interdimensional Portal effect'),
+            clienttranslate('${actplayer} can apply Interdimensional Portal effect'),
+            clienttranslate('${you} can apply Interdimensional Portal effect'),
             [$context->currentPlayerId],
             $context->stateAfter ?? -1,
             [

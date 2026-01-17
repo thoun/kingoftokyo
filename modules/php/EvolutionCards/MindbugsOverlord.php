@@ -18,8 +18,8 @@ class MindbugsOverlord extends EvolutionCard
         $otherPlayerIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
         $question = new Question(
             'MindbugsOverlord',
-            /* TODOMB clienttranslate*/('Other players can declare allegiance'),
-            /* TODOMB clienttranslate*/('${you} can declare allegiance'),
+            clienttranslate('Other players can declare allegiance'),
+            clienttranslate('${you} can declare allegiance'),
             $otherPlayerIds,
             \ST_QUESTIONS_BEFORE_START_TURN,
             [
@@ -46,8 +46,8 @@ class MindbugsOverlord extends EvolutionCard
 
         $question = new Question(
             'MindbugsOverlordChoosePlayer',
-        /* TODOMB clienttranslate*/('${actplayer} must choose of the Monsters who declared allegiance'),
-        /* TODOMB clienttranslate*/('${you} must choose of the Monsters who declared allegiance'),
+            clienttranslate('${actplayer} must choose of the Monsters who declared allegiance'),
+            clienttranslate('${you} must choose of the Monsters who declared allegiance'),
             [$context->currentPlayerId],
             \ST_QUESTIONS_BEFORE_START_TURN,
             [

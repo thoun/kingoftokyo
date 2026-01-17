@@ -18,8 +18,8 @@ class Treasure extends PowerCard
 
         $question = new Question(
             'Treasure',
-            /*TODOMB clienttranslate*/('${actplayer} can buy a <CONSUMABLE> card from the discard for 3[Energy] less'),
-            /*TODOMB clienttranslate*/('${you} can buy a <CONSUMABLE> card from the discard for 3[Energy] less'),
+            clienttranslate('${actplayer} can buy a <CONSUMABLE> card from the discard for 3[Energy] less'),
+            clienttranslate('${you} can buy a <CONSUMABLE> card from the discard for 3[Energy] less'),
             [$context->currentPlayerId],
             $context->stateAfter ?? -1,
             [

@@ -10,7 +10,7 @@ class MiraculousMindbug extends PowerCard
 {
     public function getUnmetConditionRequirement(Context $context): ?NotificationMessage {
         if ($context->game->getPlayerHealth($context->currentPlayerId) > 3) {
-            return new NotificationMessage(/*clienttranslateTODOMB*/('You can only buy this card if you have 3[Heart] or fewer.'));
+            return new NotificationMessage(clienttranslate('You can only buy this card if you have 3[Heart] or fewer.'));
         }
         return null;
     }

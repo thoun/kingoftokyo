@@ -16,14 +16,14 @@ class ArcaneScepter extends PowerCard
         $discardCards = $context->game->powerCards->getCardsInLocation('discard');
         $cards = Arrays::filter($discardCards, fn($card) => $card->type >= 400 && $card->type < 500);
         if (count($cards) === 0) {
-            $context->game->notify->all(/*TODOMB clienttranslate*/('There is no <CONSUMABLE> card in the discard pile, Arcane Scepter effect is skipped'));
+            $context->game->notify->all(clienttranslate('There is no <CONSUMABLE> card in the discard pile, Arcane Scepter effect is skipped'));
             return;
         }
 
         $question = new Question(
             'ArcaneScepter',
-            /*TODOMB clienttranslate*/('${actplayer} must take any <CONSUMABLE> card from the discard for free'),
-            /*TODOMB clienttranslate*/('${you} must take any <CONSUMABLE> card from the discard for free'),
+            clienttranslate('${actplayer} must take any <CONSUMABLE> card from the discard for free'),
+            clienttranslate('${you} must take any <CONSUMABLE> card from the discard for free'),
             [$context->currentPlayerId],
             -1,
             [
