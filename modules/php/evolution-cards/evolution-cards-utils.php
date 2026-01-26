@@ -110,7 +110,7 @@ trait EvolutionCardsUtilTrait {
 
     function applyEvolutionEffectsRefreshBuyCardArgsIfNeeded(int $playerId, bool $refreshForAnyPlayer = false) {
         // if the player is in buy phase, refresh args
-        if (($refreshForAnyPlayer || $playerId == intval($this->getActivePlayerId())) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
+        if (($refreshForAnyPlayer || $playerId == intval($this->getActivePlayerId())) && $this->gamestate->getCurrentMainStateId() == ST_PLAYER_BUY_CARD) {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }
     }
@@ -251,7 +251,7 @@ trait EvolutionCardsUtilTrait {
 
         // lose all stars
         $points = 0;
-        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $this->bga->playerScore->set($playerId, $points, null);
         $this->notify->all('points', clienttranslate('${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),

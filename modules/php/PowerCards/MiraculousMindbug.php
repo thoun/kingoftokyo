@@ -21,7 +21,7 @@ class MiraculousMindbug extends PowerCard
 
         $points = 0;
         // go back to $points stars
-        $context->game->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $context->game->bga->playerScore->set($playerId, $points, null);
         $context->game->notify->all('points','', [
             'playerId' => $playerId,
             'player_name' => $playerName,

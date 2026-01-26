@@ -27,7 +27,7 @@ class EndScore extends GameState {
             if ($player->score >= MAX_POINT) {
                 if ($player->score > MAX_POINT) {
                     $player->score = MAX_POINT;
-                    $this->game->DbQuery("UPDATE player SET `player_score` = ".MAX_POINT." WHERE player_id = ".$player->id);
+                    $this->bga->playerScore->set($player->id, MAX_POINT, null);
                 }
                 $pointsWin = true;
             } 
@@ -35,7 +35,8 @@ class EndScore extends GameState {
 
         // in case everyone is dead, no ranking
         if ($remainingPlayers == 0) {
-            $this->game->DbQuery("UPDATE player SET `player_score` = 0, `player_score_aux` = 0");
+            $this->bga->playerScore->setAll(0, null);
+            $this->bga->playerScoreAux->setAll(0, null);
         }
 
         $eliminationWin = $remainingPlayers == 1;

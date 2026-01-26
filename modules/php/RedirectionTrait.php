@@ -16,7 +16,7 @@ trait RedirectionTrait {
         }*/
 
         if ($nextStateId === null) {
-            $nextStateId = intval($this->gamestate->state_id());
+            $nextStateId = $this->gamestate->getCurrentMainStateId();
         }
 
         if ($damages != null && count($damages) > 0) {

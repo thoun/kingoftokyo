@@ -4208,7 +4208,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
-        this.bga.gameui.scoreCtrl[playerId]?.toValue(points);
+        this.bga.playerPanels.getScoreCounter(playerId).toValue(points);
         this.getPlayerTable(playerId).setPoints(points, delay);
     }
     

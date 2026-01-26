@@ -112,7 +112,7 @@ trait DiceUtilTrait {
             foreach ($dice as &$die) {
                 $symbol = getDieFace($die);
 
-                $stateId = intval($this->gamestate->state_id());
+                $stateId = $this->gamestate->getCurrentMainStateId();
                 $isChangeActivePlayerDie = $stateId == ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE;
 
                 $die->canReroll = $this->canRerollSymbol($playerId, $symbol, $isChangeActivePlayerDie);

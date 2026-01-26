@@ -10166,9 +10166,8 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
-        var _a;
         if (delay === void 0) { delay = 0; }
-        (_a = this.bga.gameui.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(points);
+        this.bga.playerPanels.getScoreCounter(playerId).toValue(points);
         this.getPlayerTable(playerId).setPoints(points, delay);
     };
     KingOfTokyo.prototype.setHealth = function (playerId, health, delay) {

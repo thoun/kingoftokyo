@@ -262,7 +262,7 @@ trait CardsUtilTrait {
 
         if ($points !== null) {
             // go back to $points stars
-            $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+            $this->bga->playerScore->set($playerId, $points, null);
             $this->notify->all('points','', [
                 'playerId' => $playerId,
                 'player_name' => $playerName,
@@ -774,7 +774,7 @@ trait CardsUtilTrait {
             ]
         );
 
-        if ($endState == null && in_array(intval($this->gamestate->state_id()), [ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT, ST_AFTER_WHEN_CARD_IS_BOUGHT])) {
+        if ($endState == null && in_array($this->gamestate->getCurrentMainStateId(), [ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT, ST_AFTER_WHEN_CARD_IS_BOUGHT])) {
             $endState = ST_PLAYER_BUY_CARD;
         }
 

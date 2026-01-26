@@ -444,7 +444,7 @@ trait PlayerUtilTrait {
     }
 
     function updateCancelDamageIfNeeded(int $rapidActionPlayerId) {
-        if ($this->gamestate->state_id() == ST_MULTIPLAYER_CANCEL_DAMAGE) {
+        if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_CANCEL_DAMAGE) {
             $intervention = $this->getDamageIntervention();
 
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;

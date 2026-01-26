@@ -95,6 +95,7 @@ namespace Bga\GameFramework\States {
 
     abstract class GameState
     {        
+        public \Bga\GameFramework\Bga $bga;
         public \Bga\GameFramework\Db\Globals $globals;
         public \Bga\GameFramework\Notify $notify;
         public \Bga\GameFramework\Legacy $legacy;
@@ -295,6 +296,26 @@ namespace Bga\GameFramework {
         }
     }
 
+    /**
+     * Object to regroup all framework subobjects.
+     */
+    abstract class Bga {
+        public Db\Globals $globals;
+        public Notify $notify;
+        public Legacy $legacy;
+        public Tournament $tournament;
+        public TableOptions $tableOptions;
+        public UserPreferences $userPreferences;
+        public TableStats $tableStats;
+        public PlayerStats $playerStats;
+        public Components\DeckFactory $deckFactory;
+        public Components\Counters\CounterFactory $counterFactory;
+        public Debug $debug;
+        
+        public Components\Counters\PlayerCounter $playerScore;
+        public Components\Counters\PlayerCounter $playerScoreAux;
+    }
+
 
     abstract class Notify {
         /**
@@ -408,6 +429,85 @@ namespace Bga\GameFramework {
         public function deleteTeam(): void {
         }
     }
+
+    abstract class Tournament
+    {
+        /**
+         * Returns true if this table is a tournament encounter.
+         */
+        public function isTournament(): bool
+        {
+            return false;
+        }
+
+        /**
+         * Retrieve tournament seeds for deterministic randomness.
+         *
+         * Returns an empty array when the table is not part of a tournament.
+         *
+         * Note: `parent_tournament` refer to the main tournament of Groups Stage tournaments (tournaments of either of the two stages, will reference the same "parent")
+         *
+         * @return array{
+         *   tournament_seed?: int,
+         *   step_seed?: int,
+         *   parent_tournament_seed?: int
+         * }
+         */
+        public function getSeedInfo(): array
+        {
+            return [];
+        }
+
+        /**
+         * Store player game data associated with the given key for a tournament (of which the table must be a part of).
+         *
+         * The cumulative size of the data you can store for a given player for a tournament is 64 KiB.
+         *
+         * Note: As with every game framework API that interacts with the BGA mainsite, please use it thoughtfully.
+         *
+         * @param int $playerId
+         * @param string $key
+         * @param mixed $data
+         */
+        public function storePlayerGameData(int $playerId, string $key, mixed $data): void
+        {
+            //
+        }
+
+        /**
+         * Get player game data associated with the given key for a tournament.
+         *
+         * You can use '%' in the key to retrieve multiple values at once matching a pattern.
+         *
+         * If '%' is used the return value will be an array of key-value pairs (or [], if no match is found).
+         * Otherwise, a single value is returned (or null, if no match is found).
+         *
+         * Returned values are decoded from JSON.
+         *
+         * @param int $playerId
+         * @param string $key
+         *
+         * @return null|string|array<string,string>
+         */
+        public function retrievePlayerGameData(int $playerId, string $key): null|string|array
+        {
+            return null;
+        }
+
+        /**
+         * Remove player game data associated with the given key for a tournament.
+         *
+         * In any case, all data related to a tournament is removed when the tournament is finished.
+         *
+         * @param int $playerId
+         * @param string $key
+         */
+        public function removePlayerGameData(int $playerId, string $key): void
+        {
+            //
+        }
+    }
+
 
 
     abstract class TableOptions {
@@ -1052,6 +1152,11 @@ namespace Bga\GameFramework {
 
     abstract class Table
     {
+        /**
+         * The object regrouping all framework subobjects.
+         */
+        readonly public \Bga\GameFramework\Bga $bga;
+
         /**
          * Access the underlying game state machine object.
          */
@@ -1997,7 +2102,7 @@ namespace Bga\GameFramework {
          *
          * @return array
          */
-        abstract protected function getAllDatas(): array;
+        //abstract protected function getAllDatas(): array;
 
         /**
          * Get the "current_player" color.

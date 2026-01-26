@@ -410,7 +410,7 @@ trait UtilTrait {
     }
 
     function checkOnlyChestThumpingRemaining() {
-        if (intval($this->gamestate->state_id()) === ST_MULTIPLAYER_LEAVE_TOKYO) {
+        if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_LEAVE_TOKYO) {
             $activePlayerList = $this->gamestate->getActivePlayerList();
             $activePlayerId = intval($this->getActivePlayerId());
             if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == $activePlayerId && $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION) > 0) {
@@ -680,7 +680,7 @@ trait UtilTrait {
         }
 
         $newScore = $points == WIN_GAME ? WIN_GAME : min(MAX_POINT, $actualScore + $points);
-        $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
+        $this->bga->playerScore->set($playerId, $newScore, null);
 
         if ($cardType instanceof PowerCard) {
             $cardType = $cardType->type;
@@ -1335,9 +1335,8 @@ trait UtilTrait {
     }
 
     function jumpToState(int $stateId) {
-        $state = $this->gamestate->state();
         // we redirect only if game is not ended
-        if ($state['name'] != 'gameEnd') {
+        if ($this->gamestate->getCurrentMainState()->name != 'gameEnd') {
             $this->gamestate->jumpToState($stateId);
         }
     }
