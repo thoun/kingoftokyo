@@ -36,8 +36,9 @@ const RULEBOOK_LINKS = [
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
     { // Mindbug
-        'en': 'TODOMB',
-        'fr': 'TODOMB',
+        'en': 'https://iellogames.com/wp-content/uploads/2025/03/KOT-Mindbug_Rules_EN.pdf',
+        'fr': 'https://iello.fr/wp-content/uploads/2025/11/KOT-Mindbug_Rules_FR.pdf',
+        'de': 'https://iellogames.com/wp-content/uploads/2025/03/KOT-Mindbug_Rules_DE.pdf',
     },
 ];
 const EXPANSION_NUMBER = 9;

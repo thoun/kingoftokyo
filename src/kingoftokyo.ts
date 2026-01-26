@@ -3479,6 +3479,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         actionTimerId = window.setInterval(() => actionTimerFunction(), 1000);
     }
 
+    public getMindbugKeywordHelp(keyword: string): string {
+        const cleanKeyword = keyword.replace('<', '').replace('>', '');
+        switch (cleanKeyword) {
+            case 'HUNTER': return _('Choose any Monster (even if it’s in the same location as you). They will be the only target for your [dieClaw].');
+            case 'SNEAKY': return _('All other Monsters lose as many [Star] as you gain when resolving your Roll.');
+            case 'POISON': return _('The attacking Monster loses as many [Heart] as you.');
+            case 'TOUGH': return _('You don’t lose any [Heart].');
+            case 'FRENZY': return _('Immediately take another turn (called a “FRENZY turn”).');
+            default: return '';
+        }
+    }
+
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
@@ -3500,7 +3512,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             <div class="help-section" style="--color: #de511e;">
                 <div>${_('On your turn, before rolling dice')}</div>
                 <div>
-                    <strong>${_('HUNTER')}:</strong> ${_('Choose any Monster (even if it’s in the same location as you). They will be the only target for your [dieClaw].')}
+                    <strong>${_('HUNTER')}:</strong> ${this.getMindbugKeywordHelp('HUNTER')}
                     <br>
                     <strong>${_('SNEAKY')}:</strong> ${_('All other Monsters lose as many [Star] as you gain when resolving your Roll.')}
                 </div>

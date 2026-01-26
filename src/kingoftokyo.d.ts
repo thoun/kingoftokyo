@@ -280,6 +280,7 @@ interface KingOfTokyoGame {
     pickMonster(monster: number): void;
     showEvolutionsPopin(cardsTypes: number[], title: string): void;
     getNoExtraTurnWarningMessage(): string;
+    getMindbugKeywordHelp(keyword: string): string;
 }
 
 interface EnteringPickMonsterArgs {

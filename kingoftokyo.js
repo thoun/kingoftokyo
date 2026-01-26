@@ -2950,9 +2950,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 64: return _("[806f52]Scavenger");
             case 65: return _("[1c9c85]Shrinky");
             case 66: return _("[693a3a]Bull Headed");
-            case 67: return /*TODOMB_*/ ("[78d0ec]Free [d5312f]Will");
-            case 68: return /*TODOMB_*/ ("[e462a0]Evasive [9ad751]Mindbug");
-            case 69: return /*TODOMB_*/ ("[f8b82b]No [167e79]Brain");
+            case 67: return _("[78d0ec]Free [d5312f]Will");
+            case 68: return _("[e462a0]Evasive [9ad751]Mindbug");
+            case 69: return _("[f8b82b]No [167e79]Brain");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -2976,10 +2976,10 @@ var CardsManager = /** @class */ (function (_super) {
             case 120: return _("[775b43]Barricades");
             case 121: return _("[6b9957]Ice Cream Truck");
             case 122: return _("[f89c4c]Supertower");
-            case 123: return /*TODOMB_*/ ("[e462a0]Mindbug!");
-            case 124: return /*TODOMB_*/ ("[e462a0]Dysfunctional [b956b2]Mindbug");
-            case 125: return /*TODOMB_*/ ("[e843aa]Treasure");
-            case 126: return /*TODOMB_*/ ("[f8b82b]Miraculous [e462a0]Mindbug");
+            case 123: return _("[e462a0]Mindbug!");
+            case 124: return _("[e462a0]Dysfunctional [b956b2]Mindbug");
+            case 125: return _("[e843aa]Treasure");
+            case 126: return _("[f8b82b]Miraculous [e462a0]Mindbug");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -3000,23 +3000,23 @@ var CardsManager = /** @class */ (function (_super) {
                 null: _("[982620]Beast [de6526]Form"),
             }[side];
             // CONSUMABLE
-            case 401: return /*TODOMB_*/ ("[e67628]Overequipped [78d0ec]Trapper");
-            case 402: return /*TODOMB_*/ ("[b35c5d]Legendary [64bf44]Hunter");
-            case 403: return /*TODOMB_*/ ("[b35c5d]Unreliable [f8b82b]Targeting");
-            case 404: return /*TODOMB_*/ ("[7f93cb]Sneaky [e67628]Alloy");
-            case 405: return /*TODOMB_*/ ("[7f93cb]Offensive [ed3d4e]Protocol");
-            case 406: return /*TODOMB_*/ ("[e5b549]Arcane [77ceea]Scepter");
-            case 407: return /*TODOMB_*/ ("[57506e]Energy [b956b2]Armor");
-            case 408: return /*TODOMB_*/ ("[57506e]Strange [e9683e]Design");
-            case 409: return /*TODOMB_*/ ("[504b65]Ancestral [badf2c]Defense");
-            case 410: return /*TODOMB_*/ ("[e462a0]Toxic [8ac784]Petals");
-            case 411: return /*TODOMB_*/ ("[50ab47]Explosive [f8b82b]Crystals");
-            case 412: return /*TODOMB_*/ ("[dade44]Electro-[50ab47]Whip");
-            case 413: return /*TODOMB_*/ ("[865ab3]Bold [e843aa]Maneuver");
-            case 414: return /*TODOMB_*/ ("[e9683e]Unfair [e843aa]Gift");
-            case 415: return /*TODOMB_*/ ("[f8b82b]Maximum [e843aa]Effort");
-            case 416: return /*TODOMB_*/ ("[57506e]Deadly [50ab47]Shell");
-            case 417: return /*TODOMB_*/ ("[b35c5d]Spatial [7f93cb]Hunter");
+            case 401: return _("[e67628]Overequipped [78d0ec]Trapper");
+            case 402: return _("[b35c5d]Legendary [64bf44]Hunter");
+            case 403: return _("[b35c5d]Unreliable [f8b82b]Targeting");
+            case 404: return _("[7f93cb]Sneaky [e67628]Alloy");
+            case 405: return _("[7f93cb]Offensive [ed3d4e]Protocol");
+            case 406: return _("[e5b549]Arcane [77ceea]Scepter");
+            case 407: return _("[57506e]Energy [b956b2]Armor");
+            case 408: return _("[57506e]Strange [e9683e]Design");
+            case 409: return _("[504b65]Ancestral [badf2c]Defense");
+            case 410: return _("[e462a0]Toxic [8ac784]Petals");
+            case 411: return _("[50ab47]Explosive [f8b82b]Crystals");
+            case 412: return _("[dade44]Electro-[50ab47]Whip");
+            case 413: return _("[865ab3]Bold [e843aa]Maneuver");
+            case 414: return _("[e9683e]Unfair [e843aa]Gift");
+            case 415: return _("[f8b82b]Maximum [e843aa]Effort");
+            case 416: return _("[57506e]Deadly [50ab47]Shell");
+            case 417: return _("[b35c5d]Spatial [7f93cb]Hunter");
         }
         return null;
     };
@@ -3046,8 +3046,7 @@ var CardsManager = /** @class */ (function (_super) {
         }
         return null;
     };
-    CardsManager.prototype.getCardDescription = function (cardTypeId, side) {
-        if (side === void 0) { side = null; }
+    CardsManager.prototype.getCardDescription = function (cardTypeId, side, withKeywords) {
         var mindbugKeywords = this.getMindbugKeywords(cardTypeId).join(" ".concat(_('or'), " "));
         switch (cardTypeId) {
             // KEEP
@@ -3119,9 +3118,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 64: return _("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
             case 65: return _("<strong>You may use [die2] as [die1].");
             case 66: return _("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
-            case 67: return '<i>' + /*TODOMB_*/ ('You cannot buy this card if you have a Mindbug Token.') + '</i><br>' + /*TODOMB_*/ ("<strong>You have 1 extra Roll</strong> each turn.");
-            case 68: return /*TODOMB_*/ ("<strong>Use this card as a Mindbug token.</strong> When used, give it to the player you Mindbugged.");
-            case 69: return '<i>' + /*TODOMB_*/ ('This card costs 2 extra [Energy] for each Mindbug token you have') + '</i><br>' + /*TODOMB_*/ ("<strong>Add [dieClaw]</strong> to your Roll.");
+            case 67: return '<i>' + _('You cannot buy this card if you have a Mindbug Token.') + '</i><br>' + _("<strong>You have 1 extra Roll</strong> each turn.");
+            case 68: return _("<strong>Use this card as a Mindbug token.</strong> When used, give it to the player you Mindbugged.");
+            case 69: return '<i>' + _('This card costs 2 extra [Energy] for each Mindbug token you have') + '</i><br>' + _("<strong>Add [dieClaw]</strong> to your Roll.");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
@@ -3145,10 +3144,10 @@ var CardsManager = /** @class */ (function (_super) {
             case 120: return _("<strong>All other Monsters lose 3[Star].</strong>");
             case 121: return "<strong>+1[Star] +2[Heart].</strong>";
             case 122: return "<strong>+5[Star].</strong>";
-            case 123: return /*TODOMB_*/ ("<strong>Gain 1 Mindbug token.</strong>");
-            case 124: return /*TODOMB_*/ ("Each Monster with at least 1 Mindbug token loses 3[Heart].");
-            case 125: return /*TODOMB_*/ ("<strong>Buy a <CONSUMABLE> card from the discard pile.</strong> It costs 3[Energy] less.");
-            case 126: return '<i>' + /*TODOMB_*/ ('You can only buy this card if you have 3[Heart] or fewer.') + '</i><br>' + /*TODOMB_*/ ("Lose all your [Star], <strong>return to 10[Heart]</strong>, and <strong>gain 1 Mindbug token</strong>");
+            case 123: return _("<strong>Gain 1 Mindbug token.</strong>");
+            case 124: return _("Each Monster with at least 1 Mindbug token loses 3[Heart].");
+            case 125: return _("<strong>Buy a <CONSUMABLE> card from the discard pile.</strong> It costs 3[Energy] less.");
+            case 126: return '<i>' + _('You can only buy this card if you have 3[Heart] or fewer.') + '</i><br>' + _("Lose all your [Star], <strong>return to 10[Heart]</strong>, and <strong>gain 1 Mindbug token</strong>");
             // COSTUME
             case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
             case 202: return _("At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>");
@@ -3168,23 +3167,23 @@ var CardsManager = /** @class */ (function (_super) {
                 1: _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
             }[side];
             // CONSUMABLE
-            case 401: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 5[Energy].");
-            case 402: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 4[Star].");
-            case 403: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you do not eliminate the hunted Monster, give them this card.");
-            case 404: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("This turn, you may use a single [die1] as any face.");
-            case 405: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Star] lost by Monsters, they also lose 1[Heart].");
-            case 406: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Gain any <CONSUMABLE> card from the discard pile for free.");
-            case 407: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you must lose, gain 1[Energy] instead.");
-            case 408: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Lose 2[Heart].");
-            case 409: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
-            case 410: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
-            case 411: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
-            case 412: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
-            case 413: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
-            case 414: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
-            case 415: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
-            case 416: return mindbugKeywords;
-            case 417: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
+            case 401: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("If you eliminate the hunted Monster, gain 5[Energy].");
+            case 402: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("If you eliminate the hunted Monster, gain 4[Star].");
+            case 403: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("If you do not eliminate the hunted Monster, give them this card.");
+            case 404: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("This turn, you may use a single [die1] as any face.");
+            case 405: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("For each [Star] lost by Monsters, they also lose 1[Heart].");
+            case 406: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("Gain any <CONSUMABLE> card from the discard pile for free.");
+            case 407: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("For each [Heart] you must lose, gain 1[Energy] instead.");
+            case 408: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("Lose 2[Heart].");
+            case 409: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
+            case 410: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
+            case 411: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
+            case 412: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
+            case 413: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
+            case 414: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
+            case 415: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
+            case 416: return withKeywords ? mindbugKeywords : '';
+            case 417: return (withKeywords ? (mindbugKeywords + '<br>') : '') + _("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
         }
         return null;
     };
@@ -3219,6 +3218,7 @@ var CardsManager = /** @class */ (function (_super) {
         this.game.bga.gameui.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     };
     CardsManager.prototype.getTooltip = function (cardTypeId, side) {
+        var _this = this;
         if (side === void 0) { side = null; }
         if (cardTypeId === 999) {
             return _("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
@@ -3228,7 +3228,8 @@ var CardsManager = /** @class */ (function (_super) {
         if (cost !== null) {
             tooltip += "<p class=\"cost\">".concat(dojo.string.substitute(_("Cost : ${cost}"), { 'cost': cost }), " <span class=\"icon energy\"></span></p>");
         }
-        tooltip += "<p>".concat(formatTextIcons(this.getCardDescription(cardTypeId, side)), "</p>");
+        tooltip += this.getMindbugKeywords(cardTypeId).map(function (keyword) { return formatTextIcons("<p>".concat(_(keyword), " : ").concat(_this.game.getMindbugKeywordHelp(keyword), "</p>")); }).join("".concat(_('or')));
+        tooltip += "<p>".concat(formatTextIcons(this.getCardDescription(cardTypeId, side, false)), "</p>");
         if (FLIPPABLE_CARDS.includes(cardTypeId) && side !== null) {
             var otherSide = side == 1 ? 0 : 1;
             var tempDiv = document.createElement('div');
@@ -3285,7 +3286,7 @@ var CardsManager = /** @class */ (function (_super) {
         cardDiv.classList.add('kot-card');
         cardDiv.dataset.design = cardType < 200 && this.game.isDarkEdition() ? 'dark-edition' : 'standard';
         var type = this.getCardTypeName(cardType);
-        var description = formatTextIcons(this.getCardDescription(cardType, side));
+        var description = formatTextIcons(this.getCardDescription(cardType, side, true));
         var position = this.getCardNamePosition(cardType, side);
         var consumable = cardType > 400 && cardType < 500;
         cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper ").concat(consumable ? 'consumable' : '', "\">").concat(description, "</div>");
@@ -6533,8 +6534,9 @@ var RULEBOOK_LINKS = [
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
     {
-        'en': 'TODOMB',
-        'fr': 'TODOMB',
+        'en': 'https://iellogames.com/wp-content/uploads/2025/03/KOT-Mindbug_Rules_EN.pdf',
+        'fr': 'https://iello.fr/wp-content/uploads/2025/11/KOT-Mindbug_Rules_FR.pdf',
+        'de': 'https://iellogames.com/wp-content/uploads/2025/03/KOT-Mindbug_Rules_DE.pdf',
     },
 ];
 var EXPANSION_NUMBER = 9;
@@ -9568,8 +9570,19 @@ var KingOfTokyo = /** @class */ (function () {
         actionTimerFunction();
         actionTimerId = window.setInterval(function () { return actionTimerFunction(); }, 1000);
     };
+    KingOfTokyo.prototype.getMindbugKeywordHelp = function (keyword) {
+        var cleanKeyword = keyword.replace('<', '').replace('>', '');
+        switch (cleanKeyword) {
+            case 'HUNTER': return _('Choose any Monster (even if it’s in the same location as you). They will be the only target for your [dieClaw].');
+            case 'SNEAKY': return _('All other Monsters lose as many [Star] as you gain when resolving your Roll.');
+            case 'POISON': return _('The attacking Monster loses as many [Heart] as you.');
+            case 'TOUGH': return _('You don’t lose any [Heart].');
+            case 'FRENZY': return _('Immediately take another turn (called a “FRENZY turn”).');
+            default: return '';
+        }
+    };
     KingOfTokyo.prototype.getHelpHtml = function () {
-        var html = "\n        <div id=\"help-popin\">\n            <div class=\"help-consumable\">\n                <div style=\"text-align: center; margin-top: -15px;\">\n                ".concat(formatTextIcons('<CONSUMABLE>'), "\n                </div>\n                ").concat(_('A Power card that must be discarded to activate its effect. Until you decide to activate its power, it has no effect.'), "\n            </div>\n            <div class=\"help-mindbug-token\">\n                <div>").concat(_('Mindbug token'), "</div>\n                <div>\n                    ").concat(_('Each player starts the game with 1 Mindbug token.'), "\n                    <br><br>\n                    ").concat(_('Discard a Mindbug token when a Monster has finished their Roll to immediately resolve the Roll as if it were your own. Carry out a <strong>3. Enter Tokyo</strong> phase if necessary, then a <strong>4. Buy Power Cards</strong> phase if you would like. The Mindbugged player then continues their turn with a new <strong>1. Roll Dice</strong> phase.'), "\n                </div>\n            </div>\n\n            <div class=\"help-section\" style=\"--color: #de511e;\">\n                <div>").concat(_('On your turn, before rolling dice'), "</div>\n                <div>\n                    <strong>").concat(_('HUNTER'), ":</strong> ").concat(_('Choose any Monster (even if it’s in the same location as you). They will be the only target for your [dieClaw].'), "\n                    <br>\n                    <strong>").concat(_('SNEAKY'), ":</strong> ").concat(_('All other Monsters lose as many [Star] as you gain when resolving your Roll.'), "\n                </div>\n            </div>\n            <div class=\"help-section\" style=\"--color: #d83884;\">\n                <div>").concat(_('When you are wounded'), "</div>\n                <div>\n                    <strong>").concat(_('POISON'), ":</strong> ").concat(_('The attacking Monster loses as many [Heart] as you.'), "\n                    <br>\n                    <strong>").concat(_('TOUGH'), ":</strong> ").concat(_('You don’t lose any [Heart].'), "\n                </div>\n            </div>\n            <div class=\"help-section\" style=\"--color: #00aaa0;\">\n                <div>").concat(_('At the end of your turn'), "</div>\n                <div>\n                    <strong>").concat(_('FRENZY'), ":</strong> ").concat(_('Immediately take another turn (called a “FRENZY turn”).'), "\n                </div>\n            </div>\n        </div>");
+        var html = "\n        <div id=\"help-popin\">\n            <div class=\"help-consumable\">\n                <div style=\"text-align: center; margin-top: -15px;\">\n                ".concat(formatTextIcons('<CONSUMABLE>'), "\n                </div>\n                ").concat(_('A Power card that must be discarded to activate its effect. Until you decide to activate its power, it has no effect.'), "\n            </div>\n            <div class=\"help-mindbug-token\">\n                <div>").concat(_('Mindbug token'), "</div>\n                <div>\n                    ").concat(_('Each player starts the game with 1 Mindbug token.'), "\n                    <br><br>\n                    ").concat(_('Discard a Mindbug token when a Monster has finished their Roll to immediately resolve the Roll as if it were your own. Carry out a <strong>3. Enter Tokyo</strong> phase if necessary, then a <strong>4. Buy Power Cards</strong> phase if you would like. The Mindbugged player then continues their turn with a new <strong>1. Roll Dice</strong> phase.'), "\n                </div>\n            </div>\n\n            <div class=\"help-section\" style=\"--color: #de511e;\">\n                <div>").concat(_('On your turn, before rolling dice'), "</div>\n                <div>\n                    <strong>").concat(_('HUNTER'), ":</strong> ").concat(this.getMindbugKeywordHelp('HUNTER'), "\n                    <br>\n                    <strong>").concat(_('SNEAKY'), ":</strong> ").concat(_('All other Monsters lose as many [Star] as you gain when resolving your Roll.'), "\n                </div>\n            </div>\n            <div class=\"help-section\" style=\"--color: #d83884;\">\n                <div>").concat(_('When you are wounded'), "</div>\n                <div>\n                    <strong>").concat(_('POISON'), ":</strong> ").concat(_('The attacking Monster loses as many [Heart] as you.'), "\n                    <br>\n                    <strong>").concat(_('TOUGH'), ":</strong> ").concat(_('You don’t lose any [Heart].'), "\n                </div>\n            </div>\n            <div class=\"help-section\" style=\"--color: #00aaa0;\">\n                <div>").concat(_('At the end of your turn'), "</div>\n                <div>\n                    <strong>").concat(_('FRENZY'), ":</strong> ").concat(_('Immediately take another turn (called a “FRENZY turn”).'), "\n                </div>\n            </div>\n        </div>");
         return formatTextIcons(html);
     };
     KingOfTokyo.prototype.setupHelp = function () {
