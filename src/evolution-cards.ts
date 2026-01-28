@@ -180,32 +180,32 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 188: return /*_TODOPUBG*/("[a5416f]Yummy [f05a7d]Yummy");
 
             // Gigasnail Hydra : light f68712 dark c73917
-            case 611: return /*_TODOMB*/("[f68712]Unstoppable [c73917]Hydra");
-            case 612: return /*_TODOMB*/("[f68712]Unstoppable [c73917]Hydra");
-            case 613: return /*_TODOMB*/("[c73917]Energy-Infused [f68712]Monster");
-            case 614: return /*_TODOMB*/("[f68712]Three Times [c73917]As Sturdy");
-            case 615: return /*_TODOMB*/("[f68712]Scary [c73917]Face");
-            case 616: return /*_TODOMB*/("[f68712]Three Times [c73917]as Strong");
-            case 617: return /*_TODOMB*/("[c73917]Thinking [f68712]Face");
-            case 618: return /*_TODOMB*/("[c73917]Hungry [f68712]Face");
+            case 611: return _("[f68712]Unstoppable [c73917]Hydra");
+            case 612: return _("[f68712]Unstoppable [c73917]Hydra");
+            case 613: return _("[c73917]Energy-Infused [f68712]Monster");
+            case 614: return _("[f68712]Three Times [c73917]As Sturdy");
+            case 615: return _("[f68712]Scary [c73917]Face");
+            case 616: return _("[f68712]Three Times [c73917]as Strong");
+            case 617: return _("[c73917]Thinking [f68712]Face");
+            case 618: return _("[c73917]Hungry [f68712]Face");
             // MasterMindbug : dark 217764 light 2ea98d
-            case 621: return /*_TODOMB*/("[217764]Mindbug [2ea98d]Acquisition");
-            case 622: return /*_TODOMB*/("[217764]Intergalactic [2ea98d]Genius");
-            case 623: return /*_TODOMB*/("[2ea98d]Superior [217764]Brain");
-            case 624: return /*_TODOMB*/("[2ea98d]Interdimensional [217764]Portal");
-            case 625: return /*_TODOMB*/("[2ea98d]Helpful [217764]Mindbug");
-            case 626: return /*_TODOMB*/("[217764]Mindbugs [2ea98d]Overlord");
-            case 627: return /*_TODOMB*/("[217764]Mind [2ea98d]Control!");
-            case 628: return /*_TODOMB*/("[2ea98d]Neutralizing [217764]Look");
+            case 621: return _("[217764]Mindbug [2ea98d]Acquisition");
+            case 622: return _("[217764]Intergalactic [2ea98d]Genius");
+            case 623: return _("[2ea98d]Superior [217764]Brain");
+            case 624: return _("[2ea98d]Interdimensional [217764]Portal");
+            case 625: return _("[2ea98d]Helpful [217764]Mindbug");
+            case 626: return _("[217764]Mindbugs [2ea98d]Overlord");
+            case 627: return _("[217764]Mind [2ea98d]Control!");
+            case 628: return _("[2ea98d]Neutralizing [217764]Look");
             // Sharky Crab-dog Mummypus-Zilla : light e25a32 dark b73d42
-            case 631: return /*_TODOMB*/("[b73d42]Shark [e25a32]Attack?!");
-            case 632: return /*_TODOMB*/("[e25a32]Energy [b73d42]Devourer");
-            case 633: return /*_TODOMB*/("[e25a32]Strange [b73d42]Evolution?!");
-            case 634: return /*_TODOMB*/("[b73d42]Crab [e25a32]Claw?!");
-            case 635: return /*_TODOMB*/("[b73d42]Undead [e25a32]Mummy?!");
-            case 636: return /*_TODOMB*/("[e25a32]Follow [b73d42]the Cubes");
-            case 637: return /*_TODOMB*/("[b73d42]Poisoned [e25a32]Tentacles?!");
-            case 638: return /*_TODOMB*/("[e25a32]Chew, [b73d42]Pinch, Catch [e25a32]and Smack");
+            case 631: return _("[b73d42]Shark [e25a32]Attack?!");
+            case 632: return _("[e25a32]Energy [b73d42]Devourer");
+            case 633: return _("[e25a32]Strange [b73d42]Evolution?!");
+            case 634: return _("[b73d42]Crab [e25a32]Claw?!");
+            case 635: return _("[b73d42]Undead [e25a32]Mummy?!");
+            case 636: return _("[e25a32]Follow [b73d42]the Cubes");
+            case 637: return _("[b73d42]Poisoned [e25a32]Tentacles?!");
+            case 638: return _("[e25a32]Chew, [b73d42]Pinch, Catch [e25a32]and Smack");
         }
         return null;
     }
@@ -350,32 +350,32 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 188: return "+2[Heart] +1[Energy].";
 
             // Gigasnail Hydra
-            case 611: case 612: return /*_TODOMB*/("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game."); // TODOMB
+            case 611: case 612: return _("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game.");
             // 612 same as 611
-            case 613: return /*_TODOMB*/("Once per turn, you may pay 1[Energy] to discard 2 dice from your result and add any 1 die symbol to your Roll."); // TODOMB
-            case 614: return '<TOUGH><br>'+ /*_TODOMB*/("If you must lose exactly 3[Heart], gain 3[Heart] instead."); // TODOMB
-            case 615: return /*_TODOMB*/("If you have exactly [die3][die3][die3] among the dice in your Roll, steal 1[Star] from the Monster with the most."); // TODOMB
-            case 616: return /*_TODOMB*/("If you have exactly 3 identical dice among the dice in your Roll, all other Monsters lose 1[Heart] each."); // TODOMB
-            case 617: return /*_TODOMB*/("If you have exactly [dieHeart][dieHeart][dieHeart] among the dice in your Roll, gain 3[Heart] and the Monster with the least [Heart] gains 1[Heart]."); // TODOMB
-            case 618: return /*_TODOMB*/("If you have exactly [dieEnergy][dieEnergy][dieEnergy] among the dice in your Roll, the first Power card you buy this turn costs 3[Energy] less."); // TODOMB
+            case 613: return _("Once per turn, you may pay 1[Energy] to discard 2 dice from your result and add any 1 die symbol to your Roll.");
+            case 614: return '<TOUGH><br>'+ _("If you must lose exactly 3[Heart], gain 3[Heart] instead.");
+            case 615: return _("If you have exactly [die3][die3][die3] among the dice in your Roll, steal 1[Star] from the Monster with the most.");
+            case 616: return _("If you have exactly 3 identical dice among the dice in your Roll, all other Monsters lose 1[Heart] each.");
+            case 617: return _("If you have exactly [dieHeart][dieHeart][dieHeart] among the dice in your Roll, gain 3[Heart] and the Monster with the least [Heart] gains 1[Heart].");
+            case 618: return _("If you have exactly [dieEnergy][dieEnergy][dieEnergy] among the dice in your Roll, the first Power card you buy this turn costs 3[Energy] less.");
             // MasterMindbug
-            case 621: return /*_TODOMB*/("Pay 6[Energy]: Gain 1 Mindbug token.");
-            case 622: return /*_TODOMB*/("Once per turn, you may reroll all your [dieEnergy]."); // TODOMB
-            case 623: return /*_TODOMB*/("Each time another Monster gains 4[Star] or more, gain 1[Star]."); // TODOMB
-            case 624: return /*_TODOMB*/("When you leave Tokyo, gain 2[Energy] or 2[Heart]."); // TODOMB
-            case 625: return /*_TODOMB*/("Discard this card when another Monster resolves their dice to gain as many [Heart] and [Energy] as they do."); // TODOMB
-            case 626: return /*_TODOMB*/("At the start of your turn, other Monsters may declare allegiance to the MasterMindbug. Choose one of them: they give you 4[Star] and gain 1 Mindbug token."); // TODOMB
-            case 627: return /*_TODOMB*/("When another Monster is about to resolve their dice, choose 3 dice that you reroll."); // TODOMB
-            case 628: return /*_TODOMB*/("When another Monster is about to resolve their dice, they must discard all their [dieClaw]."); // TODOMB
+            case 621: return _("Pay 6[Energy]: Gain 1 Mindbug token.");
+            case 622: return _("Once per turn, you may reroll all your [dieEnergy].");
+            case 623: return _("Each time another Monster gains 4[Star] or more, gain 1[Star].");
+            case 624: return _("When you leave Tokyo, gain 2[Energy] or 2[Heart].");
+            case 625: return _("Discard this card when another Monster resolves their dice to gain as many [Heart] and [Energy] as they do.");
+            case 626: return _("At the start of your turn, other Monsters may declare allegiance to the MasterMindbug. Choose one of them: they give you 4[Star] and gain 1 Mindbug token.");
+            case 627: return _("When another Monster is about to resolve their dice, choose 3 dice that you reroll.");
+            case 628: return _("When another Monster is about to resolve their dice, they must discard all their [dieClaw].");
             // Sharky Crab-dog Mummypus-Zilla
-            case 631: return '<SNEAKY><br>'+ /*_TODOMB*/("Monsters in Tokyo lose 1 additional[Star]."); // TODOMB
-            case 632: return /*_TODOMB*/("Once per turn, pay 1[Energy] to change one of your [dieHeart] to [dieSmash]."); // TODOMB
-            case 633: return /*_TODOMB*/("Draw the top card of another Monster’s Evolution deck."); // TODOMB
-            case 634: return /*_TODOMB*/("When you wound a Monster, they must discard all their Power cards. They may pay 1[Energy] per card they want to keep."); // TODOMB
-            case 635: return '<TOUGH><br>'+ /*_TODOMB*/("You may also activate this keyword when an effect makes you “lose [Heart]”."); // TODOMB
-            case 636: return '<HUNTER><br>'+ /*_TODOMB*/("If you hunt the Monster with the most [Energy], add [dieClaw][dieClaw] to your Roll."); // TODOMB
-            case 637: return '<POISON><br>'+ /*_TODOMB*/("If you lose 3[Heart] or more, all other Monsters lose 1[Heart] each."); // TODOMB
-            case 638: return '<FRENZY><br>'+ /*_TODOMB*/("After your FRENZY turn, lose 2[Star], 2[Heart], and 2[Energy]."); // TODOMB
+            case 631: return '<SNEAKY><br>'+ _("Monsters in Tokyo lose 1 additional[Star].");
+            case 632: return _("Once per turn, pay 1[Energy] to change one of your [dieHeart] to [dieSmash].");
+            case 633: return _("Draw the top card of another Monster’s Evolution deck.");
+            case 634: return _("When you wound a Monster, they must discard all their Power cards. They may pay 1[Energy] per card they want to keep.");
+            case 635: return '<TOUGH><br>'+ _("You may also activate this keyword when an effect makes you “lose [Heart]”.");
+            case 636: return '<HUNTER><br>'+ _("If you hunt the Monster with the most [Energy], add [dieClaw][dieClaw] to your Roll.");
+            case 637: return '<POISON><br>'+ _("If you lose 3[Heart] or more, all other Monsters lose 1[Heart] each.");
+            case 638: return '<FRENZY><br>'+ _("After your FRENZY turn, lose 2[Star], 2[Heart], and 2[Energy].");
         }
         return null;
     }
