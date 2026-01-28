@@ -1,9 +1,12 @@
 <?php
 namespace Bga\Games\KingOfTokyo\Objects;
 
+use Bga\GameFramework\Bga;
 use Bga\Games\KingOfTokyo\Game;
 
 class Context {
+    public Bga $bga;
+
     public function __construct(
         public Game $game,
         public ?int $currentPlayerId = null,
@@ -20,6 +23,7 @@ class Context {
         public ?int $lostHearts = null,
         public ?int $lostPoints = null,
     ) {
+        $this->bga = $game->bga;
     } 
 }
 ?>

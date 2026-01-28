@@ -693,6 +693,22 @@ class PowerCardManager extends CardManager {
         return [$addedByCards, $addingCards];
     }
 
+    public function onPlayerEliminated(Context $context) {
+        $damages = [];
+        $cards = $this->getPlayerVirtual($context->currentPlayerId);
+
+        foreach ($cards as $card) {
+            if (method_exists($card, 'onPlayerEliminated')) {
+                /** @disregard */
+                $newDamages = $card->onPlayerEliminated($context);
+                if ($newDamages) {
+                    $damages = array_merge($damages, $newDamages);
+                }
+            }
+        }
+        return $damages;
+    }
+
     public function getUnmetConditionRequirement(PowerCard $card, Context $context): ?NotificationMessage {
         if (method_exists($card, 'getUnmetConditionRequirement')) {
             /** @disregard */

@@ -19,8 +19,26 @@ class ExplosiveCrystals extends PowerCard
             $damages[] = new Damage($context->attackerPlayerId, $context->lostHearts * 2, $context->currentPlayerId, $this);
         }
 
+        return $damages;
+    }
+
+    public function onPlayerEliminated(Context $context) {
+        if (!$this->activated) {
+            return;
+        }
         $context->game->removeCard($context->currentPlayerId, $this);
 
-        return $damages;
+        $damages = $context->game->getObjectListFromDB( "SELECT `from`, `damages` FROM `turn_damages` WHERE `to` = $context->currentPlayerId");
+        if (count($damages) === 0) {
+            return null;
+        }
+        $lastDamage = $damages[count($damages) - 1];
+        $from = (int)$lastDamage['from'];
+        $damage = (int)$lastDamage['damages'];
+        if ($from === $context->currentPlayerId) {
+            return null;
+        }
+
+        return [new Damage($from, $damage * 2, $context->currentPlayerId, $this)];
     }
 }

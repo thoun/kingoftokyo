@@ -6,6 +6,7 @@ namespace Bga\Games\KingOfTokyo;
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait RedirectionTrait {
+    // TODO stack awaiting damage in DB and read them there
     function goToState($nextStateId, /*Damage[] | null*/ $damages = null) {
 
         /*$activePlayerId = $this->getActivePlayerId();

@@ -589,6 +589,11 @@ trait UtilTrait {
         if ($this->kingKongExpansion->isActive()) {
             $this->kingKongExpansion->onPlayerEliminated($player->id);
         }
+        $damages = $this->powerCards->onPlayerEliminated(new Context($this, $player->id));
+        // TODO stack them in DB instead
+        foreach ($damages as $damage) {
+            $this->applyDamageIgnoreCards($damage);
+        }
 
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
@@ -627,6 +632,8 @@ trait UtilTrait {
                 $this->leaveTokyo($this->getPlayerIdInTokyoBay());
             }
         }
+
+        return $damages;
     }
 
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {
