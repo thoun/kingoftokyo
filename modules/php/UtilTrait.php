@@ -1328,9 +1328,9 @@ trait UtilTrait {
 
         // if we are still here, no action has been done automatically, we activate the player so he can heal
         $this->setDamageIntervention($intervention);
-        if (!$fromCancelDamageState) {
+        //if (!$fromCancelDamageState) { // need to refresh the args when using Ancestral defense
             $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
-        }
+        //}
         return true;
     }
 

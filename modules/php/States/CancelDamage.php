@@ -325,7 +325,7 @@ class CancelDamage extends GameState {
             throw new \BgaUserException(clienttranslate('You cannot gain [Heart]'));
         }
 
-        if ($this->game->globals->get(ANCESTRAL_DEFENSE, 0) == 0) {
+        if (!$this->game->globals->get(ANCESTRAL_DEFENSE, false)) {
             throw new \BgaUserException('No Ancestral Defense card');
         }
 

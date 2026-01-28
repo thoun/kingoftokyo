@@ -333,10 +333,10 @@ trait CardsArgTrait {
                 $consumableEvolutions = Arrays::filter($consumableEvolutions, fn($evolution) => $evolution->type == UNDEAD_MUMMY_EVOLUTION);
             }
             $canPlayConsumable = count($consumableCards) > 0 || count($consumableEvolutions) > 0;
-            $ancestralDefense = min(
-                $this->globals->get(ANCESTRAL_DEFENSE, 0),
-                (int)floor($potentialEnergy / 2)
-            );
+            $ancestralDefense = 0;
+            if ($this->globals->get(ANCESTRAL_DEFENSE, false)) {
+                $ancestralDefense = (int)floor($potentialEnergy / 2);
+            }
 
             $canCancelDamage = 
                 $canThrowDices || 
