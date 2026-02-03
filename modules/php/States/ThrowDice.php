@@ -174,6 +174,11 @@ class ThrowDice extends GameState {
         #[IntArrayParam(name: 'diceIds')] array $diceIds,
         int $currentPlayerId,
     ): void {
+        $countBackgroundDweller = $this->game->countCardOfType($currentPlayerId, BACKGROUND_DWELLER_CARD);
+        if ($countBackgroundDweller == 0) {
+            throw new \BgaUserException('No Background Dweller card');
+        }
+        
         $die = $this->game->getFirst3Die($currentPlayerId);
         if ($die === null) {
             throw new \BgaUserException('No 3 die');
