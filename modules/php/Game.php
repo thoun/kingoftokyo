@@ -683,7 +683,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
         if ($bonusMonsters || $this->mindbugExpansion->isActive()) {             
-            $monsters = Game::getBgaEnvironment()==='studio' ? [...$monsters, 61, 62, 63] : [...$monsters, /*61,*/ 62, /*63*/]; // TODOMB
+            $monsters = Game::getBgaEnvironment()==='studio' ? [...$monsters, 61, 62, 63] : [...$monsters, 61, 62, 63];
         }
 
         if ($this->wickednessExpansion->isActive()) {

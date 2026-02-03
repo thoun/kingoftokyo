@@ -45,7 +45,7 @@ $game_options = [
         'default' => 1,
     ],
 
-    /* TODOMB MINDBUG_EXPANSION_OPTION => [
+    MINDBUG_EXPANSION_OPTION => [
         'name' => totranslate('Mindbug'),
         'values' => [
             0 => [
@@ -54,20 +54,11 @@ $game_options = [
             1 => [
                 'name' => totranslate('Enabled'),
                 'tmdisplay' => totranslate('Mindbug'),
+                'alpha' => true,
             ],
         ],
         'default' => 0,
-    ],*/
-
-        /*'startcondition' => [
-            1 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => 'Mindbug expansion will be available soon',
-                ] 
-            ],
-        ],*/
+    ],
 
     HALLOWEEN_EXPANSION_OPTION => [
         'name' => totranslate('Halloween'),
@@ -241,21 +232,21 @@ $game_options = [
         'default' => 1,
     ],
 
-    /* TODOMB MINDBUG_CARDS_OPTION => [
+    MINDBUG_CARDS_OPTION => [
         'name' => totranslate('Mindbug Power cards'),
         'values' => [
             1 => [
-                'name' => totranslate('Mindbug trial'), // TODOMB translate
+                'name' => totranslate('Mindbug trial'),
                 'description' => totranslate("Shuffle the 24 new Power cards into the King of Tokyo Power card deck."),
             ],
             2 => [
-                'name' => totranslate('Mindbug experience (difficult)'), // TODOMB translate
+                'name' => totranslate('Mindbug experience (difficult)'),
                 'description' => totranslate("Do not use the King of Tokyo Power card deck. Instead, use only the 24 Power cards from this expansion."),
                 'nobeginner' => true,
             ],
         ],
         'default' => 1,
-    ],*/
+    ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
