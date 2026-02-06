@@ -38,7 +38,6 @@ require_once('evolution-cards/evolution-cards-utils.php');
 use Bga\GameFramework\Actions\CheckAction;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\States\Start;
-use KOT\Objects\Question;
 
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
 
@@ -683,7 +682,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
         if ($bonusMonsters || $this->mindbugExpansion->isActive()) {             
-            $monsters = Game::getBgaEnvironment()==='studio' ? [...$monsters, 61, 62, 63] : [...$monsters, 61, 62, 63];
+            $monsters = [...$monsters, 61, 62, 63];
         }
 
         if ($this->wickednessExpansion->isActive()) {
@@ -698,8 +697,8 @@ class Game extends \Bga\GameFramework\Table {
     }
 
     function saveMonsterStat(int $playerId, int $monsterId, bool $automatic): void {
-        $this->setStat($monsterId, 'monster', $playerId);
-        $this->setStat($monsterId, $automatic ? 'monsterAutomatic': 'monsterPick', $playerId);
+        $this->bga->tableStats->set('monster', $monsterId, $playerId);
+        $this->bga->playerStats->set($automatic ? 'monsterAutomatic': 'monsterPick', $monsterId, $playerId);
     }
 
     function isBeastForm(int $playerId): bool {

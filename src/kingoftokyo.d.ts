@@ -258,7 +258,7 @@ interface KingOfTokyoGame {
     rerollOrDiscardDie: (id: number) => void;
     freezeDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
-    onVisibleCardClick: (stock: CardStock<Card>, card: Card, from?: number) => void;
+    onVisibleCardClick: (stock: CardStock<Card>, card: Card) => void;
     takeWickednessTile(id: number): void;
     chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;

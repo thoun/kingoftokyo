@@ -72,7 +72,7 @@ class PlayerTable {
         this.setMonsterFigureBeastMode(player.cards.find(card => card.type === 301)?.side === 1);
 
         this.cards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`cards-${this.player.id}`));
-        this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.cards, card, this.playerId);
+        this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.cards, card,);
 
         this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
@@ -85,7 +85,7 @@ class PlayerTable {
         if (game.isPowerUpExpansion()) {            
             // TODOPUBG
             this.reservedCards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`reserved-cards-${this.player.id}`));
-            this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.reservedCards, card, this.playerId);
+            this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.reservedCards, card);
             
             this.reservedCards.addCards(player.reservedCards);
         }

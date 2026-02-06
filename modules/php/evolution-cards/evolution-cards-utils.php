@@ -4,11 +4,14 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/question.php');
 
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerUpExpansion;
 use KOT\Objects\Question;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game
@@ -541,7 +544,7 @@ trait EvolutionCardsUtilTrait {
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
 
         if (count($cardsIds) >= 3 * count($this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, false))) {
-            throw new \BgaUserException('You can only have 3 cards with tokens.');
+            throw new UserException('You can only have 3 cards with tokens.');
         }
 
         $cardsIds[] = $cardId;

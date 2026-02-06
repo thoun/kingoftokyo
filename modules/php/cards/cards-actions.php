@@ -5,9 +5,20 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/card-being-bought.php');
 
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\AnubisExpansion;
+use Bga\Games\KingOfTokyo\CthulhuExpansion;
+use Bga\Games\KingOfTokyo\CybertoothExpansion;
+use Bga\Games\KingOfTokyo\KingKongExpansion;
+use Bga\Games\KingOfTokyo\MindbugExpansion;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerCardManager;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+use Bga\Games\KingOfTokyo\PowerUpExpansion;
+use Bga\Games\KingOfTokyo\WickednessExpansion;
+use Bga\Games\KingOfTokyo\WickednessTileManager;
+use KOT\Objects\Card;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
 use KOT\Objects\CardBeingBought;
@@ -21,6 +32,17 @@ use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
  */
 trait CardsActionTrait {
 
+    public AnubisExpansion $anubisExpansion;
+    public KingKongExpansion $kingKongExpansion;
+    public CybertoothExpansion $cybertoothExpansion;
+    public CthulhuExpansion $cthulhuExpansion;
+    public WickednessExpansion $wickednessExpansion;
+    public PowerUpExpansion $powerUpExpansion;
+    public MindbugExpansion $mindbugExpansion;
+
+    public PowerCardManager $powerCards;
+    public WickednessTileManager $wickednessTiles;
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -30,7 +52,7 @@ trait CardsActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function applyBuyCard(int $playerId, int $id, ?int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
+    function applyBuyCard(int $playerId, int $id, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
         $card = $this->powerCards->getCardById($id);
         $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
@@ -42,7 +64,7 @@ trait CardsActionTrait {
         $this->removeDiscardCards($playerId);
 
         if ($this->getPlayerEnergy($playerId) < $cost) {
-            throw new \BgaUserException('Not enough energy');
+            throw new UserException('Not enough energy');
         }
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
         $this->globals->delete(NEXT_POWER_CARD_COST_REDUCTION);
@@ -70,13 +92,14 @@ trait CardsActionTrait {
         $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
         $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
+        $from = $this->powerCards->getCardFrom($card);
         if ($from > 0) {
             if ($card->location_arg != $from) {
-                throw new \BgaUserException("This player doesn't own this card");
+                throw new UserException("This player doesn't own this card");
             }
 
             if ($card->type >= 100) { // You can only buy Keep cards with Parasitic Tentacles
-                throw new \BgaUserException("Not a Keep card");
+                throw new UserException("Not a Keep card");
             }
 
             if ($from != $playerId) {
@@ -167,12 +190,12 @@ trait CardsActionTrait {
             if ($useBobbingForApples) {
                 $evolution = $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION);
                 if ($evolution === null) {
-                    throw new \BgaUserException("No unused evolution");
+                    throw new UserException("No unused evolution");
                 }
                 $this->setUsedCard(3000 + $evolution->id);
 
                 if ($newCard == null) {
-                    throw new \BgaUserException("You can't buy with Bobbing for Apples when there is no new card revealed");
+                    throw new UserException("You can't buy with Bobbing for Apples when there is no new card revealed");
                 } else {
                     $newCardCost = $this->powerCards->getCardBaseCost($newCard->type);
 
@@ -235,7 +258,6 @@ trait CardsActionTrait {
             $mimic = $this->canChangeMimickedCard($playerId);
         }
 
-        
         if ($useSuperiorAlienTechnology) {
             $this->addSuperiorAlienTechnologyToken($playerId, $id);
         }
@@ -261,12 +283,12 @@ trait CardsActionTrait {
         }
     }
 
-    function actBuyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
+    function actBuyCard(int $id, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->powerCards->getCardById($id);
         if (!$card) {
-            throw new \BgaUserException('Invalid card id (buyCard)');
+            throw new UserException('Invalid card id (buyCard)');
         }
 
         $cost = $this->getCardCost($playerId, $card->type);
@@ -275,7 +297,7 @@ trait CardsActionTrait {
 
             $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
             if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
-                throw new \BgaUserException('You can only have 3 cards with tokens.');
+                throw new UserException('You can only have 3 cards with tokens.');
             }
         }
         if ($useBobbingForApples) {
@@ -284,26 +306,27 @@ trait CardsActionTrait {
 
         $unmetConditionRequirement = $this->powerCards->getUnmetConditionRequirement($card, new Context($this, $playerId, $this->inTokyo($playerId)));
         if ($unmetConditionRequirement) {
-            throw new \BgaUserException($unmetConditionRequirement->message);
+            throw new UserException($unmetConditionRequirement->message);
         }
         if (!$this->canAffordCard($playerId, $cost)) {
-            throw new \BgaUserException('Not enough energy');
+            throw new UserException('Not enough energy');
         }
 
+        $from = $this->powerCards->getCardFrom($card);
         if ($from > 0) {
             if ($from != $playerId) {
                 if ($this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
-                    throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
+                    throw new UserException("You can't buy from other players without Parasitic Tentacles");
                 }
             } else if ($from == $playerId) {
                 if ($card->location !== 'reserved'.$playerId) {
-                    throw new \BgaUserException("You can't buy this card");
+                    throw new UserException("You can't buy this card");
                 }
             }
         }
 
         if (!$this->canBuyPowerCard($playerId)) {
-            throw new \BgaUserException("You can't buy Power cards");
+            throw new UserException("You can't buy Power cards");
         }        
 
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
@@ -324,7 +347,7 @@ trait CardsActionTrait {
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($playerId, $id, $from, $cost, $useSuperiorAlienTechnology, $useBobbingForApples);
+            $this->applyBuyCard($playerId, $id, $cost, $useSuperiorAlienTechnology, $useBobbingForApples);
         }
     }
 

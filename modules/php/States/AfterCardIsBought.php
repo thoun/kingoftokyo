@@ -24,7 +24,6 @@ class AfterCardIsBought extends GameState {
             $this->game->applyBuyCard(
                 $cardBeingBought->playerId,
                 $cardBeingBought->cardId,
-                $cardBeingBought->from,
                 $cardBeingBought->cost,
                 $cardBeingBought->useSuperiorAlienTechnology,
                 $cardBeingBought->useBobbingForApples

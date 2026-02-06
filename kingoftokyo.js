@@ -4556,7 +4556,7 @@ var PlayerTable = /** @class */ (function () {
         dojo.place(html, 'table');
         this.setMonsterFigureBeastMode(((_c = player.cards.find(function (card) { return card.type === 301; })) === null || _c === void 0 ? void 0 : _c.side) === 1);
         this.cards = new LineStock(this.game.cardsManager, document.getElementById("cards-".concat(this.player.id)));
-        this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.cards, card, _this.playerId); };
+        this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.cards, card); };
         this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
             this.takeGoldenScarab();
@@ -4567,7 +4567,7 @@ var PlayerTable = /** @class */ (function () {
         if (game.isPowerUpExpansion()) {
             // TODOPUBG
             this.reservedCards = new LineStock(this.game.cardsManager, document.getElementById("reserved-cards-".concat(this.player.id)));
-            this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.reservedCards, card, _this.playerId); };
+            this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.reservedCards, card); };
             this.reservedCards.addCards(player.reservedCards);
         }
         this.initialLocation = Number(player.location);
@@ -8480,10 +8480,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onConsumableEvolutionKeywordClick = function (evolution, keyword) {
         this.bga.actions.performAction('actActivateConsumableEvolution', { id: evolution.id, keyword: keyword });
     };
-    KingOfTokyo.prototype.onVisibleCardClick = function (stock, card, from, warningChecked) {
+    KingOfTokyo.prototype.onVisibleCardClick = function (stock, card, warningChecked) {
         var _this = this;
         var _a, _b;
-        if (from === void 0) { from = 0; }
         if (warningChecked === void 0) { warningChecked = false; }
         if (!(card === null || card === void 0 ? void 0 : card.id)) {
             return;
@@ -8523,10 +8522,10 @@ var KingOfTokyo = /** @class */ (function () {
             var buyCardArgs = this.gamedatas.gamestate.args;
             var warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
             if (!warningChecked && buyCardArgs.noExtraTurnWarning.includes(card.type)) {
-                this.bga.gameui.confirmationDialog(this.getNoExtraTurnWarningMessage(), function () { return _this.onVisibleCardClick(stock, card, from, true); });
+                this.bga.gameui.confirmationDialog(this.getNoExtraTurnWarningMessage(), function () { return _this.onVisibleCardClick(stock, card, true); });
             }
             else if (warningIcon) {
-                this.bga.gameui.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, card, from, true); });
+                this.bga.gameui.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, card, true); });
             }
             else {
                 var cardCostSuperiorAlienTechnology = (_a = buyCardArgs.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[card.id];
@@ -8549,7 +8548,7 @@ var KingOfTokyo = /** @class */ (function () {
                         var choiceIndex = Number(choice);
                         if (choiceIndex < (both_1 ? 3 : 2)) {
                             _this.tableCenter.removeOtherCardsFromPick(card.id);
-                            _this.buyCard(card.id, from, canUseSuperiorAlienTechnologyForCard_1 && choiceIndex === 0, canUseBobbingForApplesForCard_1 && choiceIndex === (both_1 ? 1 : 0));
+                            _this.buyCard(card.id, canUseSuperiorAlienTechnologyForCard_1 && choiceIndex === 0, canUseBobbingForApplesForCard_1 && choiceIndex === (both_1 ? 1 : 0));
                         }
                     });
                     if (canUseSuperiorAlienTechnologyForCard_1 && buyCardArgs.canUseSuperiorAlienTechnology === false || cardCostSuperiorAlienTechnology > this.getPlayerEnergy(this.getPlayerId())) {
@@ -8564,7 +8563,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 else {
                     this.tableCenter.removeOtherCardsFromPick(card.id);
-                    this.buyCard(card.id, from);
+                    this.buyCard(card.id);
                 }
             }
         }
@@ -8577,7 +8576,9 @@ var KingOfTokyo = /** @class */ (function () {
         else if (stateName === 'answerQuestion') {
             var args = this.gamedatas.gamestate.args;
             if (args.question.code === 'Bamboozle') {
-                this.buyCardBamboozle(card.id, from);
+                this.bga.actions.performAction('actBuyCardBamboozle', {
+                    id: card.id,
+                });
             }
             else if (args.question.code === 'ChooseMimickedCard') {
                 this.chooseMimickedCard(card.id);
@@ -9295,20 +9296,13 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.skipChangeForm = function () {
         this.bga.actions.performAction('actSkipChangeForm');
     };
-    KingOfTokyo.prototype.buyCard = function (id, from, useSuperiorAlienTechnology, useBobbingForApples) {
+    KingOfTokyo.prototype.buyCard = function (id, useSuperiorAlienTechnology, useBobbingForApples) {
         if (useSuperiorAlienTechnology === void 0) { useSuperiorAlienTechnology = false; }
         if (useBobbingForApples === void 0) { useBobbingForApples = false; }
         this.bga.actions.performAction('actBuyCard', {
             id: id,
-            from: from,
             useSuperiorAlienTechnology: useSuperiorAlienTechnology,
             useBobbingForApples: useBobbingForApples
-        });
-    };
-    KingOfTokyo.prototype.buyCardBamboozle = function (id, from) {
-        this.bga.actions.performAction('actBuyCardBamboozle', {
-            id: id,
-            from: from
         });
     };
     KingOfTokyo.prototype.chooseMimickedCard = function (id) {

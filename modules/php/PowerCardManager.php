@@ -10,6 +10,8 @@ require_once(__DIR__.'/framework-prototype/item/item-manager.php');
 require_once(__DIR__.'/framework-prototype/item/card-manager.php');
 
 use Bga\GameFramework\NotificationMessage;
+use Bga\GameFramework\UserException;
+use Bga\GameFramework\VisibleSystemException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
 use \Bga\GameFrameworkPrototype\Item\CardManager;
@@ -725,5 +727,20 @@ class PowerCardManager extends CardManager {
     public function setActivatedKeywordTarget(PowerCard $card, int $targetPlayerId): void {
         $card->activated->targetPlayerId = $targetPlayerId;
         $this->updateCard($card, ['activated']);
+    }
+
+    /**
+     * @return int 0 for table, else player id
+     */
+    function getCardFrom(PowerCard $card): int {
+        if ($card->location === 'table') {
+            return 0;
+        }
+
+        if ($card->location === 'hand') {
+            return $card->location_arg;
+        }
+        
+        throw new UserException('Invalid location to take the card');
     }
 }

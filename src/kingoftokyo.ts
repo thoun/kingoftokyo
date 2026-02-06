@@ -2152,7 +2152,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.bga.actions.performAction('actActivateConsumableEvolution', { id: evolution.id, keyword });
     }
 
-    public onVisibleCardClick(stock: CardStock<Card>, card: Card, from: number = 0, warningChecked: boolean = false) { // from : player id
+    public onVisibleCardClick(stock: CardStock<Card>, card: Card, warningChecked: boolean = false) { // from : player id
         if (!card?.id) {
             return;
         }
@@ -2187,12 +2187,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (!warningChecked && buyCardArgs.noExtraTurnWarning.includes(card.type)) {
                 this.bga.gameui.confirmationDialog(
                     this.getNoExtraTurnWarningMessage(), 
-                    () => this.onVisibleCardClick(stock, card, from, true)
+                    () => this.onVisibleCardClick(stock, card, true)
                 );
             } else if (warningIcon) {
                 this.bga.gameui.confirmationDialog(
                     formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
-                    () => this.onVisibleCardClick(stock, card, from, true)
+                    () => this.onVisibleCardClick(stock, card, true)
                 );
             } else {
                 const cardCostSuperiorAlienTechnology = buyCardArgs.cardsCostsSuperiorAlienTechnology?.[card.id];
@@ -2219,7 +2219,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                             const choiceIndex = Number(choice);
                             if (choiceIndex < (both ? 3 : 2)) {
                                 this.tableCenter.removeOtherCardsFromPick(card.id);
-                                this.buyCard(card.id, from, canUseSuperiorAlienTechnologyForCard && choiceIndex === 0, canUseBobbingForApplesForCard && choiceIndex === (both ? 1 : 0));
+                                this.buyCard(card.id, canUseSuperiorAlienTechnologyForCard && choiceIndex === 0, canUseBobbingForApplesForCard && choiceIndex === (both ? 1 : 0));
                             }
                         }
                       );
@@ -2235,7 +2235,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                       }
                 } else {
                     this.tableCenter.removeOtherCardsFromPick(card.id);
-                    this.buyCard(card.id, from);
+                    this.buyCard(card.id);
                 }
             }
         } else if (stateName === 'discardKeepCard') {
@@ -2245,7 +2245,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (stateName === 'answerQuestion') {
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'Bamboozle') {
-                this.buyCardBamboozle(card.id, from);
+                this.bga.actions.performAction('actBuyCardBamboozle', {
+                    id: card.id,
+                });
             } else if (args.question.code === 'ChooseMimickedCard') {
                 this.chooseMimickedCard(card.id);
             } else if (args.question.code === 'MyToy') {
@@ -3142,19 +3144,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.bga.actions.performAction('actSkipChangeForm');
     }
 
-    public buyCard(id: number, from: number, useSuperiorAlienTechnology: boolean = false, useBobbingForApples: boolean = false) {
+    public buyCard(id: number, useSuperiorAlienTechnology: boolean = false, useBobbingForApples: boolean = false) {
         this.bga.actions.performAction('actBuyCard', {
             id,
-            from,
             useSuperiorAlienTechnology,
             useBobbingForApples
-        });
-    }
-
-    public buyCardBamboozle(id: number, from: number) {
-        this.bga.actions.performAction('actBuyCardBamboozle', {
-            id,
-            from
         });
     }
 

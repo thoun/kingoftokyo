@@ -6,6 +6,7 @@ require_once(__DIR__.'/Objects/player.php');
 require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\AnubisExpansion;
 use Bga\Games\KingOfTokyo\CthulhuExpansion;
@@ -1440,7 +1441,7 @@ trait UtilTrait {
                     $this->applyGetPoints($to, $count, $logCardType);
                     break;
                 default:
-                    throw new \BgaUserException('Invalid symbol');
+                    throw new UserException('Invalid symbol');
             }
         }
     }

@@ -149,7 +149,6 @@ class AnswerQuestion extends GameState {
     #[PossibleAction]
     public function actBuyCardBamboozle(
         int $id,
-        int $from,
         int $currentPlayerId,
         int $activePlayerId,
     ) {
@@ -164,7 +163,7 @@ class AnswerQuestion extends GameState {
         ]);
 
         // applyBuyCard do the redirection
-        $this->game->applyBuyCard($activePlayerId, $id, $from);
+        $this->game->applyBuyCard($activePlayerId, $id);
     }
 
     #[PossibleAction]
@@ -242,7 +241,6 @@ class AnswerQuestion extends GameState {
         $this->game->applyBuyCard(
             $currentPlayerId,
             $card->id,
-            0,
             $cost,
             $useSuperiorAlienTechnology,
             false,
@@ -580,7 +578,7 @@ class AnswerQuestion extends GameState {
     ) {
         $card = $this->game->powerCards->getCardById($id);
 
-        $this->game->applyBuyCard($currentPlayerId, $card->id, null, $this->game->getCardCost($currentPlayerId, $card->type) - 3);
+        $this->game->applyBuyCard($currentPlayerId, $card->id, $this->game->getCardCost($currentPlayerId, $card->type) - 3);
 
         $this->game->goToState(-1);    
     }

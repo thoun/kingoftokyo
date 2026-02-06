@@ -11,6 +11,8 @@ use Bga\Games\KingOfTokyo\Game;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\Question;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 class BuyCard extends GameState {
     public function __construct(protected Game $game)
     {
@@ -54,8 +56,8 @@ class BuyCard extends GameState {
     }
 
     #[PossibleAction]
-    function actBuyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
-        return $this->game->actBuyCard($id, $from, $useSuperiorAlienTechnology, $useBobbingForApples);
+    function actBuyCard(int $id, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
+        return $this->game->actBuyCard($id, $useSuperiorAlienTechnology, $useBobbingForApples);
     }
 
     #[PossibleAction]
