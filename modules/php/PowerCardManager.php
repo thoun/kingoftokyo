@@ -735,9 +735,9 @@ class PowerCardManager extends CardManager {
     function getCardFrom(PowerCard $card): int {
         if ($card->location === 'table') {
             return 0;
-        }
-
-        if ($card->location === 'hand') {
+        } else if ($card->location === 'discard') {
+            return -1;
+        } else if ($card->location === 'hand') {
             return $card->location_arg;
         }
         

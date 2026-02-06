@@ -323,6 +323,10 @@ trait CardsActionTrait {
                     throw new UserException("You can't buy this card");
                 }
             }
+        } else if ($from === -1) {
+                if ($this->countCardOfType($playerId, SCAVENGER_CARD) == 0) {
+                    throw new UserException("You can't buy from the discard without Scavenger");
+                }
         }
 
         if (!$this->canBuyPowerCard($playerId)) {
