@@ -7,6 +7,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFramework\UserException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -70,7 +71,7 @@ class ChangeDie extends GameState {
         $dieId = (int)$this->game->getGameStateValue(\PSYCHIC_PROBE_ROLLED_A_3);
 
         if ($dieId === 0) {
-            throw new \BgaUserException('No 3 die');
+            throw new UserException('No 3 die');
         }
 
         $this->game->setGameStateValue(\PSYCHIC_PROBE_ROLLED_A_3, 0);
@@ -107,10 +108,13 @@ class ChangeDie extends GameState {
         $selectedDie = $this->game->getDieById($dieId);
 
         if ($selectedDie === null) {
-            throw new \BgaUserException('No selected die');
+            throw new UserException('No selected die');
         }
 
         if ($cardType == \HERD_CULLER_CARD) {
+            if ($value != 1) {
+                throw new UserException('You can only change the value to [die1]');
+            }
             $usedCards = $this->game->getUsedCard();
             $herdCullerCards = $this->game->getCardsOfType($currentPlayerId, \HERD_CULLER_CARD);
             $usedCardOnThisTurn = null;
@@ -120,24 +124,30 @@ class ChangeDie extends GameState {
                 }
             }
             if ($usedCardOnThisTurn === null) {
-                throw new \BgaUserException('No unused Herd Culler for this player');
+                throw new UserException('No unused Herd Culler for this player');
             } else {
                 $this->game->setUsedCard($usedCardOnThisTurn);
             }
         } else if ($cardType == \PLOT_TWIST_CARD) {
             $cards = $this->game->getCardsOfType($currentPlayerId, \PLOT_TWIST_CARD);
-            $this->game->removeCards($currentPlayerId, $cards);
+            if (empty($cards)) {
+                throw new UserException('No Plot Twist card for this player');
+            }
+            $this->game->removeCard($currentPlayerId, $cards[0]);
         } else if ($cardType == \STRETCHY_CARD) {
             $this->game->applyLoseEnergyIgnoreCards($currentPlayerId, 2, 0);
         } else if ($cardType == \BIOFUEL_CARD) {
             if ($selectedDie->value != 4) {
-                throw new \BgaUserException('You can only change a Heart die');
+                throw new UserException('You can only change a [dieHeart]');
             }
         } else if ($cardType == \SHRINKY_CARD) {
             if ($selectedDie->value != 2) {
-                throw new \BgaUserException('You can only change a 2 die');
+                throw new UserException('You can only change a [die2]');
             }
         } else if ($cardType == \SNEAKY_ALLOY_CARD) {
+            if ($selectedDie->value != 1) {
+                throw new UserException('You can only change a [die1]');
+            }
             $usedCards = $this->game->getUsedCard();
             $sneakyAlloyCards = $this->game->getCardsOfType($currentPlayerId, \SNEAKY_ALLOY_CARD);
             $usedCardOnThisTurn = null;
@@ -147,7 +157,7 @@ class ChangeDie extends GameState {
                 }
             }
             if ($usedCardOnThisTurn === null) {
-                throw new \BgaUserException('No unused Sneaky Alloy for this player');
+                throw new UserException('No unused Sneaky Alloy for this player');
             } else {
                 $this->game->setUsedCard($sneakyAlloyCard->id);
             }
@@ -156,6 +166,9 @@ class ChangeDie extends GameState {
             $this->game->playEvolutionToTable($currentPlayerId, $saurianAdaptabilityCard, '');
             $this->game->removeEvolution($currentPlayerId, $saurianAdaptabilityCard, false, 5000);
         } else if ($cardType == 3000 + \GAMMA_BREATH_EVOLUTION) {
+            if ($value != 6) {
+                throw new UserException('You can only change the value to [dieSmash]');
+            }
             $gammaBreathCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \GAMMA_BREATH_EVOLUTION, true, true);
             $gammaBreathCard = Arrays::find($gammaBreathCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $gammaBreathCards[0];
 
@@ -164,6 +177,9 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $gammaBreathCard->id);
         } else if ($cardType == 3000 + \TAIL_SWEEP_EVOLUTION) {
+            if (!in_array($value, [1, 2])) {
+                throw new UserException('You can only change the value to [die1] or [die2]');
+            }
             $tailSweepCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \TAIL_SWEEP_EVOLUTION, true, true);
             $tailSweepCard = Arrays::find($tailSweepCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tailSweepCards[0];
 
@@ -172,6 +188,9 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $tailSweepCard->id);
         } else if ($cardType == 3000 + \TINY_TAIL_EVOLUTION) {
+            if ($value != 1) {
+                throw new UserException('You can only change the value to [die1]');
+            }
             $tinyTailCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \TINY_TAIL_EVOLUTION, true, true);
             $tinyTailCard = Arrays::find($tinyTailCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tinyTailCards[0];
 
@@ -180,6 +199,12 @@ class ChangeDie extends GameState {
             }
             $this->game->setUsedCard(3000 + $tinyTailCard->id);
         } else if ($cardType == 3000 + \ENERGY_DEVOURER_EVOLUTION) {
+            if ($selectedDie->value != 4) {
+                throw new UserException('You can only change a [dieHeart]');
+            }
+            if ($value != 6) {
+                throw new UserException('You can only change the value to [dieSmash]');
+            }
             $energyDevourerCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, \ENERGY_DEVOURER_EVOLUTION, true, true);
             $energyDevourerCard = Arrays::find($energyDevourerCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $energyDevourerCards[0];
 
@@ -189,7 +214,7 @@ class ChangeDie extends GameState {
             $this->game->setUsedCard(3000 + $energyDevourerCard->id);
             $this->game->applyLoseEnergyIgnoreCards($currentPlayerId, 1, 0);
         } else if ($cardType != \CLOWN_CARD) {
-            throw new \BgaUserException('Invalid card to change die');
+            throw new UserException('Invalid card to change die');
         }
 
         $activePlayerId = (int)$this->game->getActivePlayerId();
@@ -228,7 +253,7 @@ class ChangeDie extends GameState {
     function actUseYinYang(int $activePlayerId) {
         $yinYangEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, YIN_YANG_EVOLUTION, true, false);
         if (empty($yinYangEvolutions)) {
-            throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
+            throw new UserException("You can't play Yin & Yang without this Evolution.");
         }
         
         /** @disregard */
