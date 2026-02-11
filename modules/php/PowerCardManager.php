@@ -737,6 +737,8 @@ class PowerCardManager extends CardManager {
             return 0;
         } else if ($card->location === 'discard') {
             return -1;
+        } else if ($card->location === 'deck') {
+            return -2;
         } else if ($card->location === 'hand') {
             return $card->location_arg;
         }

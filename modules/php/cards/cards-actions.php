@@ -327,6 +327,10 @@ trait CardsActionTrait {
                 if ($this->countCardOfType($playerId, SCAVENGER_CARD) == 0) {
                     throw new UserException("You can't buy from the discard without Scavenger");
                 }
+        } else if ($from === -2) {
+                if ($this->countCardOfType($playerId, MADE_IN_A_LAB_CARD) == 0) {
+                    throw new UserException("You can't buy from the deck without Made in a lab");
+                }
         }
 
         if (!$this->canBuyPowerCard($playerId)) {
