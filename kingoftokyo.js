@@ -6841,9 +6841,6 @@ var KingOfTokyo = /** @class */ (function () {
             this.MINDBUG_TOOLTIP = formatTextIcons("\n            <h3>".concat(_("Mindbug"), "</h3>\n            <p>").concat(_("At the end of another player’s Roll Dice phase, you can announce that you “Mindbug” their Monster."), "</p>\n            <p>").concat(_("Resolve the rolled dice, as if they were your own and continue to the end of turn, then the Mindbugged Monster restart at Roll Dice phase."), "</p>"));
             this.bga.gameui.addTooltipHtmlToClass('mindbug-tooltip', this.MINDBUG_TOOLTIP);
         }
-        // override to allow icons in messages
-        var oldShowMessage = this.bga.gameui.showMessage;
-        this.bga.gameui.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
         if (gamedatas.mindbug) {
             this.notif_mindbugPlayer(gamedatas.mindbug);
         }

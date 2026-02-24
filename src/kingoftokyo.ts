@@ -246,10 +246,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.bga.gameui.addTooltipHtmlToClass('mindbug-tooltip', this.MINDBUG_TOOLTIP);
         }
 
-        // override to allow icons in messages
-        const oldShowMessage = this.bga.gameui.showMessage;
-        this.bga.gameui.showMessage = (msg, type) => oldShowMessage(formatTextIcons(msg), type);
-
         if (gamedatas.mindbug) {
             this.notif_mindbugPlayer(gamedatas.mindbug);
         }
