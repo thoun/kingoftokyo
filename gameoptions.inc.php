@@ -54,7 +54,6 @@ $game_options = [
             1 => [
                 'name' => totranslate('Enabled'),
                 'tmdisplay' => totranslate('Mindbug'),
-                'alpha' => true,
             ],
         ],
         'default' => 0,
