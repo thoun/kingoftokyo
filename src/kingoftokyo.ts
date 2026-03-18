@@ -119,7 +119,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 </div>
             </div>
         `);
-        this.bga.sounds.load('kot-punch', 'punch');
 
         if (gamedatas.origins) {
             document.getElementsByTagName('html')[0].dataset.origins = 'true';
@@ -3709,7 +3708,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (args.smashedPlayersIds.length > 0) {
             for (let delayIndex = 0; delayIndex < args.number; delayIndex++) {
-                setTimeout(() => this.bga.sounds.play('kot-punch'), ANIMATION_MS -(PUNCH_SOUND_DURATION * delayIndex - 1));
+                setTimeout(() => this.bga.sounds.play('punch'), ANIMATION_MS -(PUNCH_SOUND_DURATION * delayIndex - 1));
             }
         }
     }
