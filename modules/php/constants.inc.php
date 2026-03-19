@@ -178,6 +178,7 @@ const STARTED_TURN_IN_TOKYO = 'StartedTurnInTokyo';
 const SUPERIOR_ALIEN_TECHNOLOGY_TOKENS = 'SuperiorAlienTechnologyTokens';
 const ELECTRIC_CARROT_CHOICES = 'ElectricCarrotChoices';
 const MINDBUGS_OVERLORD = 'MINDBUGS_OVERLORD';
+const DAMAGES_TO_RESOLVE = 'DAMAGES_TO_RESOLVE';
 
 /*
  * Cards

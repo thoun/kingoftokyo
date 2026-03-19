@@ -7,13 +7,13 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class HighAltitudeBombing extends PowerCard {
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $playersIds = $context->game->getPlayersIds();
         $damages = [];
         foreach ($playersIds as $pId) {
             $damages[] = new Damage($pId, 3, $context->currentPlayerId, $this);
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }
 

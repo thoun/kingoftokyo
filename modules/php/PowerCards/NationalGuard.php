@@ -7,9 +7,9 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class NationalGuard extends PowerCard {
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $context->game->applyGetPoints($context->currentPlayerId, 2, $this);
-        return [new Damage($context->currentPlayerId, 2, $context->currentPlayerId, $this)];
+        $context->game->addDamageToResolve(new Damage($context->currentPlayerId, 2, $context->currentPlayerId, $this));
     }
 }
 

@@ -46,7 +46,8 @@ class EnterTokyoApplyBurrowing extends GameState {
         $this->game->setGlobalVariable(\BURROWING_PLAYERS, []);
         $this->game->setGlobalVariable(\JAGGED_TACTICIAN_PLAYERS, []);
 
-        $this->game->goToState($nextState, $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($nextState);
     }
 }
 

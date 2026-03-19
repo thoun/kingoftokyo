@@ -169,6 +169,7 @@ class StartTurn extends GameState {
 
         $redirectAfterStartTurn = $this->game->redirectAfterStartTurn($activePlayerId);
 
-        $this->game->goToState($redirectAfterStartTurn, $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($redirectAfterStartTurn);
     }
 }

@@ -49,7 +49,8 @@ class ResolveDieOfFate extends GameState {
             $nextState = \ST_MULTIPLAYER_REROLL_DICE;
         }
 
-        $this->game->goToState($nextState, $damagesOrState);
+        $this->game->addDamagesToResolve($damagesOrState);
+        $this->game->goToState($nextState);
     }
 }
 

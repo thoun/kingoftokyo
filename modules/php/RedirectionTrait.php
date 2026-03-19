@@ -6,21 +6,16 @@ namespace Bga\Games\KingOfTokyo;
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait RedirectionTrait {
-    // TODO stack awaiting damage in DB and read them there
-    function goToState($nextStateId, /*Damage[] | null*/ $damages = null) {
+    function goToState($nextStateId) {
 
-        /*$activePlayerId = $this->getActivePlayerId();
-        $this->trace("[GBA] activePlayerId $activePlayerId goToState $nextStateId damages ".json_encode($damages != null));
-        if ($activePlayerId == 2343493 && $nextStateId == 50) {
-            debug_print_backtrace();
-            die('stacktrace ;');
-        }*/
+        $damages = $this->bga->globals->get(DAMAGES_TO_RESOLVE, []);
+        $this->bga->globals->set(DAMAGES_TO_RESOLVE, []);
 
         if ($nextStateId === null) {
             $nextStateId = $this->gamestate->getCurrentMainStateId();
         }
 
-        if ($damages != null && count($damages) > 0) {
+        if (count($damages) > 0) {
             $this->resolveDamages($damages, $nextStateId);
         } else if ($nextStateId == -1) {
             $this->removeStackedStateAndRedirect();

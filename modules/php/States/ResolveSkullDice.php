@@ -72,7 +72,8 @@ class ResolveSkullDice extends GameState {
             }
         }
 
-        $this->game->goToState($nextState, $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($nextState);
     }
 }
 

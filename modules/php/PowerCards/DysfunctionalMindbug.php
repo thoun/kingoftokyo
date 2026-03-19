@@ -8,7 +8,7 @@ use KOT\Objects\Damage;
 
 class DysfunctionalMindbug extends PowerCard
 {
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $playersIds = $context->game->getPlayersIds();
         $damages = [];
         foreach ($playersIds as $playerId) {
@@ -16,6 +16,6 @@ class DysfunctionalMindbug extends PowerCard
                 $damages[] = new Damage($playerId, 3, $context->currentPlayerId, $this);
             }
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

@@ -7,9 +7,9 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class JetFighters extends PowerCard {
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $context->game->applyGetPoints($context->currentPlayerId, 5, $this);
-        return [new Damage($context->currentPlayerId, 4, $context->currentPlayerId, $this)];
+        $context->game->addDamageToResolve(new Damage($context->currentPlayerId, 4, $context->currentPlayerId, $this));
     }
 }
 

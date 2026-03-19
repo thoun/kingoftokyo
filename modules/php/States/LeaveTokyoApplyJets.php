@@ -23,7 +23,8 @@ class LeaveTokyoApplyJets extends GameState {
     public function onEnteringState(int $activePlayerId) {
         $jetsDamages = $this->game->getGlobalVariable(\JETS_DAMAGES);
 
-        $this->game->goToState(\ST_ENTER_TOKYO_APPLY_BURROWING, $jetsDamages);
+        $this->game->addDamagesToResolve($jetsDamages);
+        $this->game->goToState(\ST_ENTER_TOKYO_APPLY_BURROWING);
     }
 }
 

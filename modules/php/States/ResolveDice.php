@@ -54,7 +54,8 @@ class ResolveDice extends GameState {
 
         if (!$isInHibernation || !$canLeaveHibernation) {
             $damages = $this->applyResolveDice($activePlayerId);
-            $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
+            $this->game->addDamagesToResolve($damages);
+            $this->game->goToState($this->game->redirectAfterResolveDice());
         }
     }
 
@@ -62,7 +63,8 @@ class ResolveDice extends GameState {
     public function actStayInHibernation(int $activePlayerId) {
         $damages = $this->applyResolveDice($activePlayerId);
         
-        $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($this->game->redirectAfterResolveDice());
     }
   	
   	#[PossibleAction]
@@ -72,7 +74,8 @@ class ResolveDice extends GameState {
 
         $damages = $this->applyResolveDice($activePlayerId);
 
-        $this->game->goToState($this->game->redirectAfterResolveDice(), $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($this->game->redirectAfterResolveDice());
     }
 
     public function zombie(int $playerId): void {

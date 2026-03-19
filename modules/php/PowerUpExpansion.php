@@ -82,7 +82,8 @@ class PowerUpExpansion {
 
         if ($damages != null && count($damages) > 0) {
             $this->game->addStackedState();
-            $this->game->goToState(-1, $damages);
+            $this->game->addDamagesToResolve($damages);
+            $this->game->goToState(-1);
         }
     }
 

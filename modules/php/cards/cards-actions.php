@@ -251,7 +251,7 @@ trait CardsActionTrait {
 
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId);
 
-        $damages = $this->powerCards->applyEffects($card, $playerId, $redirectAfterBuyCard);
+        $this->powerCards->applyEffects($card, $playerId, $redirectAfterBuyCard);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -279,7 +279,7 @@ trait CardsActionTrait {
         }
 
         if ($wasOnAnswerQuestion || $this->gamestate->getCurrentMainStateId() !== ST_MULTIPLAYER_ANSWER_QUESTION) {
-            $this->goToState($redirectAfterBuyCard, $damages);
+            $this->goToState($redirectAfterBuyCard);
         }
     }
 
@@ -359,7 +359,7 @@ trait CardsActionTrait {
         }
     }
 
-    function applyPlayCard(int $playerId, PowerCard $card) {
+    function applyPlayCard(int $playerId, PowerCard $card): void {
         $this->updateKillPlayersScoreAux();        
         
         $this->removeDiscardCards($playerId);
@@ -395,22 +395,20 @@ trait CardsActionTrait {
 
             $this->removeCard($playerId, $card, false, true);
 
-            return null;
+            return;
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->powerCards->applyEffects($card, $playerId, -1);
+        $this->powerCards->applyEffects($card, $playerId, -1);
 
         $this->setGameStateValue('newCardId', 0);
-
-        return $damages;
     }
 
     function drawCard(int $playerId, $stateAfter = null) {
         $card = $this->powerCards->getTopDeckCard(false);
 
-        $damages = $this->applyPlayCard($playerId, $card);
+        $this->applyPlayCard($playerId, $card);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -428,7 +426,7 @@ trait CardsActionTrait {
         if ($mimic) {
             $this->goToMimicSelection($playerId, MIMIC_CARD, $stateAfter);
         } else {
-            $this->goToState($stateAfter, $damages);
+            $this->goToState($stateAfter);
         }
     }
 

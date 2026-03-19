@@ -89,7 +89,6 @@ trait CardsUtilTrait {
             'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
         ]);
 
-        // no need to check for damage return, no discard card can be mimicked
         $this->powerCards->applyEffects($card, $mimicOwnerId, -1);
 
         $tokens = $this->getTokensByCardType($card->type);

@@ -269,7 +269,7 @@ class AnswerQuestion extends GameState {
             $this->game->removeEvolution($currentPlayerId, $evolution);
         }
 
-        $damages = $this->game->applyPlayCard($currentPlayerId, $card);
+        $this->game->applyPlayCard($currentPlayerId, $card);
 
         // move other cards to bottom deck
         $question = $this->game->getQuestion();
@@ -296,7 +296,7 @@ class AnswerQuestion extends GameState {
         if ($mimic) {
             $this->game->goToMimicSelection($currentPlayerId, MIMIC_CARD, -1);
         } else {
-            $this->game->goToState(-1, $damages);
+            $this->game->goToState(-1);
         }
     }
 

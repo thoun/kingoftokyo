@@ -77,6 +77,7 @@ class ResolveEndTurn extends GameState {
             $damages[] = new Damage($activePlayerId, $countPoison, 0, POISON_SPIT_CARD);
         }
 
-        $this->game->goToState(ST_END_TURN, $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState(ST_END_TURN);
     }
 }

@@ -66,7 +66,8 @@ class ResolveNumberDice extends GameState {
             }
         }
 
-        $this->game->goToState($this->game->redirectAfterResolveNumberDice(), $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($this->game->redirectAfterResolveNumberDice());
     }
 }
 

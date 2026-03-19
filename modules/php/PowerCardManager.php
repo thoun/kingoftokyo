@@ -622,22 +622,19 @@ class PowerCardManager extends CardManager {
         return $this->getCardsInLocation('reserved'.$playerId, $locationArg);
     }
 
-    /**
-     * @return Damage[]|null
-     */
-    function applyEffects(PowerCard $card, int $playerId, int $stateAfter) { // return ?$damages
+    function applyEffects(PowerCard $card, int $playerId, int $stateAfter): void {
         $cardType = $card->type;
         if ($cardType < 100 && !$this->game->keepAndEvolutionCardsHaveEffect()) {
             return;
         }
 
-        return $this->immediateEffect($card, new Context($this->game, currentPlayerId: $playerId, stateAfter: $stateAfter));
+        $this->immediateEffect($card, new Context($this->game, currentPlayerId: $playerId, stateAfter: $stateAfter));
     }
 
-    public function immediateEffect(PowerCard $card, Context $context) {
+    public function immediateEffect(PowerCard $card, Context $context): void {
         if (method_exists($card, 'immediateEffect')) {
             /** @disregard */
-            return $card->immediateEffect($context);
+            $card->immediateEffect($context);
         }
     }
 

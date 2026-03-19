@@ -657,7 +657,8 @@ trait DiceUtilTrait {
             }
         }
 
-        $this->goToState(ST_RESOLVE_SKULL_DICE, $damages);
+        $this->addDamagesToResolve($damages);
+        $this->goToState(ST_RESOLVE_SKULL_DICE);
     }
 
     function getChangeDieCards(int $playerId) {

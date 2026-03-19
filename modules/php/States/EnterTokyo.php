@@ -50,7 +50,8 @@ class EnterTokyo extends GameState {
             ? \ST_PLAYER_AFTER_ENTERING_TOKYO
             : $this->game->redirectAfterEnterTokyo($activePlayerId);
 
-        $this->game->goToState($nextState, $damages);
+        $this->game->addDamagesToResolve($damages);
+        $this->game->goToState($nextState);
     }
 }
 

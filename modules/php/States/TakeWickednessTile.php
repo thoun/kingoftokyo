@@ -105,7 +105,8 @@ class TakeWickednessTile extends GameState {
         if ($mimic) {
             $this->game->goToMimicSelection($currentPlayerId, FLUXLING_WICKEDNESS_TILE, $stateAfter);
         } else {
-            $this->game->goToState($stateAfter, $damages);
+            $this->game->addDamagesToResolve($damages);
+            $this->game->goToState($stateAfter);
         }
     }
   	

@@ -7,14 +7,14 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class GasRefinery extends PowerCard {
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $context->game->applyGetPoints($context->currentPlayerId, 2, $this);
         $otherPlayersIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
         $damages = [];
         foreach ($otherPlayersIds as $otherPlayerId) {
             $damages[] = new Damage($otherPlayerId, 3, $context->currentPlayerId, $this);
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }
 

@@ -330,9 +330,10 @@ class ThrowDice extends GameState {
                     $damages[] = new Damage($playerId, $countOrbOfDoom, $pId, ORB_OF_DOM_CARD);
                 }
             }
+            $this->game->addDamagesToResolve($damages);
         }
 
-        $this->game->goToState(ST_PLAYER_THROW_DICE, $damages);
+        $this->game->goToState(ST_PLAYER_THROW_DICE);
     }
 
     #[PossibleAction]

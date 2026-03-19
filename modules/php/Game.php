@@ -38,6 +38,7 @@ require_once('evolution-cards/evolution-cards-utils.php');
 use Bga\GameFramework\Actions\CheckAction;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\States\Start;
+use KOT\Objects\Damage;
 
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
 
@@ -766,6 +767,21 @@ class Game extends \Bga\GameFramework\Table {
 
     function setQuestion(/*object of Question*/ $question): void {
         $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
+    }
+
+    public function addDamageToResolve(Damage $damage): void {
+        $this->addDamagesToResolve([$damage]);
+    }
+
+    /**
+     * @param Damage[]|null $damages
+     */
+    public function addDamagesToResolve(?array $damages): void {
+        if (empty($damages)) {
+            return;
+        }
+        $damagesToResolve = $this->bga->globals->get(DAMAGES_TO_RESOLVE, []);
+        $this->bga->globals->set(DAMAGES_TO_RESOLVE, array_merge($damagesToResolve, $damages));
     }
 
     function upgradeTableDb($from_version) {
