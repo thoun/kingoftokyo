@@ -13,7 +13,7 @@ class EatsShootsAndLeaves extends EvolutionCard {
         $this->evolutionType = TEMPORARY;
     }
 
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $outsideTokyoPlayersIds = $context->game->getPlayersIdsOutsideTokyo();
         $damages = [];
         foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
@@ -22,6 +22,6 @@ class EatsShootsAndLeaves extends EvolutionCard {
 
         $context->game->applyGetEnergy($context->currentPlayerId, 1, $this);
         $context->game->leaveTokyo($context->currentPlayerId);
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

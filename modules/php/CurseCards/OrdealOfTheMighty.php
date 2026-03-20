@@ -13,13 +13,13 @@ class OrdealOfTheMighty extends CurseCard {
         $context->game->applyGetHealth($context->currentPlayerId, 2, $this, $context->currentPlayerId);
     }
 
-    public function applySnakeEffect(Context $context) {
+    public function applySnakeEffect(Context $context): void {
         $playersIds = $context->game->getPlayersIdsWithMaxColumn('player_health');
         $damages = [];
         foreach ($playersIds as $pId) {
             $damages[] = new Damage($pId, 1, 0, $this);
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }
 

@@ -12,11 +12,11 @@ class BoldManeuver extends PowerCard
         $this->mindbugKeywords = [FRENZY];
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context): void {
         $damage = new Damage($context->currentPlayerId, 5, $context->currentPlayerId, $this);
 
         $context->game->removeCard($context->currentPlayerId, $this);
 
-        return [$damage];
+        $context->game->addDamageToResolve($damage);
     }
 }

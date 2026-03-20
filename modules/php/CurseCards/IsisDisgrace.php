@@ -13,8 +13,8 @@ class IsisDisgrace extends CurseCard {
         $context->game->anubisExpansion->changeGoldenScarabOwner($context->currentPlayerId);
     }
 
-    public function applySnakeEffect(Context $context) {
-        return [new Damage($context->currentPlayerId, 1, 0, $this)];
+    public function applySnakeEffect(Context $context): void {
+        $context->game->addDamageToResolve(new Damage($context->currentPlayerId, 1, 0, $this));
     }
 }
 

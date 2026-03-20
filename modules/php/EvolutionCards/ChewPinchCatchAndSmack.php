@@ -16,10 +16,10 @@ class ChewPinchCatchAndSmack extends EvolutionCard
         $this->mindbugKeywords = [FRENZY];
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context): void {
         $context->game->applyLosePoints($context->currentPlayerId, 2, $this);
         $damage = new Damage($context->currentPlayerId, 2, $context->currentPlayerId, $this);
         $context->game->applyLoseEnergy($context->currentPlayerId, 2, $this);
-        return [$damage];
+        $context->game->addDamageToResolve($damage);
     }
 }

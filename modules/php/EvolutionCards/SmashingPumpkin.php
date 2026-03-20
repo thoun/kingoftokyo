@@ -13,7 +13,7 @@ class SmashingPumpkin extends EvolutionCard {
         $this->evolutionType = TEMPORARY;
     }
 
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $players = $context->game->getPlayers();
         $damages = [];
         foreach ($players as $player) {
@@ -21,6 +21,6 @@ class SmashingPumpkin extends EvolutionCard {
                 $damages[] = new Damage($player->id, 2, $context->currentPlayerId, $this);
             }
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

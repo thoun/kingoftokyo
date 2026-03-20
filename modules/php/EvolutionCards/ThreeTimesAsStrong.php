@@ -14,7 +14,7 @@ class ThreeTimesAsStrong extends EvolutionCard
         $this->evolutionType = PERMANENT;
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context): void {
         $damages = [];
 
         $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, false, false, false);
@@ -27,6 +27,6 @@ class ThreeTimesAsStrong extends EvolutionCard
             }
 
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

@@ -12,7 +12,7 @@ class OffensiveProtocol extends PowerCard
         $this->mindbugKeywords = [SNEAKY];
     }
 
-    public function applyEffect(Context $context) {
+    public function applyEffect(Context $context): void {
         $otherPlayersIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
         $damages = [];
         foreach ($otherPlayersIds as $otherPlayerId) {
@@ -20,6 +20,6 @@ class OffensiveProtocol extends PowerCard
         }
 
         $context->game->removeCard($context->currentPlayerId, $this);
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

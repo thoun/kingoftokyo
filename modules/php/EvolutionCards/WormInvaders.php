@@ -13,12 +13,12 @@ class WormInvaders extends EvolutionCard {
         $this->evolutionType = TEMPORARY;
     }
 
-    public function immediateEffect(Context $context) {
+    public function immediateEffect(Context $context): void {
         $otherPlayersIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
         $damages = [];
         foreach ($otherPlayersIds as $otherPlayerId) {
             $damages[] = new Damage($otherPlayerId, 2, $context->currentPlayerId, $this);
         }
-        return $damages;
+        $context->game->addDamagesToResolve($damages);
     }
 }

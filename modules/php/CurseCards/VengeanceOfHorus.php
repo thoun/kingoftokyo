@@ -18,14 +18,12 @@ class VengeanceOfHorus extends CurseCard {
         }
     }
 
-    public function applySnakeEffect(Context $context) {
+    public function applySnakeEffect(Context $context): void {
         $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, true, false, false);
         $diceCounts = $context->game->getRolledDiceCounts($context->currentPlayerId, $dice, true);
         $rolledSmashes = $diceCounts[6];
         if ($rolledSmashes > 0) {
-            return [new Damage($context->currentPlayerId, $rolledSmashes, 0, $this)];
-        } else {
-            return null;
+            $context->game->addDamageToResolve(new Damage($context->currentPlayerId, $rolledSmashes, 0, $this));
         }
     }
 }

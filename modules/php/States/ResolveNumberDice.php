@@ -46,7 +46,6 @@ class ResolveNumberDice extends GameState {
             }
         }
 
-        $damages = [];
         if ($gainedPoints > 0) {
             $activatedSneakys = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, SNEAKY);
             if (count($activatedSneakys) > 0) {
@@ -57,16 +56,12 @@ class ResolveNumberDice extends GameState {
                         $this->game->applyLosePoints($otherPlayerId, $gainedPoints, $card);
                     }
                     /** @disregard */
-                    $newDamages = $card->applyEffect(new Context($this->game, $activePlayerId, keyword: SNEAKY, lostPoints: $gainedPoints));
-                    if (gettype($newDamages) === 'array') {
-                        $damages = array_merge($damages, $newDamages);
-                    }
+                    $card->applyEffect(new Context($this->game, $activePlayerId, keyword: SNEAKY, lostPoints: $gainedPoints));
                 }
                 $this->game->mindbugExpansion->cleanActivatedCards($activePlayerId, SNEAKY);
             }
         }
 
-        $this->game->addDamagesToResolve($damages);
         $this->game->goToState($this->game->redirectAfterResolveNumberDice());
     }
 }

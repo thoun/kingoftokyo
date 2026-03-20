@@ -16,8 +16,8 @@ class BowBeforeRa extends CurseCard {
         $context->game->applyGetHealth($context->currentPlayerId, 2, $this, $context->currentPlayerId);
     }
 
-    public function applySnakeEffect(Context $context) {
-        return [new Damage($context->currentPlayerId, 2, 0, $this)];
+    public function applySnakeEffect(Context $context): void {
+        $context->game->addDamageToResolve(new Damage($context->currentPlayerId, 2, 0, $this));
     }
 }
 
