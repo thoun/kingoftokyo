@@ -341,21 +341,13 @@ class MindbugExpansion {
         }
     }
 
-    /**
-     * @return Damage[]
-     */
-    public function applyEndFrenzy(int $playerId): array {
-        $damages = [];
+    public function applyEndFrenzy(int $playerId): void {
         $activatedFrenzyCards = $this->getActivatedCards($playerId, FRENZY);
         if (!empty($activatedFrenzyCards)) {
             $card = $activatedFrenzyCards[0];
             /** @disregard */
-            $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: FRENZY));
-            if (gettype($newDamages) === 'array') {
-                $damages = array_merge($damages, $newDamages);
-            }
+            $card->applyEffect(new Context($this->game, $playerId, keyword: FRENZY));
         }
         $this->cleanActivatedCards($playerId, FRENZY);
-        return $damages;
     }
 }

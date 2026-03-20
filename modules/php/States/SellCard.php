@@ -92,8 +92,7 @@ class SellCard extends GameState {
     function actEndSell(int $activePlayerId) {
         $this->game->removeDiscardCards($activePlayerId);
 
-        $damages = $this->game->mindbugExpansion->applyEndFrenzy($activePlayerId);
-        $this->game->addDamagesToResolve($damages);
+        $this->game->mindbugExpansion->applyEndFrenzy($activePlayerId);
         $this->game->goToState($this->game->redirectAfterSellCard());
     }
 

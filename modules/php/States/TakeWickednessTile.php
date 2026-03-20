@@ -84,7 +84,7 @@ class TakeWickednessTile extends GameState {
 
         $this->removeFirstTakeWickednessTileLevel($currentPlayerId);
 
-        $damages = $this->game->wickednessTiles->immediateEffect($tile, new Context($this->game, currentPlayerId: $currentPlayerId));
+        $this->game->wickednessTiles->immediateEffect($tile, new Context($this->game, currentPlayerId: $currentPlayerId));
 
         $mimic = false;
         if ($tile->type === FLUXLING_WICKEDNESS_TILE) {
@@ -105,7 +105,6 @@ class TakeWickednessTile extends GameState {
         if ($mimic) {
             $this->game->goToMimicSelection($currentPlayerId, FLUXLING_WICKEDNESS_TILE, $stateAfter);
         } else {
-            $this->game->addDamagesToResolve($damages);
             $this->game->goToState($stateAfter);
         }
     }

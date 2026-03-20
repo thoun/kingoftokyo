@@ -117,10 +117,10 @@ class WickednessTileManager extends CardManager {
         return $this->getCardsInLocation('hand', $playerId);
     }
 
-    public function immediateEffect(WickednessTile $tile, Context $context) {
+    public function immediateEffect(WickednessTile $tile, Context $context): void {
         if (method_exists($tile, 'immediateEffect')) {
             /** @disregard */
-            return $tile->immediateEffect($context);
+            $tile->immediateEffect($context);
         }
     }
 
