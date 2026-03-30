@@ -384,7 +384,7 @@ trait CardsUtilTrait {
             throw new \BgaUserException(clienttranslate('You cannot gain [Heart]'));
         }
 
-        $cards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $cards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, false);
         $unusedCards = array_values(array_filter($cards, fn($card) => !$this->isUsedCard(3000 + $card->id)));
         $card = count($unusedCards) > 0 ? $unusedCards[0] : null;
         if ($card == null) {

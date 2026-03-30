@@ -65,7 +65,7 @@ class BeforeStartTurn extends GameState {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
         if ($isPowerUpExpansion) {
-            $blizzardCards = $this->game->getEvolutionsOfType($activePlayerId, \BLIZZARD_EVOLUTION);
+            $blizzardCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, \BLIZZARD_EVOLUTION, true, false);
             if (count($blizzardCards) > 0) {
                 $this->game->removeEvolutions($activePlayerId, $blizzardCards);
             }
@@ -103,4 +103,3 @@ class BeforeStartTurn extends GameState {
         $this->actSkipBeforeStartTurn($playerId);
     }
 }
-

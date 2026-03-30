@@ -25,7 +25,7 @@ class EndTurn extends GameState {
                 MECHA_BLAST_EVOLUTION,
             ];
             foreach($EVOLUTION_TYPES_TO_REMOVE as $evolutionType) {
-                $evolutions = $this->game->getEvolutionsOfType($activePlayerId, $evolutionType);
+                $evolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, $evolutionType, true, false);
                 if (count($evolutions) > 0) {
                     $this->game->removeEvolutions($activePlayerId, $evolutions);
                 }

@@ -178,7 +178,7 @@ class ChangeActivePlayerDie extends GameState {
         }
 
         if ($cardType == 3000 + \HEART_OF_THE_RABBIT_EVOLUTION) {
-            $heartOfTheRabbitEvolutions = $this->game->getEvolutionsOfType($playerId, \HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+            $heartOfTheRabbitEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, \HEART_OF_THE_RABBIT_EVOLUTION, false, true);
             $this->game->powerUpExpansion->applyPlayEvolution($playerId, $heartOfTheRabbitEvolutions[0]);
             $this->game->setEvolutionTokens($playerId, $heartOfTheRabbitEvolutions[0], 1, true);
         }
@@ -237,7 +237,7 @@ class ChangeActivePlayerDie extends GameState {
         if ($playerId) {
             $psychicProbeCards = $this->game->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
             $witchCards = $this->game->getCardsOfType($playerId, WITCH_CARD);
-            $heartOfTheRabbitEvolutions = $this->game->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+            $heartOfTheRabbitEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
 
             $canRoll = false;
             $usedCards = $this->game->getUsedCard();
@@ -286,4 +286,3 @@ class ChangeActivePlayerDie extends GameState {
         ];
     }
 }
-

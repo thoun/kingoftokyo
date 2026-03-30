@@ -329,7 +329,7 @@ trait PlayerUtilTrait {
         }
 
         $frozenFaces = [];
-        $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+        $freezeRayCards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, FREEZE_RAY_EVOLUTION, true, false);
         foreach ($freezeRayCards as $freezeRayCard) {
             if ($freezeRayCard->tokens > 0 && !in_array($freezeRayCard->tokens, $frozenFaces)) {
                 $frozenFaces[] = $freezeRayCard->tokens;
@@ -416,7 +416,7 @@ trait PlayerUtilTrait {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+            $freezeRayCards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, FREEZE_RAY_EVOLUTION, true, false);
             foreach ($freezeRayCards as $freezeRayCard) {
                 if ($freezeRayCard->tokens == $face) {
                     return false;

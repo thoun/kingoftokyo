@@ -30,7 +30,7 @@ trait DiceStateTrait {
     function addHighTideDice(int $playerId, int $diceCount) {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         
-        $highTideEvolutions = $isPowerUpExpansion ? $this->getEvolutionsOfType($playerId, HIGH_TIDE_EVOLUTION) : [];
+        $highTideEvolutions = $isPowerUpExpansion ? $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, HIGH_TIDE_EVOLUTION, true, false) : [];
         
         $addedHearts = 0;
         $cardsAddingHearts = [];

@@ -138,48 +138,6 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    /**
-     * @deprecated
-     */
-    function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
-        $evolutions = $this->getEvolutionCardsByLocation($location, $playerId, $cardType);
-        if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
-            $mimickedCardType = $this->getMimickedEvolutionType();
-            if ($mimickedCardType == $cardType) {
-                $evolutions = array_merge($evolutions, $this->getEvolutionsOfTypeInLocation($playerId, ICY_REFLECTION_EVOLUTION, 'table')); // mimick
-            }
-        }
-
-        return $evolutions;
-    }
-
-    /**
-     * @deprecated
-     */
-    function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
-        if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1) {
-            return [];
-        }
-
-        $evolutions = [];
-
-        if ($fromTable) {
-            $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table');
-            if (count($cards) > 0) {
-                $evolutions = array_merge($evolutions, $cards);
-            }
-        }
-
-        if ($fromHand) {
-            $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'hand');
-            if (count($cards) > 0) {
-                $evolutions = array_merge($evolutions, $cards);
-            }
-        }
-
-        return $evolutions;
-    }
-
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
         $changeMaxHealth = $card->type == EATER_OF_SOULS_EVOLUTION;
 
@@ -257,13 +215,13 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getFirstUnusedEvolution(int $playerId, int $evolutionType, bool $fromTable = true, bool $fromHand = false) /* returns first unused evolution, null if none */ {
-        $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType, $fromTable, $fromHand);
+        $evolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, $evolutionType, $fromTable, $fromHand);
         $usedCards = $this->getUsedCard();
         return Arrays::find($evolutions, fn($card) => !in_array(3000 + $card->id, $usedCards));
     }
 
     function getFirstUnsetFreezeRay(int $playerId) {
-        $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+        $freezeRayCards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, FREEZE_RAY_EVOLUTION, true, false);
         $unsetFreezeRayCard = Arrays::find($freezeRayCards, fn($card) => $card->tokens == 0);
         return $unsetFreezeRayCard;
     }

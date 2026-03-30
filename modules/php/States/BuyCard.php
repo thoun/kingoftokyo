@@ -63,7 +63,7 @@ class BuyCard extends GameState {
     #[PossibleAction]
     function actRenewPowerCards(?int $cardType, int $activePlayerId) {
         if ($cardType == 3024) {
-            $adaptiveTechnologyCards = $this->game->getEvolutionsOfType($activePlayerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
+            $adaptiveTechnologyCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
 
             if (count($adaptiveTechnologyCards) == 0) {
                 throw new \BgaUserException('No matching card');

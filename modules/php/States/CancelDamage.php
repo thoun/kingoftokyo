@@ -384,14 +384,14 @@ class CancelDamage extends GameState {
         $intervention->playersUsedDice->{$currentPlayerId} = $playerUsedDice;
 
         if ($cardLogType === 3000 + SO_SMALL_EVOLUTION) {
-            $soSmallCards = $this->game->getEvolutionsOfType($currentPlayerId, SO_SMALL_EVOLUTION, true, true);
+            $soSmallCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, SO_SMALL_EVOLUTION, true, true);
 
             if (Arrays::every($soSmallCards, fn($soSmallCard) => $soSmallCard->location === 'hand')) {
                 $this->game->playEvolutionToTable($currentPlayerId, $soSmallCards[0]);
             }
         }
         if ($cardLogType === 3000 + TERROR_OF_THE_DEEP_EVOLUTION) {
-            $terrorOfTheDeepCards = $this->game->getEvolutionsOfType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true);
+            $terrorOfTheDeepCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true);
 
             if (Arrays::every($terrorOfTheDeepCards, fn($terrorOfTheDeepCard) => $terrorOfTheDeepCard->location === 'hand')) {
                 $this->game->playEvolutionToTable($currentPlayerId, $terrorOfTheDeepCards[0]);
@@ -469,7 +469,7 @@ class CancelDamage extends GameState {
 
         $this->game->removePlayerFromSmashedPlayersInTokyo($currentPlayerId);
 
-        $card = $this->game->getEvolutionsOfType($currentPlayerId, $evolutionType, true, true)[0];
+        $card = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, $evolutionType, true, true)[0];
 
         $this->game->powerUpExpansion->evolutionCards->moveCard($card, 'table', $currentPlayerId);
 
@@ -492,7 +492,7 @@ class CancelDamage extends GameState {
 
         $this->game->removePlayerFromSmashedPlayersInTokyo($currentPlayerId);
 
-        $evolution = $this->game->getEvolutionsOfType($currentPlayerId, CANDY_EVOLUTION, true, true)[0];
+        $evolution = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, CANDY_EVOLUTION, true, true)[0];
 
         $this->game->powerUpExpansion->evolutionCards->moveCard($evolution, 'table', $currentPlayerId);
 
@@ -581,4 +581,3 @@ class CancelDamage extends GameState {
         return $damageNumber == 0 ? null : new Damage($playerId, $damageNumber, $damageDealerId, $cardType, $clawDamage);
     }
 }
-

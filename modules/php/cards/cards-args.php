@@ -35,8 +35,8 @@ trait CardsArgTrait {
 
         
         if ($isPowerUpExpansion && (
-            $this->getEvolutionsOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) || // allow to replace cards with Adapting technology even without energy
-            $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, true) // allow to heal once on your turn. If not here, turn will be skipped if the player has exactly 1 energy
+            $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) || // allow to replace cards with Adapting technology even without energy
+            $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, true) // allow to heal once on your turn. If not here, turn will be skipped if the player has exactly 1 energy
         )) {
             $canBuyOrNenew = true;
         }

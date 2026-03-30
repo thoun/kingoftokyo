@@ -239,7 +239,7 @@ class ResolveDice extends GameState {
             }
 
             if ($diceCountsWithoutAddedSmashes[6] >= 1) {
-                $energySwordEvolutions = $this->game->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
+                $energySwordEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, ENERGY_SWORD_EVOLUTION, true, false);
                 $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
                 if ($countEnergySword > 0) {
                     $this->game->applyGetEnergy($playerId, $diceCountsWithoutAddedSmashes[6] * $countEnergySword, 3000 + ENERGY_SWORD_EVOLUTION);

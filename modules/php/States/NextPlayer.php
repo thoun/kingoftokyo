@@ -97,7 +97,7 @@ class NextPlayer extends GameState {
                 $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
                 $this->game->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
 
-                $jungleFrenzyEvolutions = $this->game->getEvolutionsOfType($activePlayerId, JUNGLE_FRENZY_EVOLUTION);
+                $jungleFrenzyEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, JUNGLE_FRENZY_EVOLUTION, true, false);
                 $this->game->removeEvolutions($activePlayerId, $jungleFrenzyEvolutions);
             }
             

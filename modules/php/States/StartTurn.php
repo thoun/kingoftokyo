@@ -64,12 +64,12 @@ class StartTurn extends GameState {
         }
 
         if ($this->game->powerUpExpansion->isActive()) {
-            $coldWaveCards = $this->game->getEvolutionsOfType($activePlayerId, \COLD_WAVE_EVOLUTION);
+            $coldWaveCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, \COLD_WAVE_EVOLUTION, true, false);
             if (count($coldWaveCards) > 0) {
                 $this->game->removeEvolutions($activePlayerId, $coldWaveCards);
             }
 
-            $mothershipEvolutionCards = $this->game->getEvolutionsOfType($activePlayerId, \MOTHERSHIP_SUPPORT_EVOLUTION);
+            $mothershipEvolutionCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, \MOTHERSHIP_SUPPORT_EVOLUTION, true, false);
             if (count($mothershipEvolutionCards) > 0) {
                 $this->notify->player($activePlayerId, 'toggleMothershipSupportUsed', '', [
                     'playerId' => $activePlayerId,
@@ -77,7 +77,7 @@ class StartTurn extends GameState {
                 ]);
             }
 
-            $encasedInIceCards = $this->game->getEvolutionsOfType($activePlayerId, \ENCASED_IN_ICE_EVOLUTION);
+            $encasedInIceCards = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, \ENCASED_IN_ICE_EVOLUTION, true, false);
             if (count($encasedInIceCards) > 0 && intval($this->game->getGameStateValue(\ENCASED_IN_ICE_DIE_ID)) > 0) {
                 $this->game->setGameStateValue(\ENCASED_IN_ICE_DIE_ID, 0);
             }

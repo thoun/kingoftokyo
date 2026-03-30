@@ -391,7 +391,7 @@ trait UtilTrait {
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
 
             if ($useCard == 3042) {
-                $card = $this->getEvolutionsOfType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true)[0];
+                $card = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true)[0];
                 $this->playEvolutionToTable($playerId, $card);
             }
         }
@@ -399,7 +399,7 @@ trait UtilTrait {
         $this->incStat(1, 'tokyoLeaves', $playerId);
 
         if ($this->powerUpExpansion->isActive()) {
-            $twasBeautyKilledTheBeastCards = $this->getEvolutionsOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
+            $twasBeautyKilledTheBeastCards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION, true, false);
             if (count($twasBeautyKilledTheBeastCards) > 0 && !$this->getPlayer($playerId)->eliminated) {
                 $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCards);
             }
@@ -853,7 +853,7 @@ trait UtilTrait {
             }
 
             if ($playerId != $damageDealerId && $isPowerUpExpansion) {
-                $scytheEvolutions = $this->getEvolutionsOfType($damageDealerId, SCYTHE_EVOLUTION);
+                $scytheEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($damageDealerId, SCYTHE_EVOLUTION, true, false);
                 if (count($scytheEvolutions) > 0 && $this->getPlayer($playerId)->eliminated) {
                     foreach($scytheEvolutions as $scytheEvolution) {
                         $this->setEvolutionTokens($damageDealerId, $scytheEvolution, $scytheEvolution->tokens + 1);
@@ -885,7 +885,7 @@ trait UtilTrait {
                 if ($countMandiblesOfDread > 0) {
                     $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
                 }
-                $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
+                $alphaMaleEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($damageDealerId, ALPHA_MALE_EVOLUTION, true, false);
                 if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {
                     $this->applyGetPoints($damageDealerId, count($alphaMaleEvolutions), 3000 + ALPHA_MALE_EVOLUTION);
                     $this->setUsedCard(3000 + $alphaMaleEvolutions[0]->id);
@@ -900,7 +900,7 @@ trait UtilTrait {
         }
 
         if ($isPowerUpExpansion && $damagedPlayerInTokyoBeforeDamage) { // player may be inside tokyo before damage and outside after (with It has a Child)
-            $breathOfDoomEvolutions = $this->getEvolutionsOfType($damageDealerId, BREATH_OF_DOOM_EVOLUTION);
+            $breathOfDoomEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($damageDealerId, BREATH_OF_DOOM_EVOLUTION, true, false);
             if (count($breathOfDoomEvolutions) > 0) {
                 $usedCards = $this->getUsedCard();
                 if (!in_array(3000 + $breathOfDoomEvolutions[0]->id, $usedCards)) {
@@ -1016,14 +1016,14 @@ trait UtilTrait {
             $powerUpExpansion = $this->powerUpExpansion->isActive();
             if ($powerUpExpansion) {
                 if ($this->getPlayerHealth($playerId) == 0) {
-                    $sonOfKongKikoEvolutions = $this->getEvolutionsOfType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
+                    $sonOfKongKikoEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
                     if (count($sonOfKongKikoEvolutions) > 0) {
                          $sonOfKongKikoEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
                 }
 
                 if ($this->getPlayerHealth($playerId) == 0) {
-                    $nineLivesEvolutions = $this->getEvolutionsOfType($playerId, NINE_LIVES_EVOLUTION, true, true);
+                    $nineLivesEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, NINE_LIVES_EVOLUTION, true, true);
                     if (count($nineLivesEvolutions) > 0) {
                         $nineLivesEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
@@ -1042,8 +1042,8 @@ trait UtilTrait {
             if ($powerUpExpansion) {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $unstoppableHydraEvolutions = array_merge(
-                        $this->getEvolutionsOfType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_1, true, true),
-                        $this->getEvolutionsOfType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_2, true, true),
+                        $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_1, true, true),
+                        $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, UNSTOPPABLE_HYDRA_EVOLUTION_2, true, true),
                     );
                     if (count($unstoppableHydraEvolutions) > 0) {
                          $unstoppableHydraEvolutions[0]->applyEffect(new Context($this, $playerId));

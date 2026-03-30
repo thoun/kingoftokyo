@@ -257,7 +257,7 @@ trait DiceUtilTrait {
                 }
 
                 if ($number === 1) {
-                    $trickOrThreatEvolutions = $this->getEvolutionsOfType($playerId, TRICK_OR_THREAT_EVOLUTION);
+                    $trickOrThreatEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, TRICK_OR_THREAT_EVOLUTION, true, false);
                     if (count($trickOrThreatEvolutions) > 0) {
                         $this->applyTrickOrThreat($playerId, $trickOrThreatEvolutions[0]);
                         return true;
@@ -462,7 +462,7 @@ trait DiceUtilTrait {
                 return;
             }
 
-            $exoticArmsEvolutions = $this->getEvolutionsOfType($playerId, EXOTIC_ARMS_EVOLUTION);
+            $exoticArmsEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, EXOTIC_ARMS_EVOLUTION, true, false);
             $usedExoticArms = array_values(array_filter($exoticArmsEvolutions, fn($evolution) => $evolution->tokens > 0));
             $countExoticArms = count($usedExoticArms);
             if ($countExoticArms > 0) {
@@ -498,7 +498,7 @@ trait DiceUtilTrait {
                     $diceCount *= 2;
                 }
 
-                $underratedEvolutions = $this->getEvolutionsOfType($playerId, UNDERRATED_EVOLUTION);
+                $underratedEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, UNDERRATED_EVOLUTION, true, false);
                 $diceCount += count($underratedEvolutions) * 2;
 
                 if (count($underratedEvolutions) > 0) {
@@ -858,7 +858,7 @@ trait DiceUtilTrait {
         foreach($orderedPlayers as $player) {
             if ($player->id != $playerId) {
 
-                $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($player->id, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+                $heartOfTheRabbitEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($player->id, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
                 $unusedHeartOfTheRabbitEvolutions = 0;
                 $usedCards = $this->getUsedCard();
                 foreach($heartOfTheRabbitEvolutions as $heartOfTheRabbitEvolution) {
@@ -937,7 +937,7 @@ trait DiceUtilTrait {
                 $cards = array_merge($cards, $this->getCardsOfType($playerWithActivatedWitch, WITCH_CARD));
             }
             foreach ($playersWithHeartOfTheRabbit as $playerWithHeartOfTheRabbit) {
-                $evolutions = $this->getEvolutionsOfType($playerWithHeartOfTheRabbit, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+                $evolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerWithHeartOfTheRabbit, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
                 $cards = array_merge($cards, $evolutions);
             }
             $changeActivePlayerDieIntervention = new ChangeActivePlayerDieIntervention($playersWithChangeActivePlayerDieCard, $playerId, $cards);
@@ -959,7 +959,7 @@ trait DiceUtilTrait {
 
         // Jet club
         if ($isPowerUpExpansion && $playerInTokyo) {
-            $jetClubEvolutions = $this->getEvolutionsOfType($playerId, JET_CLUB_EVOLUTION);
+            $jetClubEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, JET_CLUB_EVOLUTION, true, false);
             foreach($jetClubEvolutions as $jetClubEvolution) {
                 $addedSmashes += 1;
                     
@@ -977,7 +977,7 @@ trait DiceUtilTrait {
             }
         }
 
-        $scytheEvolutions = $this->getEvolutionsOfType($playerId, SCYTHE_EVOLUTION);
+        $scytheEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SCYTHE_EVOLUTION, true, false);
         foreach($scytheEvolutions as $scytheEvolution) {
             $addedSmashes += $scytheEvolution->tokens;
                 
@@ -996,7 +996,7 @@ trait DiceUtilTrait {
 
         // Energy Sword
         if ($diceCounts[6] >= 1 && $isPowerUpExpansion) {
-            $energySwordEvolutions = $this->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
+            $energySwordEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, ENERGY_SWORD_EVOLUTION, true, false);
             $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
             if ($countEnergySword > 0) {
                 $addedSmashes += $countEnergySword;
@@ -1070,7 +1070,7 @@ trait DiceUtilTrait {
     function getUnusedChangeActivePlayerDieCards(int $playerId) {
         $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
         $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
-        $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+        $heartOfTheRabbitEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
         if (count($witchCards) > 0 && !$this->willBeWounded($playerId, $this->getActivePlayerId())) {
             $witchCards = [];
         }
