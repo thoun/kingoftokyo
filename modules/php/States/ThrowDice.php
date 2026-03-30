@@ -385,6 +385,61 @@ class ThrowDice extends GameState {
     }*/
 
     public function zombie(int $playerId) {
-        return $this->actGoToChangeDie($playerId);
+        try {
+            $args = $this->getArgs($playerId);
+
+            if (($args['throwNumber'] ?? 0) >= ($args['maxThrowNumber'] ?? 0)) {
+                return $this->actGoToChangeDie($playerId);
+            }
+
+            $dice = $args['dice'] ?? [];
+            $selectableDice = $args['selectableDice'] ?? [];
+            if (empty($selectableDice)) {
+                return $this->actGoToChangeDie($playerId);
+            }
+
+            $numberCounts = [1 => 0, 2 => 0, 3 => 0];
+            foreach ($dice as $die) {
+                if ($die->type === 0 && $die->value >= 1 && $die->value <= 3) {
+                    $numberCounts[$die->value]++;
+                }
+            }
+
+            $bestNumber = null;
+            foreach ([3, 2, 1] as $value) {
+                if ($numberCounts[$value] >= 2 && ($bestNumber === null || $numberCounts[$value] > $numberCounts[$bestNumber])) {
+                    $bestNumber = $value;
+                }
+            }
+
+            $canHealWithDice = (bool)($args['canHealWithDice'] ?? false);
+            $diceIds = [];
+            foreach ($selectableDice as $die) {
+                $keepDie = false;
+
+                if ($die->type === 0) {
+                    $keepDie =
+                        $die->value === 6
+                        || $die->value === 5
+                        || ($die->value === 4 && $canHealWithDice)
+                        || ($bestNumber !== null && $die->value === $bestNumber);
+                } elseif ($die->type === 1) {
+                    $keepDie = $die->value !== 6;
+                }
+
+                if (!$keepDie) {
+                    $diceIds[] = (int)$die->id;
+                }
+            }
+
+            if (empty($diceIds)) {
+                return $this->actGoToChangeDie($playerId);
+            }
+
+            $this->actRethrow($diceIds, $playerId);
+            return null;
+        } catch (\Throwable $e) {
+            return $this->actGoToChangeDie($playerId);
+        }
     }
 }
