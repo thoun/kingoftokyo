@@ -812,7 +812,7 @@ trait CardsUtilTrait {
 
             if ($clawDamage !== null && $isPowerUpExpansion) {
                 // detachable head
-                $detachableHeadEvolution = $this->powerUpExpansion->evolutionCards->getGiftEvolutionOfType($damageDealerId, DETACHABLE_HEAD_EVOLUTION);
+                $detachableHeadEvolution = $this->powerUpExpansion->evolutionCards->getGiftEvolutionOfType($playerId, DETACHABLE_HEAD_EVOLUTION);
                 if ($detachableHeadEvolution !== null && $detachableHeadEvolution->ownerId == $damageDealerId) {
                     $effectiveDamage += 1;
                     $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + DETACHABLE_HEAD_EVOLUTION);

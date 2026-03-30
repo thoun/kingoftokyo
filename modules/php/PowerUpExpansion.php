@@ -33,10 +33,22 @@ class PowerUpExpansion {
     }
 
     function getMonstersWithPowerUpCards() {
-        $monstersWithPowerUpCards = [1,2,3,4,5,6,/*TODOPUKK 11,*//*TODOPUCT 12,*/13,14,15/* TODOPUBG ,18*/];
+        $monstersWithPowerUpCards = [1,2,3,4,5,6,13,14,15/* TODOPUBG ,18*/];
 
         /* TODOPUHA if ($this->game->isHalloweenExpansion()) {
             $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [7, 8]);
+        }*/
+        /* TODOPUCH if ($this->game->isChtulhuExpansion()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [9]);
+        }*/
+        /* TODOPUAN if ($this->game->isAnubisExpansion()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [10]);
+        }*/
+        /* TODOPUKK if ($this->game->isKingKongExpansion()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [11]);
+        }*/
+        /* TODOPUCY if ($this->game->isCybertoothExpansion()) {
+            $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [12]);
         }*/
 
         if ($this->game->mindbugExpansion->isActive()) {

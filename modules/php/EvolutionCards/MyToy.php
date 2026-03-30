@@ -33,4 +33,6 @@ class MyToy extends EvolutionCard {
         $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);
         $context->game->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
+
+    // TODOPUBG check if the answer of the question is handled
 }

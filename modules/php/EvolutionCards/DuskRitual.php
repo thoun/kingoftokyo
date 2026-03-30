@@ -10,4 +10,5 @@ class DuskRitual extends EvolutionCard
         $this->evolutionType = TEMPORARY;
     }
 
+    // TODOPUHA to code
 }

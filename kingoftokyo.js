@@ -3901,14 +3901,14 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 67: return _("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return _("When a Monster wounds you, you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Boogie Woogie
-            // TODOPUHA 71
+            case 71: return /*_TODOPUHA*/ ("Play this card when a wounded Monster refuses to Yield Tokyo. That Monster must Yield Tokyo. During the Buy Power Cards Phase, you can pay 1 to take this card back into your hand from the discard.");
             case 72: return /*_TODOPUHA*/ ("At the beginning of your turn, give 1[Energy] to the <i>Owner</i> of this card or lose 1[Heart]."); // TODOPUHA TOCHECK what if owner dies?
             case 73: return /*_TODOPUHA*/ ("You play with one less die.");
-            // TODOPUHA 74
+            case 74: return /*_TODOPUHA*/ ("If you roll four matching faces, gain 1[Energy] or 1[Heart].");
             case 75: return "+2[Heart]";
             case 76: return /*_TODOPUHA*/ ("Each of the other Monsters loses 2[Heart].");
             case 77: return /*_TODOPUHA*/ ("When you enter <i>Tokyo</i>, gain 1[Heart].");
-            // TODOPUHA 78
+            case 78: return /*_TODOPUHA*/ ("Play this card right after you buy a [keep] card. Gain 2[Heart] and 2[Energy].");
             // Pumpkin Jack 
             case 81: return /*_TODOPUHA*/ ("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
             case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
