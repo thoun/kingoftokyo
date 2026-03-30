@@ -554,7 +554,7 @@ trait UtilTrait {
         return array_map(fn($player) => $player->id, $orderedPlayers);
     }
     
-    function eliminatePlayers(int $currentTurnPlayerId) {
+    function eliminatePlayers(int $currentTurnPlayerId): void {
         $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, false);
 
         foreach($orderedPlayers as $player) {
@@ -586,20 +586,16 @@ trait UtilTrait {
         }
     }
 
-    function eliminateAPlayer(object $player, int $currentTurnPlayerId) {
+    function eliminateAPlayer(object $player, int $currentTurnPlayerId): void {
         if ($this->kingKongExpansion->isActive()) {
             $this->kingKongExpansion->onPlayerEliminated($player->id);
         }
-        $damages = $this->powerCards->onPlayerEliminated(new Context($this, $player->id));
-        // TODO stack them in DB instead
-        foreach ($damages as $damage) {
-            $this->applyDamageIgnoreCards($damage);
-        }
+        $this->powerCards->onPlayerEliminated(new Context($this, $player->id));
 
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
         $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
-        if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
+        if (/*$player->id == $currentTurnPlayerId || $playerIsActivePlayer*/false) { // if OK, remove asyncEliminatePlayer, $currentTurnPlayerId param, then killDeadPlayers & player_dead after a while
             $this->asyncEliminatePlayer($player->id);
         } else {
             $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
@@ -634,7 +630,7 @@ trait UtilTrait {
             }
         }
 
-        return $damages;
+        return;
     }
 
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {

@@ -22,7 +22,7 @@ class ExplosiveCrystals extends PowerCard
         return $damages;
     }
 
-    public function onPlayerEliminated(Context $context) {
+    public function onPlayerEliminated(Context $context): void {
         if (!$this->activated) {
             return;
         }
@@ -30,15 +30,15 @@ class ExplosiveCrystals extends PowerCard
 
         $damages = $context->game->getObjectListFromDB( "SELECT `from`, `damages` FROM `turn_damages` WHERE `to` = $context->currentPlayerId");
         if (count($damages) === 0) {
-            return null;
+            return;
         }
         $lastDamage = $damages[count($damages) - 1];
         $from = (int)$lastDamage['from'];
         $damage = (int)$lastDamage['damages'];
         if ($from === $context->currentPlayerId) {
-            return null;
+            return;
         }
 
-        return [new Damage($from, $damage * 2, $context->currentPlayerId, $this)];
+        $context->game->addDamageToResolve(new Damage($from, $damage * 2, $context->currentPlayerId, $this));
     }
 }
