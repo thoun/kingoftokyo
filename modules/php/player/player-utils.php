@@ -240,13 +240,13 @@ trait PlayerUtilTrait {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION) > 0) {
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, DETACHABLE_TAIL_EVOLUTION) > 0) {
                 return 3000 + DETACHABLE_TAIL_EVOLUTION;
             }
-            if ($this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION) > 0) {
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, RABBIT_S_FOOT_EVOLUTION) > 0) {
                 return 3000 + RABBIT_S_FOOT_EVOLUTION;
             }
-            if ($this->countEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION) > 0) {
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SIMIAN_SCAMPER_EVOLUTION) > 0) {
                 return 3000 + SIMIAN_SCAMPER_EVOLUTION;
             }
         }

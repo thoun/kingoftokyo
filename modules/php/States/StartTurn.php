@@ -119,11 +119,11 @@ class StartTurn extends GameState {
             }
 
             if ($this->game->powerUpExpansion->isActive()) {
-                $countIAmTheKing = $this->game->countEvolutionOfType($activePlayerId, \I_AM_THE_KING_EVOLUTION);
+                $countIAmTheKing = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, \I_AM_THE_KING_EVOLUTION);
                 if ($countIAmTheKing > 0) {
                     $this->game->applyGetPoints($activePlayerId, $countIAmTheKing, 3000 + \I_AM_THE_KING_EVOLUTION);
                 }
-                $countDefenderOfTokyo = $this->game->countEvolutionOfType($activePlayerId, \DEFENDER_OF_TOKYO_EVOLUTION);
+                $countDefenderOfTokyo = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, \DEFENDER_OF_TOKYO_EVOLUTION);
                 if ($countDefenderOfTokyo > 0) {
                     $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
                     foreach ($otherPlayersIds as $otherPlayerId) {

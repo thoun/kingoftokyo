@@ -180,7 +180,7 @@ trait UtilTrait {
                 return 1;
             }
 
-            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 return 1;
             }        
 
@@ -234,7 +234,7 @@ trait UtilTrait {
             $add += 2;
         }
         if ($this->powerUpExpansion->isActive()) {
-            $add += 2 * $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
+            $add += 2 * $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, EATER_OF_SOULS_EVOLUTION);
         }
 
         if ($this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
@@ -329,19 +329,19 @@ trait UtilTrait {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
+            $countBlackDiamond = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, BLACK_DIAMOND_EVOLUTION);
             if ($countBlackDiamond > 0) {
                 $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
             }
-            $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
+            $countIAmTheKing = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, I_AM_THE_KING_EVOLUTION);
             if ($countIAmTheKing > 0) {
                 $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
             }
-            $countEaterOfSouls = $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
+            $countEaterOfSouls = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, EATER_OF_SOULS_EVOLUTION);
             if ($countEaterOfSouls > 0) {
                 $this->applyGetHealth($playerId, $countEaterOfSouls, 3000 + EATER_OF_SOULS_EVOLUTION, $playerId);
             }
-            $countNightlife = $this->countEvolutionOfType($playerId, NIGHTLIFE_EVOLUTION);
+            $countNightlife = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, NIGHTLIFE_EVOLUTION);
             if ($countNightlife > 0) {
                 $this->applyGetHealth($playerId, $countNightlife, 3000 + NIGHTLIFE_EVOLUTION, $playerId);
             }
@@ -414,7 +414,7 @@ trait UtilTrait {
         if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_LEAVE_TOKYO) {
             $activePlayerList = $this->gamestate->getActivePlayerList();
             $activePlayerId = intval($this->getActivePlayerId());
-            if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == $activePlayerId && $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION) > 0) {
+            if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == $activePlayerId && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, CHEST_THUMPING_EVOLUTION) > 0) {
                 $argLeaveTokyo = $this->argLeaveTokyo();
                 if (array_key_exists('smashedPlayersInTokyo', $argLeaveTokyo)) {
                     $smashedPlayersInTokyo = $argLeaveTokyo['smashedPlayersInTokyo'];
@@ -844,7 +844,7 @@ trait UtilTrait {
                 }
 
                 if ($playerId != $pId && $isPowerUpExpansion) {
-                    $countProgrammedToDestroy = $this->countEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION);
+                    $countProgrammedToDestroy = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION);
                     if ($countProgrammedToDestroy > 0) {
                         $this->applyGetPoints($pId, 3 * $countProgrammedToDestroy, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
                         $this->applyGetEnergy($pId, 2 * $countProgrammedToDestroy, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
@@ -873,15 +873,15 @@ trait UtilTrait {
         // only smashes
         if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId) {
             if ($this->powerUpExpansion->isActive()) {
-                $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
+                $countHeatVision = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, HEAT_VISION_EVOLUTION);
                 if ($countHeatVision > 0) {
                     $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
                 }
-                $countTooCuteToSmash = $this->countEvolutionOfType($playerId, TOO_CUTE_TO_SMASH_EVOLUTION);
+                $countTooCuteToSmash = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, TOO_CUTE_TO_SMASH_EVOLUTION);
                 if ($countTooCuteToSmash > 0) {
                     $this->applyLosePoints($damageDealerId, $countTooCuteToSmash, 3000 + TOO_CUTE_TO_SMASH_EVOLUTION);
                 }
-                $countMandiblesOfDread = $this->countEvolutionOfType($damageDealerId, MANDIBLES_OF_DREAD_EVOLUTION);
+                $countMandiblesOfDread = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($damageDealerId, MANDIBLES_OF_DREAD_EVOLUTION);
                 if ($countMandiblesOfDread > 0) {
                     $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
                 }
@@ -1244,7 +1244,7 @@ trait UtilTrait {
             $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD) > 0 || 
             ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
-            ($this->powerUpExpansion->isActive() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
+            ($this->powerUpExpansion->isActive() && ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
             $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0 ||
             count($consumableCards) > 0 ||
             count($consumableEvolutions) > 0;
@@ -1264,7 +1264,7 @@ trait UtilTrait {
                 $healWithEvolutions = 0;
                 if ($damageToCancelToSurvive > 0 && $this->powerUpExpansion->isActive()) {
                     foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
-                        $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
+                        $count = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, $evolutionType, false, true);
     
                         if ($count > 0) {
                             $healWithEvolutions += $count * ($amount === null ? 999 : $amount); 

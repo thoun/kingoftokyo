@@ -26,7 +26,7 @@ class ResolveHeartDice extends GameState {
             $this->game->resolveHealthDice($activePlayerId, $diceCount);
         } else {
             if ($this->game->powerUpExpansion->isActive()) {
-                $countGrowingFast = $this->game->countEvolutionOfType($activePlayerId, \GROWING_FAST_EVOLUTION);
+                $countGrowingFast = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, \GROWING_FAST_EVOLUTION);
                 if ($countGrowingFast > 0) {
                     $this->game->applyGetHealth($activePlayerId, $countGrowingFast, 3000 + \GROWING_FAST_EVOLUTION, $activePlayerId);
                 }

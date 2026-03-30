@@ -77,7 +77,7 @@ class PowerUpExpansion {
     }
 
     function applyPlayEvolution(int $playerId, EvolutionCard $card): void {
-        $countMothershipSupportBefore = $this->game->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $countMothershipSupportBefore = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
         $this->evolutionCards->moveCard($card, 'table', $playerId);
 

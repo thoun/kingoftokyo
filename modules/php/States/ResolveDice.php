@@ -141,7 +141,7 @@ class ResolveDice extends GameState {
                 }
 
                 if ($this->game->powerUpExpansion->isActive()) {
-                    $countPandaExpress = $this->game->countEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION);
+                    $countPandaExpress = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, PANDA_EXPRESS_EVOLUTION);
                     if ($countPandaExpress > 0) {
                         $this->game->applyGetPoints($playerId, 2 * $countPandaExpress, 3000 + PANDA_EXPRESS_EVOLUTION);
                         if ($this->game->mindbugExpansion->canGetExtraTurn()) {
@@ -213,7 +213,7 @@ class ResolveDice extends GameState {
             }
         }
         if ($isPowerUpExpansion && $fourOfAKindWithCards) {
-            $count8thWonderOfTheWorld = $this->game->countEvolutionOfType($playerId, EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
+            $count8thWonderOfTheWorld = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
             if ($count8thWonderOfTheWorld > 0) {
                 $this->game->applyGetPoints($playerId, $count8thWonderOfTheWorld, 3000 + EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
             }
@@ -222,14 +222,14 @@ class ResolveDice extends GameState {
         $funnyLookingButDangerousDamages = [];
         if ($isPowerUpExpansion) {
             if ($diceCounts[4] >= 3) {
-                $countPandarwinism = $this->game->countEvolutionOfType($playerId, PANDARWINISM_EVOLUTION);
+                $countPandarwinism = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, PANDARWINISM_EVOLUTION);
                 if ($countPandarwinism > 0) {
                     $this->game->applyGetPoints($playerId, ($diceCounts[4] - 2) * $countPandarwinism, 3000 + PANDARWINISM_EVOLUTION);
                 }
             }
 
             if ($diceCounts[2] >= 3) {
-                $countFunnyLookingButDangerous = $this->game->countEvolutionOfType($playerId, FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION);
+                $countFunnyLookingButDangerous = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION);
                 if ($countFunnyLookingButDangerous > 0) {
                     $otherPlayersIds = $this->game->getOtherPlayersIds($playerId);
                     foreach ($otherPlayersIds as $otherPlayerId) {

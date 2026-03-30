@@ -59,7 +59,7 @@ class LeaveTokyo extends GameState {
         }
 
         if (!empty($aliveSmashedPlayersInTokyo) && $this->game->powerUpExpansion->isActive()) {
-            $countChestThumping = $this->game->countEvolutionOfType($activePlayerId, \CHEST_THUMPING_EVOLUTION);
+            $countChestThumping = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, \CHEST_THUMPING_EVOLUTION);
             if (
                 $countChestThumping > 0
                 && $this->game->anubisExpansion->isActive()
@@ -85,7 +85,7 @@ class LeaveTokyo extends GameState {
         $this->game->notifStayInTokyo($currentPlayerId);
 
         if ($this->game->powerUpExpansion->isActive()) {
-            $countBlackDiamond = $this->game->countEvolutionOfType($currentPlayerId, BLACK_DIAMOND_EVOLUTION);
+            $countBlackDiamond = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, BLACK_DIAMOND_EVOLUTION);
             if ($countBlackDiamond > 0) {
                 $this->game->applyGetPoints($currentPlayerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
             }

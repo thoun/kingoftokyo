@@ -252,7 +252,7 @@ trait DiceUtilTrait {
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
             if ($isPowerUpExpansion) {
-                if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+                if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $points *= 2;
                 }
 
@@ -315,13 +315,13 @@ trait DiceUtilTrait {
         }
 
         if ($diceCount >= 1 && $number == 1 && $isPowerUpExpansion) {
-            $countMouseHunter = $this->countEvolutionOfType($playerId, MOUSE_HUNTER_EVOLUTION);
+            $countMouseHunter = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MOUSE_HUNTER_EVOLUTION);
             if ($countMouseHunter > 0) {
                 $this->applyGetPoints($playerId, $countMouseHunter, 3000 + MOUSE_HUNTER_EVOLUTION);
             }
 
             if ($this->inTokyo($playerId)) {
-                $countClimbTokyoTower = $this->countEvolutionOfType($playerId, CLIMB_TOKYO_TOWER_EVOLUTION);
+                $countClimbTokyoTower = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CLIMB_TOKYO_TOWER_EVOLUTION);
                 if ($countClimbTokyoTower > 0) {
                     if ($diceCount >= 6) {
                         $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
@@ -349,7 +349,7 @@ trait DiceUtilTrait {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
         }
@@ -398,7 +398,7 @@ trait DiceUtilTrait {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+            if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
         }
@@ -494,7 +494,7 @@ trait DiceUtilTrait {
             }
             
             if ($isPowerUpExpansion) {
-                if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+                if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $diceCount *= 2;
                 }
 
@@ -557,7 +557,7 @@ trait DiceUtilTrait {
                 $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
                 $countSimianScamper = 0;
                 if ($isPowerUpExpansion) {
-                    $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
+                    $countSimianScamper = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
                 }
 
                 $clawDamage = new ClawDamage($playerScore, $addSmashTokens->shrinkRay, $addSmashTokens->poison, $electricCarrotChoices);
@@ -750,10 +750,10 @@ trait DiceUtilTrait {
             }
 
             // Saurian Adaptability
-            $hasSaurianAdaptability = $this->countEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true) > 0;
+            $hasSaurianAdaptability = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true) > 0;
 
             // yin & yang
-            $hasYinYang = $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
+            $hasYinYang = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, YIN_YANG_EVOLUTION) > 0;
 
             // energy-infused monster
             $energyInfusedMonster = $this->getFirstUnusedEvolution($playerId, ENERGY_INFUSED_MONSTER_EVOLUTION);
@@ -986,7 +986,7 @@ trait DiceUtilTrait {
 
         // Meow Missle
         if ($diceCounts[1] >= 1 && $isPowerUpExpansion) {
-            $countMeowMissle = $this->countEvolutionOfType($playerId, MEOW_MISSLE_EVOLUTION);
+            $countMeowMissle = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MEOW_MISSLE_EVOLUTION);
             if ($countMeowMissle > 0) {
                 $addedSmashes += $countMeowMissle;
                 
@@ -1196,7 +1196,7 @@ trait DiceUtilTrait {
     }
 
     function canUsePlayWithYourFood(int $playerId, array $diceCounts) { // players concerned by the effect, null if can't be used
-        if ($diceCounts[6] >= 2 && $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, PLAY_WITH_YOUR_FOOD_EVOLUTION) > 0) {
+        if ($diceCounts[6] >= 2 && $this->powerUpExpansion->isActive() && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, PLAY_WITH_YOUR_FOOD_EVOLUTION) > 0) {
             $otherPlayersIds = $this->getPlayersIds();
             $willBeWoundedIds = [];
             foreach ($otherPlayersIds as $otherPlayerId) {

@@ -162,8 +162,8 @@ class BuyCard extends GameState {
         $cost = $this->game->getCardCost($activePlayerId, $card->type) - 1;
         $canUseSuperiorAlienTechnology = 
             $card->type < 100 && 
-            $this->game->countEvolutionOfType($activePlayerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && 
-            count($this->game->getSuperiorAlienTechnologyTokens($activePlayerId)) < 3 * $this->game->countEvolutionOfType($activePlayerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION);
+            $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && 
+            count($this->game->getSuperiorAlienTechnologyTokens($activePlayerId)) < 3 * $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION);
 
         $question = new Question(
             'MiraculousCatch',

@@ -45,8 +45,8 @@ trait CardsArgTrait {
         $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
 
         // superior alien technology
-        $gotSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
-        $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
+        $gotSuperiorAlienTechnology = $isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
         $canUseBobbingForApples = $isPowerUpExpansion && $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION) != null;
 
         $cards = $this->powerCards->getTable();
@@ -180,8 +180,8 @@ trait CardsArgTrait {
             $privateArgs['_private']['active']['discardCards'] = $discardCards;
         }
 
-        $canUseAdaptingTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
-        $canUseMiraculousCatch = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) > 0;
+        $canUseAdaptingTechnology = $isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $canUseMiraculousCatch = $isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) > 0;
         $unusedMiraculousCatch = $canUseMiraculousCatch && $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) != null;
     
         // return values:
@@ -274,11 +274,11 @@ trait CardsArgTrait {
                 }
             }
 
-            $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && ($this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0))) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
+            $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0))) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
-            $canUseDetachableTail = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
-            $canUseRabbitsFoot = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
-            $canUseCandy = $isPowerUpExpansion && $clawDamage !== null && $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0;
+            $canUseDetachableTail = $isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
+            $canUseRabbitsFoot = $isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
+            $canUseCandy = $isPowerUpExpansion && $clawDamage !== null && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CANDY_EVOLUTION, true, true) > 0;
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
             $playersUsedElectricArmor = property_exists($intervention, 'electricArmorUsed') ? $intervention->electricArmorUsed : false;
             $canUseElectricArmor = !$playersUsedElectricArmor && $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD) > 0;
@@ -296,7 +296,7 @@ trait CardsArgTrait {
             $healWithEvolutions = 0;
             if ($damageToCancelToSurvive > 0 && $this->powerUpExpansion->isActive()) {
                 foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
-                    $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
+                    $count = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, $evolutionType, false, true);
 
                     if ($count > 0) {
                         $healWithEvolutions += $count * ($amount === null ? 999 : $amount); 

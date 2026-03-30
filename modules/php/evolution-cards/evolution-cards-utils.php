@@ -141,13 +141,6 @@ trait EvolutionCardsUtilTrait {
     /**
      * @deprecated
      */
-    function countEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
-        return count($this->getEvolutionsOfType($playerId, $cardType, $fromTable, $fromHand));
-    }
-
-    /**
-     * @deprecated
-     */
     function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
         $evolutions = $this->getEvolutionCardsByLocation($location, $playerId, $cardType);
         if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
@@ -419,7 +412,7 @@ trait EvolutionCardsUtilTrait {
 
 
     function setMimickedEvolution(int $mimicOwnerId, object $card) {
-        $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $countMothershipSupportBefore = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
@@ -443,7 +436,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function removeMimicEvolutionToken(int $mimicOwnerId) {
-        $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $countMothershipSupportBefore = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
         $card = $this->getMimickedEvolution();
         if ($card) {
@@ -562,7 +555,7 @@ trait EvolutionCardsUtilTrait {
         // if damages is a smash from active player
         if (count($allDamages) > 0 && gettype($allDamages[0]->cardType) == 'integer' &&  $allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
             $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
-            $playersWithTargetAcquired = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, TARGET_ACQUIRED_EVOLUTION) > 0));
+            $playersWithTargetAcquired = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, TARGET_ACQUIRED_EVOLUTION) > 0));
 
             if (count($playersWithTargetAcquired) > 0) {
                 $question = new Question(
@@ -592,7 +585,7 @@ trait EvolutionCardsUtilTrait {
     function askLightningArmor(array $allDamages) {
         $activePlayerId = intval($this->getActivePlayerId());
         $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
-        $playersWithLightningArmor = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, LIGHTNING_ARMOR_EVOLUTION) > 0));
+        $playersWithLightningArmor = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, LIGHTNING_ARMOR_EVOLUTION) > 0));
 
         if (count($playersWithLightningArmor) > 0) {
 

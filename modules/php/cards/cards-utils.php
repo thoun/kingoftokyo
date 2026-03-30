@@ -204,7 +204,7 @@ trait CardsUtilTrait {
         // secret laboratory
         $countSecretLaboratory = 0;
         if ($this->powerUpExpansion->isActive()) {
-            $countSecretLaboratory = $this->countEvolutionOfType($playerId, SECRET_LABORATORY_EVOLUTION);
+            $countSecretLaboratory = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SECRET_LABORATORY_EVOLUTION);
         }
 
         return max($cardCost + $inadequateOffering - $countAlienOrigin - $wickenessTilesDec - $countSecretLaboratory, 0);
@@ -431,7 +431,7 @@ trait CardsUtilTrait {
         $toVoid = ($card->type >= 300 && $card->type < 400) || ($card->type >= 900 && $card->type < 1000); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
         $this->powerCards->moveCard($card, $toVoid ? 'void' : 'discard');
 
-        if ($this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
+        if ($this->powerUpExpansion->isActive() && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
             $superiorAlienTechnologyTokens = array_values(array_filter($superiorAlienTechnologyTokens, fn($token) => $token != $card->id));
             $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $superiorAlienTechnologyTokens);
@@ -472,7 +472,7 @@ trait CardsUtilTrait {
     }
 
     function toggleMothershipSupport(int $playerId, int $countMothershipSupportBefore) {
-        $countMothershipSupportAfter = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $countMothershipSupportAfter = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
         if (boolval($countMothershipSupportBefore) != boolval($countMothershipSupportAfter)) {
             $active = $countMothershipSupportAfter > $countMothershipSupportBefore;
@@ -802,7 +802,7 @@ trait CardsUtilTrait {
             // target acquired
             $countTargetAcquired = 0;
             if ($isPowerUpExpansion && $playerId == intval($this->getGameStateValue(TARGETED_PLAYER))) {
-                $countTargetAcquired = $this->countEvolutionOfType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
+                $countTargetAcquired = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
 
                 if ($countTargetAcquired > 0) {
                     $effectiveDamage += $countTargetAcquired;
@@ -819,7 +819,7 @@ trait CardsUtilTrait {
                 }
 
                 // mecha blash
-                $countMechaBlast = $this->countEvolutionOfType($damageDealerId, MECHA_BLAST_EVOLUTION);
+                $countMechaBlast = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($damageDealerId, MECHA_BLAST_EVOLUTION);
                 if ($countMechaBlast > 0) {
                     $effectiveDamage += $countMechaBlast * 2;
                     $logs[] = new LoseHealthLog($this, $playerId, $countMechaBlast * 2, 3000 + MECHA_BLAST_EVOLUTION);
@@ -836,7 +836,7 @@ trait CardsUtilTrait {
             // last effect so it can be cummulative with previous ones
             $countClawsOfSteel = 0;
             if ($isPowerUpExpansion && $damageByActivePlayer) {
-                $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
+                $countClawsOfSteel = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
 
                 if ($countClawsOfSteel > 0) {
                     $damageBefore = $this->damageDealtToAnotherPlayerThisTurn($damageDealerId, $playerId);

@@ -82,7 +82,7 @@ trait CardsActionTrait {
             ));
         }
         // King of the gizmo
-        $countKingOfTheGizmo = $this->countEvolutionOfType($playerId, KING_OF_THE_GIZMO_EVOLUTION);
+        $countKingOfTheGizmo = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, KING_OF_THE_GIZMO_EVOLUTION);
         if ($countKingOfTheGizmo > 0) {
             $this->applyGetPoints($playerId, $countKingOfTheGizmo, 3000 + KING_OF_THE_GIZMO_EVOLUTION);
         }
@@ -296,7 +296,7 @@ trait CardsActionTrait {
             $cost = ceil($cost / 2);
 
             $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
-            if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
+            if (count($cardsIds) >= 3 * $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
                 throw new UserException('You can only have 3 cards with tokens.');
             }
         }

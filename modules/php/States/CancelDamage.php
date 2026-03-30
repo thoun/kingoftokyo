@@ -63,9 +63,9 @@ class CancelDamage extends GameState {
     #[PossibleAction]
     function actThrowCamouflageDice(int $currentPlayerId) {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
-        $countSoSmall = $isPowerUpExpansion ? $this->game->countEvolutionOfType($currentPlayerId, SO_SMALL_EVOLUTION, true, true) : 0;
+        $countSoSmall = $isPowerUpExpansion ? $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->game->countCardOfType($currentPlayerId, CAMOUFLAGE_CARD);
-        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->game->countEvolutionOfType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
         
         if ($countSoSmall + $countCamouflage + $countTerrorOfTheDeep == 0) {
             throw new \BgaUserException('No card to roll dice and cancel damage');
@@ -361,9 +361,9 @@ class CancelDamage extends GameState {
 
     function endThrowCamouflageDice(int $currentPlayerId, object $intervention, array $dice, bool $incCamouflageRolls) {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
-        $countSoSmall = $isPowerUpExpansion ? $this->game->countEvolutionOfType($currentPlayerId, SO_SMALL_EVOLUTION, true, true) : 0;
+        $countSoSmall = $isPowerUpExpansion ? $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->game->countCardOfType($currentPlayerId, CAMOUFLAGE_CARD);
-        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->game->countEvolutionOfType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
         
         $rolledDice = array_values(array_filter($dice, fn($d) => $d->rolled));
         $diceValues = array_map(fn($die) => $die->value, $dice);
@@ -459,7 +459,7 @@ class CancelDamage extends GameState {
     
     #[PossibleAction]
     function actUseInvincibleEvolution(int $evolutionType, int $currentPlayerId) {
-        if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, RABBIT_S_FOOT_EVOLUTION]) || $this->game->countEvolutionOfType($currentPlayerId, $evolutionType, false, true) == 0) {
+        if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, RABBIT_S_FOOT_EVOLUTION]) || $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, $evolutionType, false, true) == 0) {
             throw new \BgaUserException('No Detachable Tail / Rabbits Foot Evolution');
         }
 
@@ -482,7 +482,7 @@ class CancelDamage extends GameState {
     
     #[PossibleAction]
     function actUseCandyEvolution(int $currentPlayerId) {
-        if ($this->game->countEvolutionOfType($currentPlayerId, CANDY_EVOLUTION, true, true) == 0) {
+        if ($this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($currentPlayerId, CANDY_EVOLUTION, true, true) == 0) {
             throw new \BgaUserException('No Candy Evolution');
         }
 

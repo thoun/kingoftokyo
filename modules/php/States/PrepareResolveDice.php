@@ -23,7 +23,7 @@ class PrepareResolveDice extends GameState {
     }
 
     public function getArgs(int $activePlayerId): array {
-        $hasEncasedInIce = $this->game->powerUpExpansion->isActive() && $this->game->countEvolutionOfType($activePlayerId, ENCASED_IN_ICE_EVOLUTION) > 0;
+        $hasEncasedInIce = $this->game->powerUpExpansion->isActive() && $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, ENCASED_IN_ICE_EVOLUTION) > 0;
 
         $dice = $this->game->getPlayerRolledDice($activePlayerId, true, true, false);
         $selectableDice = $this->game->getSelectableDice($dice, false, false);

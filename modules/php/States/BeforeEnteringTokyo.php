@@ -31,7 +31,7 @@ class BeforeEnteringTokyo extends GameState {
 
         $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
 
-        $felineMotorPlayersIds = Arrays::filter($otherPlayersIds, fn($pId) => $this->game->countEvolutionOfType($pId, FELINE_MOTOR_EVOLUTION) > 0);
+        $felineMotorPlayersIds = Arrays::filter($otherPlayersIds, fn($pId) => $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($pId, FELINE_MOTOR_EVOLUTION) > 0);
 
         return [
             'highlighted' => $highlighted,

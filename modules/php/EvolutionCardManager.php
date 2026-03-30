@@ -277,6 +277,10 @@ class EvolutionCardManager extends CardManager {
         return Arrays::filter($evolutions, fn($evolution) => $evolution->type === $type);
     }
 
+    function countPlayerVirtualByType(int $playerId, int $type, bool $fromTable = true, bool $fromHand = false): int {
+        return count($this->getPlayerVirtualByType($playerId, $type, $fromTable, $fromHand));
+    }
+
     /**
      * Returns the searched gift evolution the player have in front of him, only if it really affects him.
      */

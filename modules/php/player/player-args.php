@@ -33,7 +33,7 @@ trait PlayerArgTrait {
                 $jetsPlayers[] = $smashedPlayerInTokyo;
             }
             
-            if ($isPowerUpExpansion && $this->countEvolutionOfType($smashedPlayerInTokyo, SIMIAN_SCAMPER_EVOLUTION, true, true) > 0) {
+            if ($isPowerUpExpansion && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($smashedPlayerInTokyo, SIMIAN_SCAMPER_EVOLUTION, true, true) > 0) {
                 $simianScamperPlayers[] = $smashedPlayerInTokyo;
             }
 
@@ -63,7 +63,7 @@ trait PlayerArgTrait {
         ];
 
         if ($isPowerUpExpansion) {
-            $countChestThumping = $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION);
+            $countChestThumping = $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($activePlayerId, CHEST_THUMPING_EVOLUTION);
             $anubisWithPharaonicEgo = $this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD;
             if ($countChestThumping > 0 && !$anubisWithPharaonicEgo) { // impossible to use Chest Thumping with Pharaonic Ego 
                 $smashedPlayersInTokyoStillInTokyo = array_values(array_filter($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId)));
