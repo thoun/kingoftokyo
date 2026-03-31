@@ -768,6 +768,12 @@ class AnswerQuestion extends GameState {
     }
 
     public function zombie(int $playerId) {
+        $question = $this->game->getQuestion();
+
+        if ($question->code === 'BambooSupply') {
+            return $this->actPutEnergyOnBambooSupply($playerId);
+        }
+        
         // to be done
     }
 }
