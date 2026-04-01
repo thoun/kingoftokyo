@@ -567,7 +567,7 @@ trait UtilTrait {
                     /** @disregard */
                     $winOnEliminationWickednessTile->onTrigger($context);
                 } else {
-                    $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                    $this->eliminateAPlayer($player);
                 }
             }
         }
@@ -586,7 +586,7 @@ trait UtilTrait {
         }
     }
 
-    function eliminateAPlayer(object $player, int $currentTurnPlayerId): void {
+    function eliminateAPlayer(object $player): void {
         if ($this->kingKongExpansion->isActive()) {
             $this->kingKongExpansion->onPlayerEliminated($player->id);
         }
@@ -595,14 +595,10 @@ trait UtilTrait {
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
         $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
-        if (/*$player->id == $currentTurnPlayerId || $playerIsActivePlayer*/false) { // if OK, remove asyncEliminatePlayer, $currentTurnPlayerId param, then killDeadPlayers & player_dead after a while
-            $this->asyncEliminatePlayer($player->id);
-        } else {
-            $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
-            $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
-            
-            $this->safeEliminatePlayer($player->id);
-        }
+        $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
+        $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
+        $this->safeEliminatePlayer($player->id);
+        // TODO in the future: remove killDeadPlayers & player_dead after a while
 
         $cards = $this->powerCards->getPlayerReal($player->id);
         $this->removeCards($player->id, $cards, true);
@@ -619,7 +615,10 @@ trait UtilTrait {
         
         // if player is playing in multipleactiveplayer
         if ($playerIsActivePlayer) {
-            $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
+            $transitions = array_keys($this->gamestate->getCurrentMainState()->transitions);
+            if (in_array('stay', $transitions)) {
+                $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
+            }
         }
 
         if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved

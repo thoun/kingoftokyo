@@ -245,6 +245,12 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'displaycondition' => [[
+            'type' => 'otheroption',
+            'id' => MINDBUG_EXPANSION_OPTION,
+            'value' => 1,
+        ]],
+        
     ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/

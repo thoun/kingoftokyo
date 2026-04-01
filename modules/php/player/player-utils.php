@@ -179,15 +179,6 @@ trait PlayerUtilTrait {
         $this->applyAskPlayEvolution($playerId,  $value);
     }
 
-    function asyncEliminatePlayer(int $playerId) {
-        $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX));
-        $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0, `player_dead` = $scoreAux where `player_id` = $playerId");
-
-        $this->notify->all('kotPlayerEliminated', '', [
-            'who_quits' => $playerId,
-        ]);
-    }
-
     function killDeadPlayers() {
         $activePlayerId = intval($this->getActivePlayerId());
 
