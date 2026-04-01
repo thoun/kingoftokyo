@@ -612,14 +612,6 @@ trait UtilTrait {
             $cards = $this->getEvolutionCardsByLocation('table', $player->id);
             $this->removeEvolutions($player->id, $cards, true);
         }
-        
-        // if player is playing in multipleactiveplayer
-        if ($playerIsActivePlayer) {
-            $transitions = array_keys($this->gamestate->getCurrentMainState()->transitions);
-            if (in_array('stay', $transitions)) {
-                $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
-            }
-        }
 
         if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved
             if ($this->isTokyoEmpty(false)) {
@@ -947,6 +939,7 @@ trait UtilTrait {
 
         $effectiveDamageDetail = $this->getEffectiveDamage($health, $playerId, $damageDealerId, $damage->clawDamage);
         $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
+        //$this->notify->all('applyDamageIgnoreCards',"applyDamageIgnoreCards $effectiveDamage to $playerId");
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $effectiveDamage, 0);
@@ -1017,6 +1010,7 @@ trait UtilTrait {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $sonOfKongKikoEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
                     if (count($sonOfKongKikoEvolutions) > 0) {
+                        /** @disregard */
                          $sonOfKongKikoEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
                 }
@@ -1024,6 +1018,7 @@ trait UtilTrait {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $nineLivesEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, NINE_LIVES_EVOLUTION, true, true);
                     if (count($nineLivesEvolutions) > 0) {
+                        /** @disregard */
                         $nineLivesEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
                 }

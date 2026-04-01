@@ -15,7 +15,7 @@ html[data-dark-edition="true"] {
     .player-board {
         background-color: $darkEditionGrey;
 
-        .player_score, .fa-star {
+        .player_score  .player_score_value, .fa-star {
             color: #f99603;
         }
 

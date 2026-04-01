@@ -29,7 +29,7 @@
   height: 85px;
   margin-bottom: -45px;
 }
-.player-board .player_score, .player-board .fa-star {
+.player-board .player_score .player_score_value, .player-board .fa-star {
   font-weight: bold;
   color: #6787c3;
 }
@@ -2834,7 +2834,7 @@ html[data-dark-edition=true] #loader_mask #game_box_loader_front, html[data-dark
 html[data-dark-edition=true] .player-board {
   background-color: #737373;
 }
-html[data-dark-edition=true] .player-board .player_score, html[data-dark-edition=true] .player-board .fa-star {
+html[data-dark-edition=true] .player-board .player_score .player_score_value, html[data-dark-edition=true] .player-board .fa-star {
   color: #f99603;
 }
 html[data-dark-edition=true] .player-board .counters {
