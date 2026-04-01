@@ -192,7 +192,7 @@ trait PlayerUtilTrait {
             $playerDead = intval($dbResult['player_dead']);
 
             $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $playerDead, player_location = 0 where `player_id` = $playerId");
-            $this->safeEliminatePlayer($playerId);
+            $this->eliminatePlayer($playerId);
 
             if ($activePlayerId === $playerId) {
                 $killActive = true;

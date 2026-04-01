@@ -9657,7 +9657,6 @@ var KingOfTokyo = /** @class */ (function () {
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['updateAskPlayEvolution', 1],
-            ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
             ['cultist', 1],
             ['removeWickednessTiles', 1],
@@ -9751,9 +9750,6 @@ var KingOfTokyo = /** @class */ (function () {
         var playerId = Number(args.who_quits);
         this.setPoints(playerId, 0);
         this.eliminatePlayer(playerId);
-    };
-    KingOfTokyo.prototype.notif_kotPlayerEliminated = function (args) {
-        this.notif_playerEliminated(args);
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (args) {
         this.getPlayerTable(args.playerId).leaveTokyo();

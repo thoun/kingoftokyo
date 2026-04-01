@@ -573,31 +573,15 @@ trait UtilTrait {
         }
     }
 
-    function safeEliminatePlayer(int $playerId) {
-        if ($this->getRemainingPlayers() > 1) {
-            $this->eliminatePlayer($playerId); // no need for notif, framework does it
-        } else {
-            // if last player, we make a notification same as elimination
-            // but we don't really eliminate him as the framework don't like it and game will end anyway
-            $this->notify->all('playerEliminated', '', [
-                'who_quits' => $playerId,
-                'player_name' => $this->getPlayerNameById($playerId),
-            ]);
-        }
-    }
-
     function eliminateAPlayer(object $player): void {
         if ($this->kingKongExpansion->isActive()) {
             $this->kingKongExpansion->onPlayerEliminated($player->id);
         }
         $this->powerCards->onPlayerEliminated(new Context($this, $player->id));
 
-        // if player is killing himself
-        // in a game state, we can kill him, but else we have to wait the end of his turn
-        $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
         $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
         $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
-        $this->safeEliminatePlayer($player->id);
+        $this->eliminatePlayer($player->id);
         // TODO in the future: remove killDeadPlayers & player_dead after a while
 
         $cards = $this->powerCards->getPlayerReal($player->id);

@@ -3608,7 +3608,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['updateAskPlayEvolution', 1],
-            ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
             ['cultist', 1],
             ['removeWickednessTiles', 1],
@@ -3717,10 +3716,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         const playerId = Number(args.who_quits);
         this.setPoints(playerId, 0);
         this.eliminatePlayer(playerId);
-    }
-
-    notif_kotPlayerEliminated(args: NotifPlayerEliminatedArgs) {
-        this.notif_playerEliminated(args);
     }
 
     notif_leaveTokyo(args: NotifPlayerLeavesTokyoArgs) {
