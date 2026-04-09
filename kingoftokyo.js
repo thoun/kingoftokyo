@@ -3784,14 +3784,14 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 157: return _("[2384c6]Sunken [4c7c96]Temple");
             case 158: return _("[2384c6]Mandibles [4c7c96]of Dread");
             // Baby Gigazaur : dark a5416f light f05a7d
-            case 181: return /*_TODOPUBG*/ ("[a5416f]My [f05a7d]Toy");
-            case 182: return /*_TODOPUBG*/ ("[a5416f]Growing [f05a7d]Fast");
-            case 183: return /*_TODOPUBG*/ ("[a5416f]Nurture [f05a7d]the Young");
-            case 184: return /*_TODOPUBG*/ ("[a5416f]Tiny [f05a7d]Tail");
-            case 185: return /*_TODOPUBG*/ ("[a5416f]Too Cute [f05a7d]to Smash");
-            case 186: return /*_TODOPUBG*/ ("[a5416f]So [f05a7d]Small!");
-            case 187: return /*_TODOPUBG*/ ("[a5416f]Underrated");
-            case 188: return /*_TODOPUBG*/ ("[a5416f]Yummy [f05a7d]Yummy");
+            case 181: return _("[a5416f]My [f05a7d]Toy");
+            case 182: return _("[a5416f]Growing [f05a7d]Fast");
+            case 183: return _("[a5416f]Nurture [f05a7d]the Young");
+            case 184: return _("[a5416f]Tiny [f05a7d]Tail");
+            case 185: return _("[a5416f]Too Cute [f05a7d]to Smash");
+            case 186: return _("[a5416f]So [f05a7d]Small!");
+            case 187: return _("[a5416f]Underrated");
+            case 188: return _("[a5416f]Yummy [f05a7d]Yummy");
             // Gigasnail Hydra : light f68712 dark c73917
             case 611: return _("[f68712]Unstoppable [c73917]Hydra");
             case 612: return _("[f68712]Unstoppable [c73917]Hydra");
@@ -3955,13 +3955,13 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 157: return _("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
             case 158: return _("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
-            case 181: return /*_TODOPUBG*/ ("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
-            case 182: return /*_TODOPUBG*/ ("If you roll no [diceHeart], gain 1[Heart].");
-            case 183: return /*_TODOPUBG*/ ("Each Monster who has more [Star] than you has to give you 1[Star].");
-            case 184: return /*_TODOPUBG*/ ("Once per turn, you may change two dice you rolled to [dice1].");
+            case 181: return _("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve.");
+            case 182: return _("If you roll no [diceHeart], gain 1[Heart].");
+            case 183: return _("Each Monster who has more [Star] than you has to give you 1[Star].");
+            case 184: return _("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            case 186: return /*_TODOPUBG*/ ("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
-            case 187: return /*_TODOPUBG*/ ("Add 2 [diceSmash] to your Roll.");
+            case 186: return _("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
+            case 187: return _("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
             // Gigasnail Hydra
             case 611:
@@ -4545,9 +4545,7 @@ var PlayerTable = /** @class */ (function () {
         var eliminated = Number(player.eliminated) > 0;
         var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"kot-player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
         if (game.isPowerUpExpansion()) {
-            html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            ");
-            // TODOPUBG
-            html += "\n            <div id=\"reserved-cards-".concat(player.id, "\" class=\"reserved card-stock player-cards ").concat(player.cards.length ? '' : 'empty', "\"></div>\n            ");
+            html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            <div id=\"reserved-cards-").concat(player.id, "\" class=\"reserved card-stock player-cards ").concat(player.cards.length ? '' : 'empty', "\"></div>\n            ");
         }
         if (game.isWickednessExpansion()) {
             html += "<div id=\"wickedness-tiles-".concat(player.id, "\" class=\"wickedness-tile-stock player-wickedness-tiles ").concat(((_b = player.wickednessTiles) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty', "\"></div>");
@@ -4565,9 +4563,8 @@ var PlayerTable = /** @class */ (function () {
             player.cards.filter(function (card) { return player.superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(card); });
         }
         if (game.isPowerUpExpansion()) {
-            // TODOPUBG
             this.reservedCards = new LineStock(this.game.cardsManager, document.getElementById("reserved-cards-".concat(this.player.id)));
-            this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.reservedCards, card); };
+            this.reservedCards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.reservedCards, card); };
             this.reservedCards.addCards(player.reservedCards);
         }
         this.initialLocation = Number(player.location);
@@ -6688,7 +6685,7 @@ var MonsterSelector = /** @class */ (function () {
             html += "\n            <div class=\"monster-group\">\n                <div class=\"title\" style=\"--title-color: ".concat(group.color, ";\">").concat(group.title, "</div>      \n                <div class=\"monster-group-monsters\">");
             var groupMonsters = args.availableMonsters.filter(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
             groupMonsters.forEach(function (monster) {
-                html += "\n                    <div id=\"pick-monster-figure-".concat(monster, "-wrapper\">\n                        <div id=\"pick-monster-figure-").concat(monster, "\" class=\"monster-figure monster").concat(monster, "\"></div>");
+                html += "\n                    <div id=\"pick-monster-figure-".concat(monster, "-wrapper\">\n                        <div id=\"pick-monster-figure-").concat(monster, "\" class=\"monster-figure monster").concat(monster, "\">\n                            ").concat(_this.game.isPowerUpExpansion() && [18].includes(monster) ? "<div class=\"emblemalpha emblemstatus emblemstatus_nofold ttalphagame\"></div>" : "", "\n                        </div>");
                 if (_this.game.isPowerUpExpansion()) {
                     html += "<div><button id=\"see-monster-evolution-".concat(monster, "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>").concat(_('Show Evolutions'), "</button></div>");
                 }
@@ -9810,7 +9807,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_reserveCard = function (args) {
         var card = args.card;
         var newCard = args.newCard;
-        this.getPlayerTable(args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
+        this.getPlayerTable(args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
         this.tableCenter.setTopDeckCard(args.topDeckCard, args.deckCardsCount);
         this.tableManager.tableHeightChange(); // adapt to new card

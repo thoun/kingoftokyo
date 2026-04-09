@@ -170,14 +170,14 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 157: return _("[2384c6]Sunken [4c7c96]Temple");
             case 158: return _("[2384c6]Mandibles [4c7c96]of Dread");
             // Baby Gigazaur : dark a5416f light f05a7d
-            case 181: return /*_TODOPUBG*/("[a5416f]My [f05a7d]Toy");
-            case 182: return /*_TODOPUBG*/("[a5416f]Growing [f05a7d]Fast");
-            case 183: return /*_TODOPUBG*/("[a5416f]Nurture [f05a7d]the Young");
-            case 184: return /*_TODOPUBG*/("[a5416f]Tiny [f05a7d]Tail");
-            case 185: return /*_TODOPUBG*/("[a5416f]Too Cute [f05a7d]to Smash");
-            case 186: return /*_TODOPUBG*/("[a5416f]So [f05a7d]Small!");
-            case 187: return /*_TODOPUBG*/("[a5416f]Underrated");
-            case 188: return /*_TODOPUBG*/("[a5416f]Yummy [f05a7d]Yummy");
+            case 181: return _("[a5416f]My [f05a7d]Toy");
+            case 182: return _("[a5416f]Growing [f05a7d]Fast");
+            case 183: return _("[a5416f]Nurture [f05a7d]the Young");
+            case 184: return _("[a5416f]Tiny [f05a7d]Tail");
+            case 185: return _("[a5416f]Too Cute [f05a7d]to Smash");
+            case 186: return _("[a5416f]So [f05a7d]Small!");
+            case 187: return _("[a5416f]Underrated");
+            case 188: return _("[a5416f]Yummy [f05a7d]Yummy");
 
             // Gigasnail Hydra : light f68712 dark c73917
             case 611: return _("[f68712]Unstoppable [c73917]Hydra");
@@ -340,13 +340,13 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 157: return _("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
             case 158: return _("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
-            case 181: return /*_TODOPUBG*/("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
-            case 182: return /*_TODOPUBG*/("If you roll no [diceHeart], gain 1[Heart].");
-            case 183: return /*_TODOPUBG*/("Each Monster who has more [Star] than you has to give you 1[Star].");
-            case 184: return /*_TODOPUBG*/("Once per turn, you may change two dice you rolled to [dice1].");
+            case 181: return _("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve.");
+            case 182: return _("If you roll no [diceHeart], gain 1[Heart].");
+            case 183: return _("Each Monster who has more [Star] than you has to give you 1[Star].");
+            case 184: return _("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            case 186: return /*_TODOPUBG*/("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
-            case 187: return /*_TODOPUBG*/("Add 2 [diceSmash] to your Roll.");
+            case 186: return _("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
+            case 187: return _("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
 
             // Gigasnail Hydra

@@ -43,7 +43,9 @@ class MonsterSelector {
                 groupMonsters.forEach(monster => {
                     html += `
                     <div id="pick-monster-figure-${monster}-wrapper">
-                        <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>`;
+                        <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}">
+                            ${this.game.isPowerUpExpansion() && [18].includes(monster) ? `<div class="emblemalpha emblemstatus emblemstatus_nofold ttalphagame"></div>` : ``}
+                        </div>`;
                     if (this.game.isPowerUpExpansion()) {
                         html += `<div><button id="see-monster-evolution-${monster}" class="bgabutton bgabutton_blue see-evolutions-button"><div class="player-evolution-card"></div>${_('Show Evolutions')}</button></div>`;
                     }

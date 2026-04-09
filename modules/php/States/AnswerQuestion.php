@@ -493,7 +493,7 @@ class AnswerQuestion extends GameState {
 
         $newCard = $this->game->powerCards->pickCardForLocationOldOrder('deck', 'table', $cardLocationArg);
 
-        $this->notify->all("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
+        $this->notify->all("reserveCard", clienttranslate('${player_name} puts ${card_name} to reserve'), [
             'playerId' => $currentPlayerId,
             'player_name' => $this->game->getPlayerNameById($currentPlayerId),
             'card' => $card,

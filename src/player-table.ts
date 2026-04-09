@@ -17,7 +17,7 @@ class PlayerTable {
     private showHand: boolean = false;
 
     public cards: LineStock<Card>;
-    public reservedCards: LineStock<Card>; // TODOPUBG
+    public reservedCards: LineStock<Card>;
     public wickednessTiles: LineStock<WickednessTile>;
     public hiddenEvolutionCards: LineStock<EvolutionCard> | null = null;
     public pickEvolutionCards: LineStock<EvolutionCard> | null = null;
@@ -54,9 +54,6 @@ class PlayerTable {
         if (game.isPowerUpExpansion()) {
             html += `
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
-            `;
-            // TODOPUBG
-            html += `
             <div id="reserved-cards-${player.id}" class="reserved card-stock player-cards ${player.cards.length ? '' : 'empty'}"></div>
             `;
         }
@@ -82,10 +79,9 @@ class PlayerTable {
             player.cards.filter(card => player.superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(card));
         }
 
-        if (game.isPowerUpExpansion()) {            
-            // TODOPUBG
+        if (game.isPowerUpExpansion()) { 
             this.reservedCards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`reserved-cards-${this.player.id}`));
-            this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.reservedCards, card);
+            this.reservedCards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.reservedCards, card);
             
             this.reservedCards.addCards(player.reservedCards);
         }

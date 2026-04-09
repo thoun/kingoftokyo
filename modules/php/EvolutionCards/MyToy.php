@@ -14,10 +14,14 @@ class MyToy extends EvolutionCard {
     }
 
     public function immediateEffect(Context $context) {
+        $this->myToyQuestion($context);
+    }
+
+    public function myToyQuestion(Context $context) {
         $question = new Question(
             'MyToy',
-            /*client TODOPUBG translate(*/'${player_name} must choose a card to reserve'/*)*/,
-            /*client TODOPUBG translate(*/'${you} must choose a card to reserve'/*)*/,
+            clienttranslate('${player_name} must choose a card to reserve'),
+            clienttranslate('${you} must choose a card to reserve'),
             [$context->currentPlayerId],
             ST_AFTER_ANSWER_QUESTION,
             [ 
@@ -33,6 +37,4 @@ class MyToy extends EvolutionCard {
         $context->game->gamestate->setPlayersMultiactive([$context->currentPlayerId], 'next', true);
         $context->game->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
-
-    // TODOPUBG check if the answer of the question is handled
 }

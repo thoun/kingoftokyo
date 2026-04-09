@@ -33,7 +33,7 @@ class PowerUpExpansion {
     }
 
     function getMonstersWithPowerUpCards() {
-        $monstersWithPowerUpCards = [1,2,3,4,5,6,13,14,15/* TODOPUBG ,18*/];
+        $monstersWithPowerUpCards = [1,2,3,4,5,6,13,14,15,18];
 
         /* TODOPUHA if ($this->game->isHalloweenExpansion()) {
             $monstersWithPowerUpCards = array_merge($monstersWithPowerUpCards, [7, 8]);

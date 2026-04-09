@@ -93,7 +93,9 @@ trait CardsActionTrait {
         $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
         $from = $this->powerCards->getCardFrom($card);
-        if ($from > 0) {
+        if ($card->location === "reserved$playerId") {
+            // no need to check, bying from its reserve
+        } else if ($from > 0) {
             if ($card->location_arg != $from) {
                 throw new UserException("This player doesn't own this card");
             }
@@ -138,7 +140,7 @@ trait CardsActionTrait {
             }
             
         } else if ($from > 0) {
-            $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserved cards ${cost} [energy]'/*)*/ : 
+            $message = $from == $playerId ? clienttranslate('${player_name} buys ${card_name} from reserved cards ${cost} [energy]') : 
             clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
             $this->notify->all("buyCard", $message, [
                 'playerId' => $playerId,
@@ -272,7 +274,7 @@ trait CardsActionTrait {
                 $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->countCardsInLocation('reserved'.$playerId, $myToyEvolution->id) === 0));
 
                 if (count($myToyEvolutions) > 0) {
-                    $this->myToyQuestion($playerId, $myToyEvolutions[0]);
+                    $myToyEvolutions[0]->myToyQuestion(new Context($this, $playerId));
                     return;
                 }
             }
@@ -340,7 +342,8 @@ trait CardsActionTrait {
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
         $canPreventBuying = ($playerId == intval($this->getActivePlayerId())) && $this->powerUpExpansion->isActive()
-            && count($this->getPlayersIdsWhoCouldPlayEvolutions($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)) > 0;
+            && count($this->getPlayersIdsWhoCouldPlayEvolutions($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)) > 0
+            && !str_starts_with($card->location, 'reserve');
 
         if ($canPreventBuying && (
             $this->getGlobalVariable(CARD_BEING_BOUGHT) == null || $this->getGlobalVariable(CARD_BEING_BOUGHT)->allowed

@@ -731,6 +731,8 @@ class PowerCardManager extends CardManager {
             return -1;
         } else if ($card->location === 'deck') {
             return -2;
+        } else if (str_starts_with($card->location, 'reserve')) {
+            return (int) substr($card->location, 8);
         } else if ($card->location === 'hand') {
             return $card->location_arg;
         }

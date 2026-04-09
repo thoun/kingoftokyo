@@ -3784,7 +3784,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         const card = args.card;
 
         const newCard = args.newCard;
-        this.getPlayerTable(args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
+        this.getPlayerTable(args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
         
 
