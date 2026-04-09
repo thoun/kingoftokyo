@@ -516,7 +516,7 @@ trait UtilTrait {
     function getOtherPlayers(int $playerId, bool $includeEliminated = false) {
         $sql = "SELECT * FROM player WHERE player_id <> $playerId";
         if (!$includeEliminated) {
-            $sql .= " AND player_eliminated = 0 AND";
+            $sql .= " AND player_eliminated = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
