@@ -8327,7 +8327,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         Object.values(gamedatas.players).forEach(function (player) {
             var playerId = Number(player.id);
-            var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
+            var eliminated = Number(player.eliminated) > 0;
             // health & energy counters
             var html = "<div class=\"counters\">\n                <div id=\"health-counter-wrapper-".concat(player.id, "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-").concat(player.id, "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-").concat(player.id, "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-").concat(player.id, "\"></span>\n                </div>");
             if (gamedatas.wickednessExpansion) {

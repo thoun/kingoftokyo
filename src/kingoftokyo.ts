@@ -1927,7 +1927,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);  
 
-            const eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
+            const eliminated = Number(player.eliminated) > 0;
 
             // health & energy counters
             let html = `<div class="counters">

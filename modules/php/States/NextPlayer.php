@@ -36,80 +36,68 @@ class NextPlayer extends GameState {
         } 
         $this->globals->delete(NEXT_POWER_CARD_COST_REDUCTION);
 
-        $killPlayer = $this->game->killDeadPlayers();
+        $anotherTimeWithCard = 0;
 
-        if ($killPlayer) {
+        $freezeTimeMaxTurns = intval($this->game->getGameStateValue(FREEZE_TIME_MAX_TURNS));
+        $freezeTimeCurrentTurn = intval($this->game->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
+
+        $activatedFrenzys = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY);
+
+        if ($anotherTimeWithCard == 0 && count($activatedFrenzys) > 0) { // extra turn for current player
+            $card = $activatedFrenzys[0];
+            if ($card instanceof EvolutionCard) {
+                $anotherTimeWithCard = 3000 + $card->type; // FRENZY evolution
+            } else if ($card instanceof PowerCard) {
+                $anotherTimeWithCard = $card->type; // FRENZY card
+            }
+        }
+
+        if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 1000 + BUILDERS_UPRISING_CURSE_CARD; // Builders' uprising
+            $this->game->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 2); 
+        }
+
+        if ($anotherTimeWithCard == 0 && $freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
             $this->game->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
             $this->game->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
+        } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
+            $anotherTimeWithCard = FREEZE_TIME_CARD;
+            $this->game->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
+        }
+
+        if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
+            $this->game->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
+            $finalPushTile = $this->game->wickednessExpansion->getWickednessTileByType($activePlayerId, FINAL_PUSH_WICKEDNESS_TILE);
+            $this->game->wickednessExpansion->removeWickednessTiles($activePlayerId, [$finalPushTile]);
+        }
+
+        if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = FRENZY_CARD; // Frenzy
             $this->game->setGameStateValue(FRENZY_EXTRA_TURN, 0);
-            $this->game->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0);
-            $this->game->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
+        }
 
-            $activePlayerId = (int)$this->game->activateNextPlayer();
+        if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(PANDA_EXPRESS_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 3000 + PANDA_EXPRESS_EVOLUTION;
+            $this->game->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 0);
+        }
+
+        if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(JUNGLE_FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
+            $this->game->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
+
+            $jungleFrenzyEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, JUNGLE_FRENZY_EVOLUTION, true, false);
+            $this->game->removeEvolutions($activePlayerId, $jungleFrenzyEvolutions);
+        }
+        
+        if ($anotherTimeWithCard > 0) {
+            $this->notify->all('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+                'playerId' => $activePlayerId,
+                'player_name' => $this->game->getPlayerNameById($activePlayerId),
+                'card_name' => $anotherTimeWithCard,
+            ]);
         } else {
-            $anotherTimeWithCard = 0;
-
-            $freezeTimeMaxTurns = intval($this->game->getGameStateValue(FREEZE_TIME_MAX_TURNS));
-            $freezeTimeCurrentTurn = intval($this->game->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
-
-            $activatedFrenzys = $this->game->mindbugExpansion->getActivatedCards($activePlayerId, FRENZY);
-
-            if ($anotherTimeWithCard == 0 && count($activatedFrenzys) > 0) { // extra turn for current player
-                $card = $activatedFrenzys[0];
-                if ($card instanceof EvolutionCard) {
-                    $anotherTimeWithCard = 3000 + $card->type; // FRENZY evolution
-                } else if ($card instanceof PowerCard) {
-                    $anotherTimeWithCard = $card->type; // FRENZY card
-                }
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 1000 + BUILDERS_UPRISING_CURSE_CARD; // Builders' uprising
-                $this->game->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 2); 
-            }
-
-            if ($anotherTimeWithCard == 0 && $freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
-                $this->game->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
-                $this->game->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
-            } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
-                $anotherTimeWithCard = FREEZE_TIME_CARD;
-                $this->game->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
-                $this->game->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
-                $finalPushTile = $this->game->wickednessExpansion->getWickednessTileByType($activePlayerId, FINAL_PUSH_WICKEDNESS_TILE);
-                $this->game->wickednessExpansion->removeWickednessTiles($activePlayerId, [$finalPushTile]);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = FRENZY_CARD; // Frenzy
-                $this->game->setGameStateValue(FRENZY_EXTRA_TURN, 0);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(PANDA_EXPRESS_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 3000 + PANDA_EXPRESS_EVOLUTION;
-                $this->game->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 0);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(JUNGLE_FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
-                $this->game->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
-
-                $jungleFrenzyEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, JUNGLE_FRENZY_EVOLUTION, true, false);
-                $this->game->removeEvolutions($activePlayerId, $jungleFrenzyEvolutions);
-            }
-            
-            if ($anotherTimeWithCard > 0) {
-                $this->notify->all('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
-                    'playerId' => $activePlayerId,
-                    'player_name' => $this->game->getPlayerNameById($activePlayerId),
-                    'card_name' => $anotherTimeWithCard,
-                ]);
-            } else {
-                $activePlayerId = (int)$this->game->activateNextPlayer();
-            }
+            $activePlayerId = (int)$this->game->activateNextPlayer();
         }
 
         if ($this->game->getRemainingPlayers() <= 1 || $this->game->getMaxPlayerScore() >= MAX_POINT) {

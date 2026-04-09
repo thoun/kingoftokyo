@@ -14,7 +14,7 @@ trait PlayerUtilTrait {
 ////////////
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 AND player_dead = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0)) = 1";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0)) = 1";
         return intval($this->getUniqueValueFromDB($sql)) > 0;
     }
 
@@ -177,29 +177,6 @@ trait PlayerUtilTrait {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyAskPlayEvolution($playerId,  $value);
-    }
-
-    function killDeadPlayers() {
-        $activePlayerId = intval($this->getActivePlayerId());
-
-        $sql = "SELECT player_id, player_dead FROM player WHERE player_eliminated = 0 AND player_dead > 0 ORDER BY player_no";
-        $dbResults = $this->getCollectionFromDb($sql);
-
-        $killActive = false;
-
-        foreach($dbResults as $dbResult) {
-            $playerId = intval($dbResult['player_id']);
-            $playerDead = intval($dbResult['player_dead']);
-
-            $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $playerDead, player_location = 0 where `player_id` = $playerId");
-            $this->eliminatePlayer($playerId);
-
-            if ($activePlayerId === $playerId) {
-                $killActive = true;
-            }
-        }
-
-        return $killActive;
     }
 
     #[CheckAction(false)]

@@ -161,7 +161,6 @@ interface KingOfTokyoPlayer extends Player {
     monster: number;
     location: number;
     maxHealth: number;
-    playerDead: number;
     zombified: boolean;
     tokyoTowerLevels?: number[];
     berserk?: boolean;

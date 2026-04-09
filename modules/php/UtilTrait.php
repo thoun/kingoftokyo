@@ -139,7 +139,7 @@ trait UtilTrait {
     }
 
     function getMinPlayerHealth(): int {
-        return intval($this->getUniqueValueFromDB("SELECT min(player_health) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
+        return intval($this->getUniqueValueFromDB("SELECT min(player_health) FROM player WHERE player_eliminated = 0"));
     }
 
     function getMaxPlayerEnergy(): int {
@@ -249,7 +249,7 @@ trait UtilTrait {
     }
 
     function getRemainingPlayers(): int {
-        return intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
+        return intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0"));
     }
 
     function tokyoBayUsed(): bool {
@@ -450,18 +450,18 @@ trait UtilTrait {
 
     private function getPlayersIdsFromLocation(bool $inside) {
         $sign = $inside ? '>' : '=';
-        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0  ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayerIdInTokyoCity() {
-        $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 ORDER BY player_no";
         return intval($this->getUniqueValueFromDB($sql));
     }
 
     function getPlayerIdInTokyoBay() {
-        $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 ORDER BY player_no";
         return intval($this->getUniqueValueFromDB($sql));
     }
 
@@ -476,7 +476,7 @@ trait UtilTrait {
     function getPlayersIds(bool $includeEliminated = false) {        
         $sql = "SELECT player_id FROM player";
         if (!$includeEliminated) {
-            $sql .= " WHERE player_eliminated = 0 AND player_dead = 0";
+            $sql .= " WHERE player_eliminated = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
@@ -484,13 +484,13 @@ trait UtilTrait {
     }
 
     function getOtherPlayersIds(int $playerId) {
-        $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }  
 
     function getNonZombiePlayersIds() {
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND player_zombie = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_zombie = 0 ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
@@ -505,7 +505,7 @@ trait UtilTrait {
     function getPlayers(bool $includeEliminated = false) {
         $sql = "SELECT * FROM player";
         if (!$includeEliminated) {
-            $sql .= " WHERE player_eliminated = 0 AND player_dead = 0";
+            $sql .= " WHERE player_eliminated = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
@@ -516,7 +516,7 @@ trait UtilTrait {
     function getOtherPlayers(int $playerId, bool $includeEliminated = false) {
         $sql = "SELECT * FROM player WHERE player_id <> $playerId";
         if (!$includeEliminated) {
-            $sql .= " AND player_eliminated = 0 AND player_dead = 0";
+            $sql .= " AND player_eliminated = 0 AND";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
@@ -582,7 +582,6 @@ trait UtilTrait {
         $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
         $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
         $this->eliminatePlayer($player->id);
-        // TODO in the future: remove killDeadPlayers & player_dead after a while
 
         $cards = $this->powerCards->getPlayerReal($player->id);
         $this->removeCards($player->id, $cards, true);
@@ -1324,7 +1323,7 @@ trait UtilTrait {
     }
 
     function updateKillPlayersScoreAux() {
-        $eliminatedPlayersCount = intval($this->getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
+        $eliminatedPlayersCount = intval($this->getUniqueValueFromDB("select count(*) from player where player_eliminated > 0"));
         $this->setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
     }
 
@@ -1364,13 +1363,13 @@ trait UtilTrait {
     }
 
     function getPlayersIdsWithMinColumn(string $column) {
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select min(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND `$column` = (select min(`$column`) FROM player WHERE player_eliminated = 0) ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayersIdsWithMaxColumn(string $column) {
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0) ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
