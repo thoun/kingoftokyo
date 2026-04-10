@@ -486,6 +486,15 @@ trait DiceUtilTrait {
                 }
             }
         }
+            
+        if ($isPowerUpExpansion) {
+            $underratedEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, UNDERRATED_EVOLUTION, true, false);
+            $diceCount += count($underratedEvolutions) * 2;
+
+            if (count($underratedEvolutions) > 0) {
+                $this->removeEvolutions($playerId, $underratedEvolutions);
+            }
+        }
 
         if ($diceCount > 0) {
             // only here (not in ResolveDice state) so player can heal and then activate Berserk
@@ -496,13 +505,6 @@ trait DiceUtilTrait {
             if ($isPowerUpExpansion) {
                 if ($this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $diceCount *= 2;
-                }
-
-                $underratedEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, UNDERRATED_EVOLUTION, true, false);
-                $diceCount += count($underratedEvolutions) * 2;
-
-                if (count($underratedEvolutions) > 0) {
-                    $this->removeEvolutions($playerId, $underratedEvolutions);
                 }
             }
 
