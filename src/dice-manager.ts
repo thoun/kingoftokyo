@@ -632,7 +632,7 @@ class DiceManager {
                             tinyTailButtonId, 
                             dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(184, 'text-only')}</strong>` }),
                             () => {
-                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3184);
                                 this.toggleBubbleChangeDie(die);
                             },
                             true

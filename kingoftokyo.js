@@ -5737,7 +5737,7 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasTinyTail) {
                         this.game.createButton(bubbleActionButtonsId, tinyTailButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(184, 'text-only'), "</strong>") }), function () {
-                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3184);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
