@@ -546,8 +546,8 @@ trait EvolutionCardsUtilTrait {
         $playersWithLightningArmor = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, LIGHTNING_ARMOR_EVOLUTION) > 0));
 
         if (count($playersWithLightningArmor) > 0) {
-
             $damageAmountByPlayer = [];
+            $damageDealerIdByPlayer = [];
 
             foreach($playersWithLightningArmor as $playerId) {
                 $damageAmountByPlayer[$playerId] = 0;
@@ -560,7 +560,9 @@ trait EvolutionCardsUtilTrait {
                 }
             }
 
-            if (Arrays::some($damageAmountByPlayer, fn($damageAmount) => $damageAmount > 0)) {
+            $playersWithLightningArmor = array_values(array_filter($playersWithLightningArmor, fn($playerId) => $damageAmountByPlayer[$playerId] > 0 && $damageDealerIdByPlayer[$playerId] !== $playerId));
+
+            if (count($playersWithLightningArmor) > 0) {
                 $question = new Question(
                     'LightningArmor',
                     clienttranslate('Player with ${card_name} can throw dice to backfire damage'),

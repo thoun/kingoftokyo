@@ -351,6 +351,11 @@ class AnswerQuestion extends GameState {
         $question = $this->game->getQuestion();
         $damageAmountForPlayer = ((array)$question->args->damageAmountByPlayer)[$currentPlayerId];
         $damageDealerIdForPlayer = ((array)$question->args->damageDealerIdByPlayer)[$currentPlayerId];
+
+        if ($damageAmountForPlayer <= 0 || !$damageDealerIdForPlayer || $damageDealerIdForPlayer === $currentPlayerId) {
+            $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
+            return;
+        }
         
         $dice = [];
         for ($i=0; $i<$damageAmountForPlayer; $i++) {
@@ -368,24 +373,19 @@ class AnswerQuestion extends GameState {
             $diceStr .= $this->game->getDieFaceLogName($dieValue, 0);
         }
 
-        if ($damageDealerIdForPlayer) {
-            $this->notify->all("useLightningArmor", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and makes ${player_name2} lose ${damage}[Heart]'), [
-                'playerId' => $currentPlayerId,
-                'player_name' => $this->game->getPlayerNameById($currentPlayerId),
-                'player_name2' => $this->game->getPlayerNameById($damageDealerIdForPlayer),
-                'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
-                'damage' => $smashCount,
-                'diceValues' => $dice,
-                'dice' => $diceStr,
-            ]);
-            if ($smashCount > 0) {
-                $damage = new Damage($damageDealerIdForPlayer, $smashCount, $currentPlayerId, 3000 + LIGHTNING_ARMOR_EVOLUTION);
-                $this->game->applyDamage($damage);
-            }
-        }/* else {
-            $this->warn('useLightningArmor damageDealerIdForPlayer is null');
-            $this->dump('$question->args', $question->args);
-        }*/
+        $this->notify->all("useLightningArmor", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and makes ${player_name2} lose ${damage}[Heart]'), [
+            'playerId' => $currentPlayerId,
+            'player_name' => $this->game->getPlayerNameById($currentPlayerId),
+            'player_name2' => $this->game->getPlayerNameById($damageDealerIdForPlayer),
+            'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
+            'damage' => $smashCount,
+            'diceValues' => $dice,
+            'dice' => $diceStr,
+        ]);
+        if ($smashCount > 0) {
+            $damage = new Damage($damageDealerIdForPlayer, $smashCount, $currentPlayerId, 3000 + LIGHTNING_ARMOR_EVOLUTION);
+            $this->game->applyDamage($damage);
+        }
 
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
     }
