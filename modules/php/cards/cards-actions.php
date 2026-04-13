@@ -93,7 +93,8 @@ trait CardsActionTrait {
         $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
         $from = $this->powerCards->getCardFrom($card);
-        if ($card->location === "reserved$playerId") {
+        $isMyToyReservedCard = $card->location === "reserved$playerId";
+        if ($isMyToyReservedCard) {
             // no need to check, bying from its reserve
         } else if ($from > 0) {
             if ($card->location_arg != $from) {
@@ -140,8 +141,9 @@ trait CardsActionTrait {
             }
             
         } else if ($from > 0) {
-            $message = $from == $playerId ? clienttranslate('${player_name} buys ${card_name} from reserved cards ${cost} [energy]') : 
-            clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
+            $message = $isMyToyReservedCard ?
+                clienttranslate('${player_name} buys ${card_name} from reserved cards for ${cost} [energy]') :
+                clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
             $this->notify->all("buyCard", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
@@ -154,7 +156,9 @@ trait CardsActionTrait {
                 'cost' => $cost,
             ]);
 
-            $this->applyGetEnergy($from, $cost, 0);
+            if (!$isMyToyReservedCard) {
+                $this->applyGetEnergy($from, $cost, 0);
+            }
             
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {            
             $this->notify->all("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
@@ -268,7 +272,7 @@ trait CardsActionTrait {
             $this->goToMimicSelection($playerId, MIMIC_CARD);
             return;
         }
-        if ($from === $playerId && $this->powerUpExpansion->isActive()) {
+        if ($isMyToyReservedCard && $this->powerUpExpansion->isActive()) {
             $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
             if (count($myToyEvolutions) > 0) {
                 $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->countCardsInLocation('reserved'.$playerId, $myToyEvolution->id) === 0));
