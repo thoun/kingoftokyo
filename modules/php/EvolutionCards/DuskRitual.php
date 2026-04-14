@@ -10,5 +10,5 @@ class DuskRitual extends EvolutionCard
         $this->evolutionType = TEMPORARY;
     }
 
-    // TODOPUHA to code
+    // TODOPUHA to code case 78: return /*_TODOPUHA*/("Play this card right after you buy a [keep] card. Gain 2[Heart] and 2[Energy].");
 }

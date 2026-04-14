@@ -10,5 +10,5 @@ class BoogieDance extends EvolutionCard
         $this->evolutionType = PERMANENT;
     }
 
-    // TODOPUHA to code
+    // TODOPUHA to code case 72: return /*_TODOPUHA*/("At the beginning of your turn, give 1[Energy] to the <i>Owner</i> of this card or lose 1[Heart]."); // TODOPUHA TOCHECK what if owner dies?
 }

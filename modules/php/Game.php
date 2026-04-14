@@ -171,7 +171,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_score_aux, player_monster) VALUES ";
+        $sql = "INSERT INTO player (player_id, player_color, player_name, player_score_aux, player_monster) VALUES ";
         $values = [];
         $affectedMonsters = [];
         $affectedPlayersMonsters = [];
@@ -194,7 +194,7 @@ class Game extends \Bga\GameFramework\Table {
             }
 
             $color = array_shift( $default_colors );
-            $values[] = "('".$playerId."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
+            $values[] = "('".$playerId."','$color','".addslashes( $player['player_name'] )."', $eliminationRank, $playerMonster)";
         }
         $sql .= implode(',', $values);
         $this->DbQuery($sql);
