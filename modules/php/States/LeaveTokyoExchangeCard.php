@@ -105,6 +105,10 @@ class LeaveTokyoExchangeCard extends GameState {
             'card_name2' => $exchangedCard->type,
         ]);
 
+        // Exchanging away Zombie can immediately kill a player at 0 HP.
+        $this->game->updateKillPlayersScoreAux();
+        $this->game->eliminatePlayers($currentPlayerId);
+
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
     }
 
