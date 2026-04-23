@@ -335,8 +335,8 @@ trait EvolutionCardsUtilTrait {
 
         $question = new Question(
             'GiveEnergyOrLoseHearts',
-            /*client TODOPUHA translate*/('Other monsters must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
-            /*client TODOPUHA translate*/('${you} must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
+            clienttranslate('Other monsters must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
+            clienttranslate('${you} must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
             [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
             [ 

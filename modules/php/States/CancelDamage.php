@@ -516,7 +516,7 @@ class CancelDamage extends GameState {
         $toPlayerId = $damageDealerId;
         $this->game->removeEvolution($fromPlayerId, $evolution);
         $this->game->powerUpExpansion->evolutionCards->moveCard($evolution, 'hand', $toPlayerId);
-        $message = /*client TODOPUHA translate*/('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
+        $message = clienttranslate('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
         $this->game->notifNewEvolutionCard($toPlayerId, $evolution, $message, [
             'card_name' => 3000 + $evolution->type,
             'player_name2' => $this->game->getPlayerNameById($fromPlayerId),

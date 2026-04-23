@@ -206,12 +206,12 @@ trait CardsActionTrait {
                     $newCardCost = $this->powerCards->getCardBaseCost($newCard->type);
 
                     if ($newCardCost % 2 == 0) {
-                        $this->notify->all("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
+                        $this->notify->all("log", clienttranslate('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
                             'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);
                     } else {
-                        $this->notify->all("log500", /*client TODOPUHA translate*/('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
+                        $this->notify->all("log500", clienttranslate('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
                             'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);

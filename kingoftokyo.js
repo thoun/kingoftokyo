@@ -3736,14 +3736,14 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 77: return /*_TODOPUHA*/ ("[6c5b55]Nighlife!");
             case 78: return /*_TODOPUHA*/ ("[6c5b55]Dusk [a68d83]Ritual");
             // Pumpkin Jack : dark de6428 light f7941d
-            case 81: return /*_TODOPUHA*/ ("[de6428]Detachable [f7941d]Head");
-            case 82: return /*_TODOPUHA*/ ("[de6428]Ignis [f7941d]Fatus");
-            case 83: return /*_TODOPUHA*/ ("[de6428]Smashing [f7941d]Pumpkin");
-            case 84: return /*_TODOPUHA*/ ("[de6428]Trick [f7941d]or Threat");
-            case 85: return /*_TODOPUHA*/ ("[de6428]Bobbing [f7941d]for Apples");
-            case 86: return /*_TODOPUHA*/ ("[de6428]Feast [f7941d]of Crows");
-            case 87: return /*_TODOPUHA*/ ("[de6428]Scythe");
-            case 88: return /*_TODOPUHA*/ ("[de6428]Candy!");
+            case 81: return _("[de6428]Detachable [f7941d]Head");
+            case 82: return _("[de6428]Ignis [f7941d]Fatus");
+            case 83: return _("[de6428]Smashing [f7941d]Pumpkin");
+            case 84: return _("[de6428]Trick [f7941d]or Threat");
+            case 85: return _("[de6428]Bobbing [f7941d]for Apples");
+            case 86: return _("[de6428]Feast [f7941d]of Crows");
+            case 87: return _("[de6428]Scythe");
+            case 88: return _("[de6428]Candy!");
             // Cthulhu
             // Anubis
             // King Kong TODOPUKK color codes
@@ -3910,14 +3910,14 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 77: return /*_TODOPUHA*/ ("When you enter <i>Tokyo</i>, gain 1[Heart].");
             case 78: return /*_TODOPUHA*/ ("Play this card right after you buy a [keep] card. Gain 2[Heart] and 2[Energy].");
             // Pumpkin Jack 
-            case 81: return /*_TODOPUHA*/ ("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
-            case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
-            case 83: return /*_TODOPUHA*/ ("All Monsters with 12 or more [Star] lose 2[Heart].");
-            case 84: return /*_TODOPUHA*/ ("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
-            case 85: return /*_TODOPUHA*/ ("Once per turn, you can buy a Power card for 2[Energy] less. If the Power card that replaces it has an odd cost, discard the one you just bought and regain the [Energy] you spent.");
-            case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
-            case 87: return /*_TODOPUHA*/ ("When you play this card and each time you eliminate a Monster, put 1[Energy] from the pool on this card. For each [Energy] on this card, add [diceSmash] to your Roll.");
-            case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/ ("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
+            case 81: return _("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
+            case 82: return _("You have one less Roll each turn.");
+            case 83: return _("All Monsters with 12 or more [Star] lose 2[Heart].");
+            case 84: return _("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
+            case 85: return _("Once per turn, you can buy a Power card for 2[Energy] less. If the Power card that replaces it has an odd cost, discard the one you just bought and regain the [Energy] you spent.");
+            case 86: return _("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
+            case 87: return _("When you play this card and each time you eliminate a Monster, put 1[Energy] from the pool on this card. For each [Energy] on this card, add [diceSmash] to your Roll.");
+            case 88: return "+1[Heart]<br>" + _("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
             // King Kong
             case 111: return /*_TODOPUKK*/ ("Play when you reach 0[Heart]. Gain 4[Heart], leave Tokyo, and continue playing.");
             case 112: return /*_TODOPUKK*/ ("Play when you Yield Tokyo. Gain [Heart] to your maximum amount. Skip your next turn.");
@@ -6685,7 +6685,7 @@ var MonsterSelector = /** @class */ (function () {
             html += "\n            <div class=\"monster-group\">\n                <div class=\"title\" style=\"--title-color: ".concat(group.color, ";\">").concat(group.title, "</div>      \n                <div class=\"monster-group-monsters\">");
             var groupMonsters = args.availableMonsters.filter(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
             groupMonsters.forEach(function (monster) {
-                html += "\n                    <div id=\"pick-monster-figure-".concat(monster, "-wrapper\">\n                        <div id=\"pick-monster-figure-").concat(monster, "\" class=\"monster-figure monster").concat(monster, "\">\n                            ").concat(_this.game.isPowerUpExpansion() && [18].includes(monster) ? "<div class=\"emblemalpha emblemstatus emblemstatus_nofold ttalphagame\"></div>" : "", "\n                        </div>");
+                html += "\n                    <div id=\"pick-monster-figure-".concat(monster, "-wrapper\">\n                        <div id=\"pick-monster-figure-").concat(monster, "\" class=\"monster-figure monster").concat(monster, "\">\n                            ").concat(_this.game.isPowerUpExpansion() && [7, 8].includes(monster) ? "<div class=\"emblemalpha emblemstatus emblemstatus_nofold ttalphagame\"></div>" : "", "\n                        </div>");
                 if (_this.game.isPowerUpExpansion()) {
                     html += "<div><button id=\"see-monster-evolution-".concat(monster, "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>").concat(_('Show Evolutions'), "</button></div>");
                 }
@@ -8604,7 +8604,7 @@ var KingOfTokyo = /** @class */ (function () {
         args.woundedPlayersIds.slice().reverse().forEach(function (woundedPlayerId) {
             var woundedPlayer = _this.getPlayer(woundedPlayerId);
             var cardType = Number(document.querySelector("[data-evolution-id=\"".concat(cardId, "\"]")).dataset.evolutionType);
-            var label = /*TODOPUHA_*/ ('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #".concat(woundedPlayer.color, ";\">").concat(woundedPlayer.name, "</strong>"));
+            var label = _('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #".concat(woundedPlayer.color, ";\">").concat(woundedPlayer.name, "</strong>"));
             var button = _this.createButton('endStealCostume_button', "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
             document.getElementById("giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button")).insertAdjacentElement('beforebegin', button);
         });

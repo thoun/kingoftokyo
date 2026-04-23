@@ -2272,7 +2272,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         args.woundedPlayersIds.slice().reverse().forEach(woundedPlayerId => {
             const woundedPlayer = this.getPlayer(woundedPlayerId);
             const cardType = Number((document.querySelector(`[data-evolution-id="${cardId}"]`) as HTMLDivElement).dataset.evolutionType);
-            const label = /*TODOPUHA_*/('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
+            const label = _('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
             const button = this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
             document.getElementById(`giveGift${cardId}to${woundedPlayerId}_button`).insertAdjacentElement('beforebegin', button);
         });
