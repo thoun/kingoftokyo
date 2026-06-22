@@ -1,12 +1,16 @@
-.player-board {
-  background-color: white;
+html[data-theme="light"] {
+  .player-board {
+    --game-bga-player-panel-background: white;
+  }
+}
 
+.player-board {
   &.active {
     box-shadow: 0px 0px 2px 3px #ffcf13;
   }
 
   &.eliminated-player {
-    background-color: #b9b9b9;
+    --game-bga-player-panel-background: #b9b9b9;
 
     .player-name a {
       text-decoration: line-through;

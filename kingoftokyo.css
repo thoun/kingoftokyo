@@ -1,11 +1,12 @@
-.player-board {
-  background-color: white;
+html[data-theme=light] .player-board {
+  --game-bga-player-panel-background: white;
 }
+
 .player-board.active {
   box-shadow: 0px 0px 2px 3px #ffcf13;
 }
 .player-board.eliminated-player {
-  background-color: #b9b9b9;
+  --game-bga-player-panel-background: #b9b9b9;
 }
 .player-board.eliminated-player .player-name a {
   text-decoration: line-through;
@@ -1977,6 +1978,7 @@ body > .card {
   bottom: 50px;
   left: 19px;
   right: 19px;
+  color: black;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.8);
   padding: 5px;
@@ -2572,6 +2574,7 @@ body.halloween .highlight-evolution, body.halloween .highlight-zombify {
 }
 
 #active-expansions-button {
+  color: black;
   background: white;
   padding: 0;
 }
@@ -2701,6 +2704,10 @@ body.halloween .highlight-evolution, body.halloween .highlight-zombify {
   box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.6666666667);
   border-radius: 10px;
   padding: 20px;
+}
+
+html[data-theme=dark] #popin_showActivatedExpansions {
+  background: var(--game-palette-bga-gray-244);
 }
 
 .kingoftokyo_popin {
@@ -3307,6 +3314,7 @@ html[data-dice="6"] .animation {
   gap: 10px;
 }
 #monster-pick .monster-group {
+  color: black;
   background: rgba(255, 255, 255, 0.6666666667);
 }
 #monster-pick .monster-group .title {

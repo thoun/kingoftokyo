@@ -1,6 +1,7 @@
 $expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04, #06b8ee, #5d7b38, #41423c, #b14e85;
 
 #active-expansions-button {
+    color: black;
     background: white;
     padding: 0;
 
@@ -89,6 +90,12 @@ $expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04, #06b8ee,
     box-shadow: 3px 3px 10px 1px #000a;
     border-radius: 10px;
     padding: 20px;
+}
+
+html[data-theme="dark"] {
+    #popin_showActivatedExpansions {
+        background: var(--game-palette-bga-gray-244);
+    }
 }
 
 .kingoftokyo_popin {
