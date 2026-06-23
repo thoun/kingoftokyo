@@ -7424,14 +7424,29 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringStealCostumeCard = function (args, isCurrentPlayerActive) {
         var _this = this;
-        var _a;
+        var _a, _b, _c;
         if (!args.canGiveGift && !args.canBuyFromPlayers && !this.isHalloweenExpansion()) {
-            this.setGamestateDescription('Give');
+            // Conceal case: player has no Gift cards and Halloween isn't active.
+            // Other players should see a neutral message that doesn't leak hand contents.
+            this.gamedatas.gamestate.description = _('${actplayer} can play an Evolution card');
+            this.bga.gameui.updatePageTitle();
         }
         if (args.canGiveGift) {
-            this.setGamestateDescription(args.canBuyFromPlayers ? "StealAndGive" : 'Give');
-            if (isCurrentPlayerActive) {
-                (_a = this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.setSelectionMode('single');
+            var playerTable = this.getPlayerTable(this.getPlayerId());
+            var hasGift = ((_a = playerTable.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.getCards().some(function (c) { return _this.gamedatas.EVOLUTION_CARDS_TYPES[c.type] === 3; })) ||
+                ((_b = playerTable.hiddenEvolutionCards) === null || _b === void 0 ? void 0 : _b.getCards().some(function (c) { return _this.gamedatas.EVOLUTION_CARDS_TYPES[c.type] === 3; }));
+            if (hasGift) {
+                if (args.canBuyFromPlayers) {
+                    this.gamedatas.gamestate.descriptionmyturn = _('${you} can give a Gift Evolution and/or steal a Costume card');
+                }
+                else {
+                    this.gamedatas.gamestate.description = _('${actplayer} can play an Evolution card');
+                    this.gamedatas.gamestate.descriptionmyturn = _('${you} can give a Gift Evolution');
+                }
+                this.bga.gameui.updatePageTitle();
+                if (isCurrentPlayerActive) {
+                    (_c = playerTable.visibleEvolutionCards) === null || _c === void 0 ? void 0 : _c.setSelectionMode('single');
+                }
             }
         }
         if (isCurrentPlayerActive) {
@@ -8595,7 +8610,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.chooseEvolutionCard(id);
         }
     };
-    KingOfTokyo.prototype.onSelectGiftEvolution = function (cardId) {
+    KingOfTokyo.prototype.onSelectGiftEvolution = function (cardId, cardType) {
         var _this = this;
         var generalActionButtons = Array.from(document.getElementById("generalactions").getElementsByClassName("action-button"));
         generalActionButtons = generalActionButtons.slice(0, generalActionButtons.findIndex(function (button) { return button.id == 'endStealCostume_button'; }));
@@ -8603,10 +8618,9 @@ var KingOfTokyo = /** @class */ (function () {
         var args = this.gamedatas.gamestate.args;
         args.woundedPlayersIds.slice().reverse().forEach(function (woundedPlayerId) {
             var woundedPlayer = _this.getPlayer(woundedPlayerId);
-            var cardType = Number(document.querySelector("[data-evolution-id=\"".concat(cardId, "\"]")).dataset.evolutionType);
             var label = _('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #".concat(woundedPlayer.color, ";\">").concat(woundedPlayer.name, "</strong>"));
-            var button = _this.createButton('endStealCostume_button', "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
-            document.getElementById("giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button")).insertAdjacentElement('beforebegin', button);
+            var button = _this.bga.statusBar.addActionButton(label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, { id: "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), });
+            document.getElementById('endStealCostume_button').insertAdjacentElement('beforebegin', button);
         });
     };
     KingOfTokyo.prototype.onHiddenEvolutionClick = function (card) {
@@ -8622,8 +8636,9 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
         else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(card.id);
-            this.onSelectGiftEvolution(card.id);
+            if (this.gamedatas.EVOLUTION_CARDS_TYPES[card.type] === 3) {
+                this.onSelectGiftEvolution(card.id, card.type);
+            }
             return;
         }
         var args = this.gamedatas.gamestate.args;
@@ -8635,6 +8650,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onVisibleEvolutionClick = function (cardId) {
+        var _a;
         var stateName = this.getStateName();
         if (stateName === 'answerQuestion') {
             var args = this.gamedatas.gamestate.args;
@@ -8646,7 +8662,11 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
         else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(cardId);
+            var playerTable = this.getPlayerTable(this.getPlayerId());
+            var card = (_a = playerTable.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.getCards().find(function (c) { return c.id === cardId; });
+            if (card && this.gamedatas.EVOLUTION_CARDS_TYPES[card.type] === 3) {
+                this.onSelectGiftEvolution(cardId, card.type);
+            }
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {

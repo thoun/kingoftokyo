@@ -951,13 +951,29 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
         if (!args.canGiveGift && !args.canBuyFromPlayers && !this.isHalloweenExpansion()) {
-            this.setGamestateDescription('Give');
+            // Conceal case: player has no Gift cards and Halloween isn't active.
+            // Other players should see a neutral message that doesn't leak hand contents.
+            this.gamedatas.gamestate.description = _('${actplayer} can play an Evolution card');
+            this.bga.gameui.updatePageTitle();
         }
         if (args.canGiveGift) {
-            this.setGamestateDescription(args.canBuyFromPlayers ? `StealAndGive` : 'Give');
+            const playerTable = this.getPlayerTable(this.getPlayerId());
+            const hasGift = 
+                playerTable.visibleEvolutionCards?.getCards().some(c => this.gamedatas.EVOLUTION_CARDS_TYPES[c.type] === 3) ||
+                playerTable.hiddenEvolutionCards?.getCards().some(c => this.gamedatas.EVOLUTION_CARDS_TYPES[c.type] === 3);
 
-            if (isCurrentPlayerActive) {
-                this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards?.setSelectionMode('single');
+            if (hasGift) {
+                if (args.canBuyFromPlayers) {
+                    this.gamedatas.gamestate.descriptionmyturn = _('${you} can give a Gift Evolution and/or steal a Costume card');
+                } else {
+                    this.gamedatas.gamestate.description = _('${actplayer} can play an Evolution card');
+                    this.gamedatas.gamestate.descriptionmyturn = _('${you} can give a Gift Evolution');
+                }
+                this.bga.gameui.updatePageTitle();
+
+                if (isCurrentPlayerActive) {
+                    playerTable.visibleEvolutionCards?.setSelectionMode('single');
+                }
             }
         }
 
@@ -2264,17 +2280,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    public onSelectGiftEvolution(cardId: number) {
+    public onSelectGiftEvolution(cardId: number, cardType: number) {
         let generalActionButtons = Array.from(document.getElementById(`generalactions`).getElementsByClassName(`action-button`)) as HTMLElement[];
         generalActionButtons = generalActionButtons.slice(0, generalActionButtons.findIndex(button => button.id == 'endStealCostume_button'));
         generalActionButtons.forEach(generalActionButton => generalActionButton.remove());
         const args = this.gamedatas.gamestate.args as EnteringStealCostumeCardArgs;
         args.woundedPlayersIds.slice().reverse().forEach(woundedPlayerId => {
             const woundedPlayer = this.getPlayer(woundedPlayerId);
-            const cardType = Number((document.querySelector(`[data-evolution-id="${cardId}"]`) as HTMLDivElement).dataset.evolutionType);
             const label = _('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
-            const button = this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
-            document.getElementById(`giveGift${cardId}to${woundedPlayerId}_button`).insertAdjacentElement('beforebegin', button);
+            const button = this.bga.statusBar.addActionButton(label, () => this.giveGiftEvolution(cardId, woundedPlayerId), { id: `giveGift${cardId}to${woundedPlayerId}_button`, });
+            document.getElementById('endStealCostume_button').insertAdjacentElement('beforebegin', button);
         });
     }
 
@@ -2288,8 +2303,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 return;
             }
         } else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(card.id);
-            this.onSelectGiftEvolution(card.id);
+            if (this.gamedatas.EVOLUTION_CARDS_TYPES[card.type] === 3) {
+                this.onSelectGiftEvolution(card.id, card.type);
+            }
             return;
         }
         
@@ -2314,7 +2330,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.chooseMimickedEvolution(Number(cardId));
             }
         } else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(cardId);
+            const playerTable = this.getPlayerTable(this.getPlayerId());
+            const card = playerTable.visibleEvolutionCards?.getCards().find(c => c.id === cardId);
+            if (card && this.gamedatas.EVOLUTION_CARDS_TYPES[card.type] === 3) {
+                this.onSelectGiftEvolution(cardId, card.type);
+            }
         }
     }
     
