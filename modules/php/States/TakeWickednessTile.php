@@ -63,14 +63,14 @@ class TakeWickednessTile extends GameState {
     #[PossibleAction]
     public function actTakeWickednessTile(int $id, int $currentPlayerId) {
         $level = $this->game->wickednessExpansion->canTakeWickednessTile($currentPlayerId);
-        $tile = $this->game->wickednessTiles->getCardById($id);
+        $tile = $this->game->wickednessTiles->items->getItemById($id);
 
         $tableTiles = $this->game->wickednessTiles->getTable($level);
         if (!Arrays::some($tableTiles, fn($t) => $t->id === $tile->id)) {
             throw new \BgaUserException("This tile is not on the table");
         }
 
-        $this->game->wickednessTiles->moveCard($tile, 'hand', $currentPlayerId);
+        $this->game->wickednessTiles->items->moveItem($tile, ['hand', $currentPlayerId]);
 
         $this->notify->all("takeWickednessTile", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $currentPlayerId,
@@ -130,4 +130,3 @@ class TakeWickednessTile extends GameState {
         $this->game->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '$levelsJson' where `player_id` = $playerId");
     }
 }
-

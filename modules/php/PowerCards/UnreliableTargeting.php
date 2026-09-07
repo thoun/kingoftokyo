@@ -16,8 +16,8 @@ class UnreliableTargeting extends PowerCard
             $context->game->removeCard($context->currentPlayerId, $this);
         } else {
             $this->activated = null;
-            $context->game->powerCards->updateCard($this, 'activated');
-            $context->game->powerCards->moveCard($this, 'hand', $context->targetPlayerId);
+            $context->game->powerCards->items->updateItem($this, 'activated');
+            $context->game->powerCards->items->moveItem($this, ['hand', $context->targetPlayerId]);
 
             $context->game->notify->all("buyCard", clienttranslate('${player_name2} gives ${card_name} to ${player_name}'), [
                 'playerId' => $context->targetPlayerId,

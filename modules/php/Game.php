@@ -154,8 +154,8 @@ class Game extends \Bga\GameFramework\Table {
         the game is ready to be played.
     */
     protected function setupNewGame($players, $options = []) {  
-        $this->powerCards->initDb();
-        $this->wickednessTiles->initDb();
+        $this->powerCards->items->initDb();
+        $this->wickednessTiles->items->initDb();
         $this->powerUpExpansion->initDb();
         $this->anubisExpansion->initDb();
         $this->mindbugExpansion->initDb(array_keys($players));
@@ -343,7 +343,7 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($this->isMutantEvolutionVariant()) {
             foreach ($playersIds as $playerId) {
-                $this->powerCards->pickCardForLocation('mutantdeck', null, 'hand', $playerId);
+                $this->powerCards->items->pickItem('mutantdeck', ['hand', $playerId]);
             }
         }
 
@@ -419,8 +419,8 @@ class Game extends \Bga\GameFramework\Table {
                 $playerDb['score'] = MAX_POINT;
             }
 
-            $playerDb['cards'] = $this->powerCards->getCardsInLocation('hand', $playerId);
-            $playerDb['reservedCards'] = $this->powerCards->getCardsInLocation('reserved'.$playerId);
+            $playerDb['cards'] = $this->powerCards->items->getItemsInLocation(['hand', $playerId])->values();
+            $playerDb['reservedCards'] = $this->powerCards->items->getItemsInLocation('reserved'.$playerId)->values();
 
             foreach($playerDb['cards'] as &$card) {
                 if ($card->type == MIMIC_CARD) {
@@ -545,7 +545,7 @@ class Game extends \Bga\GameFramework\Table {
 
     #[CheckAction(false)]
     function actPlayEvolution(int $id, int $currentPlayerId): void {
-        $card = $this->powerUpExpansion->evolutionCards->getCardById($id);
+        $card = $this->powerUpExpansion->evolutionCards->items->getItemById($id);
 
         if ($card->location != 'hand') {
             throw new \BgaUserException('Evolution card is not in your hand');
@@ -556,7 +556,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->powerUpExpansion->applyPlayEvolution($currentPlayerId, $card);
 
         // if the player has no more evolution cards, we skip the state for him
-        if ($this->powerUpExpansion->evolutionCards->countCardsInLocation('hand', $currentPlayerId) == 0) {
+        if ($this->powerUpExpansion->evolutionCards->items->countItemsInLocation(['hand', $currentPlayerId]) == 0) {
             $stateId = $this->gamestate->getCurrentMainStateId();
 
             if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_DURING_RESOLVE_DICE])) {
@@ -724,7 +724,7 @@ class Game extends \Bga\GameFramework\Table {
     private function everyPlayerHasEvolutionCard(): bool {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
-            if ($this->powerUpExpansion->evolutionCards->countCardsInLocation('hand', $playerId) == 0) {
+            if ($this->powerUpExpansion->evolutionCards->items->countItemsInLocation(['hand', $playerId]) == 0) {
                 return false;
             }
         }

@@ -53,7 +53,7 @@ trait CardsActionTrait {
     */
 
     function applyBuyCard(int $playerId, int $id, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
-        $card = $this->powerCards->getCardById($id);
+        $card = $this->powerCards->items->getItemById($id);
         $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
@@ -110,7 +110,7 @@ trait CardsActionTrait {
                 $this->removeCard($from, $card, true, false, true);
             }
         }
-        $this->powerCards->moveCard($card, 'hand', $playerId);
+        $this->powerCards->items->moveItem($card, ['hand', $playerId]);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
@@ -137,7 +137,7 @@ trait CardsActionTrait {
                 $this->removeCard($playerId, $card, false, true);
                 
                 $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1 WHERE `card_location` = 'deck'");
-                $this->powerCards->moveCard($card, 'deck', 0);
+                $this->powerCards->items->moveItem($card, ['deck', 0]);
             }
             
         } else if ($from > 0) {
@@ -175,7 +175,7 @@ trait CardsActionTrait {
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
-            $numberOfCardsInTable = $this->powerCards->countCardsInLocation('table');
+            $numberOfCardsInTable = $this->powerCards->items->countItemsInLocation('table');
 
             $newCard = $numberOfCardsInTable < 3 ?
                 $this->powerCards->pickCardForLocationOldOrder('deck', 'table', $cardLocationArg) :
@@ -275,7 +275,7 @@ trait CardsActionTrait {
         if ($isMyToyReservedCard && $this->powerUpExpansion->isActive()) {
             $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
             if (count($myToyEvolutions) > 0) {
-                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->countCardsInLocation('reserved'.$playerId, $myToyEvolution->id) === 0));
+                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->items->countItemsInLocation(['reserved'.$playerId, $myToyEvolution->id]) === 0));
 
                 if (count($myToyEvolutions) > 0) {
                     $myToyEvolutions[0]->myToyQuestion(new Context($this, $playerId));
@@ -292,7 +292,7 @@ trait CardsActionTrait {
     function actBuyCard(int $id, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->powerCards->getCardById($id);
+        $card = $this->powerCards->items->getItemById($id);
         if (!$card) {
             throw new UserException('Invalid card id (buyCard)');
         }
@@ -373,7 +373,7 @@ trait CardsActionTrait {
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
-        $this->powerCards->moveCard($card, 'hand', $playerId);
+        $this->powerCards->items->moveItem($card, ['hand', $playerId]);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {

@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\PowerCards;
 
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
 class Treasure extends PowerCard
 {
     public function immediateEffect(Context $context) {
-        $discardCards = $context->game->powerCards->getCardsInLocation('discard');
-        $cards = Arrays::filter($discardCards, fn($card) => $card->type >= 400 && $card->type < 500);
+        $cards = $context->game->powerCards->items->getItemsInLocation('discard')
+            ->filter(fn($card) => $card->type >= 400 && $card->type < 500)
+            ->values();
         if (count($cards) === 0) {
             throw new \BgaUserException("No <CONSUMABLE> cards in discard pile");
         }

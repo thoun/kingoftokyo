@@ -3,14 +3,8 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo;
 
-require_once(__DIR__.'/framework-prototype/item/item.php');
-require_once(__DIR__.'/framework-prototype/item/item-field.php');
-require_once(__DIR__.'/framework-prototype/item/item-location.php');
-require_once(__DIR__.'/framework-prototype/item/item-manager.php');
-require_once(__DIR__.'/framework-prototype/item/card-manager.php');
-
-use Bga\GameFrameworkPrototype\Item\ItemLocation;
-use \Bga\GameFrameworkPrototype\Item\CardManager;
+use Bga\GameFramework\Components\ItemManager\ItemLocation;
+use Bga\GameFramework\Components\ItemManager\ItemManager;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 
@@ -41,31 +35,40 @@ const CURSE_CARD_CLASSES = [
     SCRIBE_S_PERSEVERANCE_CURSE_CARD => 'ScribePerseverance',
 ];
 
-class CurseCardManager extends CardManager {
+class CurseCardManager {
+    /** @var ItemManager<CurseCard> */
+    public ItemManager $items;
 
     function __construct(
-        protected $game,
+        protected Game $game,
     ) {
-        parent::__construct(
+        $this->items = $game->bga->itemManagerFactory->createItemManager(
             CurseCard::class,
-            [
+            classNameResolver: [$this, 'getClassName'],
+            locations: [
                 new ItemLocation('deck', autoReshuffleFrom: 'discard'),
+                new ItemLocation('discard'),
+                new ItemLocation('table'),
             ],
         );
     }
 
     function setup() {
+        $cards = [];
         for($value=1; $value<=24; $value++) {
-            $cards[] = ['type' => $value, 'location' => 'deck', 'type_arg' => 0, 'nbr' => 1];
+            $cards[] = ['type' => $value, 'location' => 'deck'];
         }
-        $this->createCards($cards);
-        $this->shuffle('deck'); 
+        $this->items->createItems($cards);
+        $this->items->shuffle('deck');
 
         // init first curse card
-        $this->pickCardForLocation('deck', null, 'table');
+        $this->items->pickItem('deck', ['table', 0]);
     }
 
     public function getClassName(?array $dbItem): ?string {
+        if ($dbItem === null) {
+            return CurseCard::class;
+        }
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, CURSE_CARD_CLASSES)) {
             return null;
@@ -78,11 +81,11 @@ class CurseCardManager extends CardManager {
     }
 
     function getCurrent() {
-        return $this->getCardsInLocation('table')[0];
+        return $this->items->getItemsInLocation('table')->first();
     }
 
     function getTopDeck() {
-        return CurseCard::onlyId($this->getCardOnTop('deck'));
+        return CurseCard::onlyId($this->items->getItemOnTop('deck'));
     }
 
     public function immediateEffect(CurseCard $card, Context $context) {

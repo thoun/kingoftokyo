@@ -313,16 +313,14 @@ trait DebugUtilTrait {
 
     #[Debug(reload: true)]
     function debug_SetWickednessTileInTable(int $cardType) {
-        $cards = $this->wickednessTiles->getCardsByFieldName('type', [$cardType]);
-        $card = $cards[0];
-        $this->wickednessTiles->moveCard($card, 'table');
+        $card = $this->wickednessTiles->items->getItemsByFieldName('type', $cardType)->first();
+        $this->wickednessTiles->items->moveItem($card, ['table', 0]);
     }
 
     #[Debug(reload: true)]
     function debug_SetWickednessTileInHand(int $cardType, int $playerId) {
-        $cards = $this->wickednessTiles->getCardsByFieldName('type', [$cardType]);
-        $card = $cards[0];
-        $this->wickednessTiles->moveCard($card, 'hand', $playerId);
+        $card = $this->wickednessTiles->items->getItemsByFieldName('type', $cardType)->first();
+        $this->wickednessTiles->items->moveItem($card, ['hand', $playerId]);
         return $card;
     }
 
@@ -336,15 +334,15 @@ trait DebugUtilTrait {
     function debug_SetCardInTable(int $cardType) {
         $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         if (!$card) {
-            $this->powerCards->createCards([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
+            $this->powerCards->items->createItems([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
             $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         }
-        $this->powerCards->moveCard($card, 'table', 1);
+        $this->powerCards->items->moveItem($card, ['table', 1]);
     }
 
     // debug_SetCardInDiscard(110)
     /*function debug_SetCardInDiscard(int $cardType) {
-        $this->powerCards->moveCard($this->powerCards->getCardsOfType($cardType)[0], 'discard');
+        $this->powerCards->items->moveItem($this->powerCards->getCardsOfType($cardType)[0], ['discard', 0]);
     }*/
 
     /*function debug_SetCardIn(int $cardId, bool $other = true) {
@@ -353,7 +351,7 @@ trait DebugUtilTrait {
             'otherLog' => $other,
         ]);
 
-        $this->powerCards->moveCard($this->powerCards->getCardById($cardId), 'hand', $other ? 23 : 13);
+        $this->powerCards->items->moveItem($this->powerCards->items->getItemById($cardId), ['hand', $other ? 23 : 13]);
         //return $card;
     }*/
 
@@ -361,16 +359,16 @@ trait DebugUtilTrait {
     public function debug_SetCardInPlayerHand(int $cardType, int $playerId) {
         $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         if (!$card) {
-            $this->powerCards->createCards([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
+            $this->powerCards->items->createItems([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
             $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
         }
-        $this->powerCards->moveCard($card, 'hand', $playerId);
+        $this->powerCards->items->moveItem($card, ['hand', $playerId]);
         return $card;
     }
 
     function debugSetEvolutionForPlayer(int $cardType, int $playerId, bool $visible, ?int $owner = null) {
-        $card = $this->powerUpExpansion->evolutionCards->getCardsByFieldName('type', [$cardType])[0];
-        $this->powerUpExpansion->evolutionCards->moveCard($card, $visible ? 'table' : 'hand', $playerId);
+        $card = $this->powerUpExpansion->evolutionCards->items->getItemsByFieldName('type', $cardType)->first();
+        $this->powerUpExpansion->evolutionCards->items->moveItem($card, [$visible ? 'table' : 'hand', $playerId]);
         $ownerId = $owner === null ? $playerId : $owner;
         $this->DbQuery("UPDATE evolution_card SET owner_id=$ownerId WHERE card_id = $card->id");
         return $card;
@@ -428,10 +426,9 @@ trait DebugUtilTrait {
 
     /*function debug_SetCurseCardInTable(int $cardType) {
         if ($this->anubisExpansion->isActive()) {
-            $cards = $this->anubisExpansion->curseCards->getCardsByFieldName('type', [$cardType]);
-            $card = $cards[0];
-            $this->anubisExpansion->curseCards->moveAllCardsInLocation('table', 'discard');
-            $this->anubisExpansion->curseCards->moveCard($card, 'table');
+            $card = $this->anubisExpansion->curseCards->items->getItemsByFieldName('type', $cardType)->first();
+            $this->anubisExpansion->curseCards->items->moveAllItemsInLocation('table', ['discard', 0]);
+            $this->anubisExpansion->curseCards->items->moveItem($card, ['table', 0]);
         }
     }*/
 

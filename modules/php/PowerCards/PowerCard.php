@@ -1,8 +1,9 @@
 <?php
 namespace Bga\Games\KingOfTokyo\PowerCards;
 
-use \Bga\GameFrameworkPrototype\Item\Item;
-use \Bga\GameFrameworkPrototype\Item\ItemField;
+use Bga\GameFramework\Components\ItemManager\Item;
+use Bga\GameFramework\Components\ItemManager\ItemField;
+use Bga\GameFramework\Components\ItemManager\ItemFieldKind;
 use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 
 const HUNTER = 'HUNTER';
@@ -21,18 +22,18 @@ interface AddSmashesPowerCard {
 
 #[Item('card')]
 class PowerCard {
-    #[ItemField(kind: 'id', dbField: 'card_id')]
+    #[ItemField(kind: ItemFieldKind::ID, dbField: 'card_id')]
     public int $id;
-    #[ItemField(kind: 'location', dbField: 'card_location')]
+    #[ItemField(kind: ItemFieldKind::LOCATION, dbField: 'card_location')]
     public string $location;
-    #[ItemField(kind: 'location_arg', dbField: 'card_location_arg')]
+    #[ItemField(kind: ItemFieldKind::LOCATION, dbField: 'card_location_arg', locationIndex: 1)]
     public ?int $location_arg;
     #[ItemField(dbField: 'card_type')]
     public int $type;
     #[ItemField(dbField: 'card_type_arg')]
     public int $type_arg;
-    #[ItemField(kind: 'order')]
-    public ?int $order;
+    #[ItemField(kind: ItemFieldKind::ORDER)]
+    public int $order = 0;
 
     #[ItemField]
     public ?int $used;

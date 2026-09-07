@@ -3,14 +3,9 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo;
 
-require_once(__DIR__.'/framework-prototype/item/item.php');
-require_once(__DIR__.'/framework-prototype/item/item-field.php');
-require_once(__DIR__.'/framework-prototype/item/item-location.php');
-require_once(__DIR__.'/framework-prototype/item/item-manager.php');
-require_once(__DIR__.'/framework-prototype/item/card-manager.php');
-
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
-use \Bga\GameFrameworkPrototype\Item\CardManager;
+use Bga\GameFramework\Components\ItemManager\ItemLocation;
+use Bga\GameFramework\Components\ItemManager\ItemManager;
+use Bga\GameFramework\Helpers\Collection;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
@@ -63,14 +58,22 @@ const WICKEDNESS_TILE_CLASSES = [
     STARBURST_WICKEDNESS_TILE => 'Starburst',
 ];
 
-class WickednessTileManager extends CardManager {
+class WickednessTileManager {
+    /** @var ItemManager<WickednessTile> */
+    public ItemManager $items;
 
     function __construct(
-        protected $game,
+        protected Game $game,
     ) {
-        parent::__construct(
+        $this->items = $game->bga->itemManagerFactory->createItemManager(
             WickednessTile::class,
-            [],
+            classNameResolver: [$this, 'getClassName'],
+            locations: [
+                new ItemLocation('deck'),
+                new ItemLocation('discard'),
+                new ItemLocation('table'),
+                new ItemLocation('hand'),
+            ],
         );
     }
 
@@ -80,19 +83,22 @@ class WickednessTileManager extends CardManager {
             $level = $value > 8 ? 10 : ($value > 4 ? 6 : 3);
             $cards[] = ['location' => 'table', 'location_arg' => $level, 'type' => $value + 100 * $cardSide, 'tokens' => 0];
         }
-        $this->createCards($cards);
+        $this->items->createItems($cards);
 
-        $allTiles = $this->getCardsInLocation('deck');
+        $allTiles = $this->items->getItemsInLocation('deck');
 
         foreach ([3, 6, 10] as $level) {
-            $levelTiles = Arrays::filter($allTiles, fn($tile) =>
+            $levelTiles = $allTiles->filter(fn($tile) =>
                 $level === (($tile->type % 100) > 8 ? 10 : (($tile->type % 100) > 4 ? 6 : 3))
             );
-            $this->moveCards($levelTiles, 'table', $level);
+            $this->items->moveItems($levelTiles, ['table', $level]);
         }
     }
 
     public function getClassName(?array $dbItem): ?string {
+        if ($dbItem === null) {
+            return WickednessTile::class;
+        }
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, WICKEDNESS_TILE_CLASSES)) {
             throw new \BgaSystemException('Unexisting WickednessTile class');
@@ -107,14 +113,15 @@ class WickednessTileManager extends CardManager {
      * @return WickednessTile[]
      */
     public function getTable(?int $level = null): array {
-        return $this->getCardsInLocation('table', $level);
+        $location = $level === null ? 'table' : ['table', $level];
+        return $this->items->getItemsInLocation($location)->values();
     }
 
     /**
      * @return WickednessTile[]
      */
     public function getPlayerTiles(int $playerId): array {
-        return $this->getCardsInLocation('hand', $playerId);
+        return $this->items->getItemsInLocation(['hand', $playerId])->values();
     }
 
     public function immediateEffect(WickednessTile $tile, Context $context): void {
@@ -229,17 +236,15 @@ class WickednessTileManager extends CardManager {
     }
 
     public function onAddSmashes(Context $context): array {
-        $tiles = $this->getPlayerTiles($context->currentPlayerId);
-        $tiles = Arrays::filter($tiles, fn($tile) => method_exists($tile, 'addSmashes'));
+        // Antimatter Beam multiplication must happen after additions such as Barbs.
+        $tiles = (new Collection($this->getPlayerTiles($context->currentPlayerId)))
+            ->filter(fn($tile) => method_exists($tile, 'addSmashes'))
+            ->sort(
+                fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1)
+                    <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
+            );
         $addedByTiles = 0;
         $addingTiles = [];
-
-        // to make sure antimatter beam multiplication is done after barbs addition
-        /** @var AddSmashesPowerCard[] $tiles */
-        usort($tiles, 
-            // Sort by the return value of addSmashesOrder, smaller order first
-            fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1) <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
-        );
 
         foreach ($tiles as $tile) {
             $addedByTile = $tile->addSmashes($context);

@@ -48,7 +48,7 @@ class ChangeMimickedCard extends GameState {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $card = $this->game->powerCards->getCardById($cardId);
+        $card = $this->game->powerCards->items->getItemById($cardId);
         if ($card->type > 100 || $card->type == \MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -71,4 +71,3 @@ class ChangeMimickedCard extends GameState {
         return $this->actSkipChangeMimickedCard($playerId);
     }
 }
-

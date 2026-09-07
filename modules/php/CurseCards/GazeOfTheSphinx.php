@@ -32,8 +32,8 @@ class GazeOfTheSphinx extends CurseCard {
         $canLoseEvolution = false;
         if ($context->game->powerUpExpansion->isActive()) {
             $canLoseEvolution = (
-                $context->game->powerUpExpansion->evolutionCards->countCardsInLocation('table', $context->currentPlayerId) +
-                $context->game->powerUpExpansion->evolutionCards->countCardsInLocation('hand', $context->currentPlayerId)
+                $context->game->powerUpExpansion->evolutionCards->items->countItemsInLocation(['table', $context->currentPlayerId]) +
+                $context->game->powerUpExpansion->evolutionCards->items->countItemsInLocation(['hand', $context->currentPlayerId])
             ) > 0;
         }
         if ($canLoseEvolution) {

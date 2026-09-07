@@ -264,7 +264,7 @@ class ChangeDie extends GameState {
 
     #[PossibleAction]
     function actUseEnergyInfusedMonster(int $id, int $activePlayerId) {
-        $evolution = $this->game->powerUpExpansion->evolutionCards->getCardById($id);
+        $evolution = $this->game->powerUpExpansion->evolutionCards->items->getItemById($id);
         
         /** @disregard */
         $evolution->applyEffect(new Context($this->game, $activePlayerId));

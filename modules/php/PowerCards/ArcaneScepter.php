@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\PowerCards;
 
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
@@ -13,8 +12,9 @@ class ArcaneScepter extends PowerCard
         $this->mindbugKeywords = [SNEAKY];
     }
     public function immediateEffect(Context $context) {
-        $discardCards = $context->game->powerCards->getCardsInLocation('discard');
-        $cards = Arrays::filter($discardCards, fn($card) => $card->type >= 400 && $card->type < 500);
+        $cards = $context->game->powerCards->items->getItemsInLocation('discard')
+            ->filter(fn($card) => $card->type >= 400 && $card->type < 500)
+            ->values();
         if (count($cards) === 0) {
             $context->game->notify->all(clienttranslate('There is no <CONSUMABLE> card in the discard pile, Arcane Scepter effect is skipped'));
             return;

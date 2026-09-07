@@ -1,21 +1,22 @@
 <?php
 namespace Bga\Games\KingOfTokyo\CurseCards;
 
-use \Bga\GameFrameworkPrototype\Item\Item;
-use \Bga\GameFrameworkPrototype\Item\ItemField;
+use Bga\GameFramework\Components\ItemManager\Item;
+use Bga\GameFramework\Components\ItemManager\ItemField;
+use Bga\GameFramework\Components\ItemManager\ItemFieldKind;
 
 #[Item('curse_card')]
 class CurseCard {
-    #[ItemField(kind: 'id', dbField: 'card_id')]
+    #[ItemField(kind: ItemFieldKind::ID, dbField: 'card_id')]
     public int $id;
-    #[ItemField(kind: 'location', dbField: 'card_location')]
+    #[ItemField(kind: ItemFieldKind::LOCATION, dbField: 'card_location')]
     public string $location;
-    #[ItemField(kind: 'location_arg', dbField: 'card_location_arg')]
+    #[ItemField(kind: ItemFieldKind::LOCATION, dbField: 'card_location_arg', locationIndex: 1)]
     public ?int $location_arg;
     #[ItemField(dbField: 'card_type')]
     public int $type;
-    #[ItemField(kind: 'order')]
-    public ?int $order;
+    #[ItemField(kind: ItemFieldKind::ORDER)]
+    public int $order = 0;
 
     public static function onlyId(?CurseCard $card) {
         if ($card == null) {

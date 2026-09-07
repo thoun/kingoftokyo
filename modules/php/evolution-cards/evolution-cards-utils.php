@@ -24,23 +24,24 @@ trait EvolutionCardsUtilTrait {
     ////////////
 
     function getEvolutionCardsByLocation(string $location, ?int $location_arg = null, ?int $type = null) {
-        $cards = $this->powerUpExpansion->evolutionCards->getCardsInLocation($location, $location_arg, true, sortByField: 'location_arg');
+        $itemLocation = $location_arg === null ? $location : [$location, $location_arg];
+        $cards = $this->powerUpExpansion->evolutionCards->items->getItemsInLocation($itemLocation, true, sortByField: 'location_arg');
         if ($type !== null) {
-            $cards = Arrays::filter($cards, fn($card) => $card->type === $type);
+            $cards = $cards->where('type', $type);
         }
-        return $cards;
+        return $cards->values();
     }
 
     function getEvolutionCardsByType(int $type) {
-        return $this->powerUpExpansion->evolutionCards->getCardsByFieldName('type', [$type]);
+        return $this->powerUpExpansion->evolutionCards->items->getItemsByFieldName('type', $type)->values();
     }
 
     function getEvolutionCardsByOwner(int $ownerId) {
-        return $this->powerUpExpansion->evolutionCards->getCardsByFieldName('ownerId', [$ownerId]);
+        return $this->powerUpExpansion->evolutionCards->items->getItemsByFieldName('ownerId', $ownerId)->values();
     }
 
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
-        return $this->powerUpExpansion->evolutionCards->getCardsInLocation("deck$playerId", null, true, $number, sortByField: 'location_arg');
+        return $this->powerUpExpansion->evolutionCards->items->getItemsInLocation("deck$playerId", true, $number, 'location_arg')->values();
     }
 
     function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null, $fromPlayerId = null) {
@@ -48,7 +49,7 @@ trait EvolutionCardsUtilTrait {
             $message = clienttranslate('${player_name} plays ${card_name}');
         }
 
-        $this->powerUpExpansion->evolutionCards->moveCard($card, 'table', $playerId);
+        $this->powerUpExpansion->evolutionCards->items->moveItem($card, ['table', $playerId]);
         $card->location = 'table';
 
         $this->notify->all("playEvolution", $message, [
@@ -67,7 +68,7 @@ trait EvolutionCardsUtilTrait {
         $playersIds = $isPowerUpMutantEvolution ? $this->getPlayersIds(true) : $playersIds;
 
         // ignore a player if its hand is empty
-        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->countCardsInLocation('hand', $playerId) > 0));
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->items->countItemsInLocation(['hand', $playerId]) > 0));
 
         if (count($playersIds) == 0) {
             return [];
@@ -150,14 +151,14 @@ trait EvolutionCardsUtilTrait {
             $this->removeMimicEvolutionToken($playerId);
         }
         $card->activated = null;
-        $this->powerUpExpansion->evolutionCards->updateCard($card, ['activated']);
-        $this->powerUpExpansion->evolutionCards->moveCard($card, 'discard'.$playerId);
+        $this->powerUpExpansion->evolutionCards->items->updateItem($card, ['activated']);
+        $this->powerUpExpansion->evolutionCards->items->moveItem($card, ['discard'.$playerId, 0]);
 
         if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {
             // if My Toy is removed, reserved card is put to discard
             $reservedCards = $this->powerCards->getReserved($playerId, $card->id);
             if (count($reservedCards) > 0) {
-                $this->powerCards->moveCards($reservedCards, 'discard');
+                $this->powerCards->items->moveItems($reservedCards, ['discard', 0]);
             }
         }
 
@@ -228,7 +229,7 @@ trait EvolutionCardsUtilTrait {
 
     function setEvolutionTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
-        $this->powerUpExpansion->evolutionCards->updateCard($card, ['tokens']);
+        $this->powerUpExpansion->evolutionCards->items->updateItem($card, ['tokens']);
 
         if (!$silent) {
             /*TODOPU if ($card->type == MIMIC_CARD) {
@@ -251,7 +252,7 @@ trait EvolutionCardsUtilTrait {
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
             ]);
-            $this->powerCards->moveCard($topCard, 'discard');
+            $this->powerCards->items->moveItem($topCard, ['discard', 0]);
             $this->applyPrecisionFieldSupport($playerId);
 
         } else if ($this->powerCards->getCardBaseCost($topCard->type) > 4) {
@@ -261,7 +262,7 @@ trait EvolutionCardsUtilTrait {
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
             ]);
-            $this->powerCards->moveCard($topCard, 'discard');
+            $this->powerCards->items->moveItem($topCard, ['discard', 0]);
             $this->applyPrecisionFieldSupport($playerId);
 
         } else {
@@ -475,8 +476,8 @@ trait EvolutionCardsUtilTrait {
         }
 
         $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
-        $this->powerUpExpansion->evolutionCards->moveCard($evolution, 'table', $toPlayerId);
-        $movedEvolution = $this->powerUpExpansion->evolutionCards->getCardById($evolution->id); // so we relaad location
+        $this->powerUpExpansion->evolutionCards->items->moveItem($evolution, ['table', $toPlayerId]);
+        $movedEvolution = $this->powerUpExpansion->evolutionCards->items->getItemById($evolution->id); // so we relaad location
         $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
 
         if ($evolution->id == $this->getMimickedEvolutionId()) {
@@ -501,7 +502,7 @@ trait EvolutionCardsUtilTrait {
         $cardsIds[] = $cardId;
         $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $cardsIds);
 
-        $card = $this->powerCards->getCardById($cardId);
+        $card = $this->powerCards->items->getItemById($cardId);
         $this->notify->all("addSuperiorAlienTechnologyToken", '', [
             'playerId' => $playerId,
             'card' => $card,

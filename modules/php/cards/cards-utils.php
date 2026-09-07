@@ -45,8 +45,7 @@ trait CardsUtilTrait {
                 $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
             }
         } else if ($mimicCardType == FLUXLING_WICKEDNESS_TILE) {
-            $mimicCards = $this->wickednessTiles->getCardsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
-            $mimicCard = $mimicCards[0] ?? null;
+            $mimicCard = $this->wickednessTiles->items->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE)->first();
 
             if ($mimicCard && $mimicCard->tokens > 0) {
                 $this->wickednessExpansion->setTileTokens($mimicCard->location_arg, $mimicCard, 0);
@@ -61,7 +60,7 @@ trait CardsUtilTrait {
     }
 
     function setMimickedCardId(int $mimicCard, int $mimicOwnerId, int $cardId) {
-        $card = $this->powerCards->getCardById($cardId);
+        $card = $this->powerCards->items->getItemById($cardId);
         $this->setMimickedCard($mimicCard, $mimicOwnerId, $card);
     }
 
@@ -97,8 +96,7 @@ trait CardsUtilTrait {
                 $mimicCard = $this->powerCards->getCardsOfType(MIMIC_CARD)[0];
                 $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
             } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
-                $mimicCards = $this->wickednessTiles->getCardsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
-                $mimicCard = $mimicCards[0] ?? null;
+                $mimicCard = $this->wickednessTiles->items->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE)->first();
                 $this->wickednessExpansion->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
             }
         }
@@ -427,9 +425,9 @@ trait CardsUtilTrait {
         }
 
         $card->activated = null;
-        $this->powerCards->updateCard($card, ['activated']);
+        $this->powerCards->items->updateItem($card, ['activated']);
         $toVoid = ($card->type >= 300 && $card->type < 400) || ($card->type >= 900 && $card->type < 1000); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
-        $this->powerCards->moveCard($card, $toVoid ? 'void' : 'discard');
+        $this->powerCards->items->moveItem($card, [$toVoid ? 'void' : 'discard', 0]);
 
         if ($this->powerUpExpansion->isActive() && $this->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);

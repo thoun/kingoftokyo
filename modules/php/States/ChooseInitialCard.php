@@ -97,10 +97,10 @@ class ChooseInitialCard extends GameState {
     }
 
     private function setInitialCostumeCard(int $playerId, int $id, PowerCard $otherCard) {
-        $card = $this->game->powerCards->getCardById($id);
+        $card = $this->game->powerCards->items->getItemById($id);
         
-        $this->game->powerCards->moveCard($card, 'hand', $playerId);
-        $this->game->powerCards->moveCard($otherCard, 'costumediscard');
+        $this->game->powerCards->items->moveItem($card, ['hand', $playerId]);
+        $this->game->powerCards->items->moveItem($otherCard, ['costumediscard', 0]);
 
         $this->notify->all("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
@@ -111,4 +111,3 @@ class ChooseInitialCard extends GameState {
         ]);
     }
 }
-

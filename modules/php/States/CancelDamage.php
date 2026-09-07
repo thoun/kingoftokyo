@@ -471,7 +471,7 @@ class CancelDamage extends GameState {
 
         $card = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, $evolutionType, true, true)[0];
 
-        $this->game->powerUpExpansion->evolutionCards->moveCard($card, 'table', $currentPlayerId);
+        $this->game->powerUpExpansion->evolutionCards->items->moveItem($card, ['table', $currentPlayerId]);
 
         $this->game->playEvolutionToTable($currentPlayerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
@@ -494,7 +494,7 @@ class CancelDamage extends GameState {
 
         $evolution = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, CANDY_EVOLUTION, true, true)[0];
 
-        $this->game->powerUpExpansion->evolutionCards->moveCard($evolution, 'table', $currentPlayerId);
+        $this->game->powerUpExpansion->evolutionCards->items->moveItem($evolution, ['table', $currentPlayerId]);
 
         $this->game->playEvolutionToTable($currentPlayerId, $evolution, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
@@ -515,7 +515,7 @@ class CancelDamage extends GameState {
         $fromPlayerId = $currentPlayerId;
         $toPlayerId = $damageDealerId;
         $this->game->removeEvolution($fromPlayerId, $evolution);
-        $this->game->powerUpExpansion->evolutionCards->moveCard($evolution, 'hand', $toPlayerId);
+        $this->game->powerUpExpansion->evolutionCards->items->moveItem($evolution, ['hand', $toPlayerId]);
         $message = clienttranslate('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
         $this->game->notifNewEvolutionCard($toPlayerId, $evolution, $message, [
             'card_name' => 3000 + $evolution->type,

@@ -17,7 +17,7 @@ class PowerUpExpansion {
     }
 
     public function initDb() {
-        $this->evolutionCards->initDb();
+        $this->evolutionCards->items->initDb();
     }
 
     public function setup(array $affectedPlayersMonsters) {
@@ -66,8 +66,8 @@ class PowerUpExpansion {
         }
         $otherCard = Arrays::find($topCards, fn($topCard) => $topCard->id != $id);
 
-        $this->evolutionCards->moveCard($card, 'hand', $playerId);
-        $this->evolutionCards->moveCard($otherCard, 'discard'.$playerId);
+        $this->evolutionCards->items->moveItem($card, ['hand', $playerId]);
+        $this->evolutionCards->items->moveItem($otherCard, ['discard'.$playerId, 0]);
 
         $this->game->incStat(1, 'picked'.$this->game->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->game->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
 
@@ -79,7 +79,7 @@ class PowerUpExpansion {
     function applyPlayEvolution(int $playerId, EvolutionCard $card): void {
         $countMothershipSupportBefore = $this->game->powerUpExpansion->evolutionCards->countPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
-        $this->evolutionCards->moveCard($card, 'table', $playerId);
+        $this->evolutionCards->items->moveItem($card, ['table', $playerId]);
 
         $this->game->playEvolutionToTable($playerId, $card);
         
@@ -144,14 +144,14 @@ class PowerUpExpansion {
     }
 
     function pickEvolutionCards(int $playerId, int $number = 2) {
-        $remainingInDeck = $this->evolutionCards->countCardsInLocation('deck'.$playerId);
+        $remainingInDeck = $this->evolutionCards->items->countItemsInLocation('deck'.$playerId);
         if ($remainingInDeck >= $number) {
             return $this->game->getEvolutionCardsOnDeckTop($playerId, $number);
         } else {
             $cards = $this->game->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
 
-            $this->evolutionCards->moveAllCardsInLocation('discard'.$playerId, 'deck'.$playerId);
-            $this->evolutionCards->shuffle('deck'.$playerId);
+            $this->evolutionCards->items->moveAllItemsInLocation('discard'.$playerId, ['deck'.$playerId, 0]);
+            $this->evolutionCards->items->shuffle('deck'.$playerId);
 
             $cards = array_merge(
                 $cards,
@@ -164,7 +164,7 @@ class PowerUpExpansion {
     function drawEvolution(int $playerId, ?int $fromPlayerId = null) {
         $card = $this->pickEvolutionCards($fromPlayerId ?? $playerId, 1)[0];
 
-        $this->evolutionCards->moveCard($card, 'hand', $playerId);
+        $this->evolutionCards->items->moveItem($card, ['hand', $playerId]);
 
         $this->game->notifNewEvolutionCard($playerId, $card);
 
@@ -172,9 +172,9 @@ class PowerUpExpansion {
     }
 
     function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
-        $card = $this->evolutionCards->getCardById($evolutionId);
+        $card = $this->evolutionCards->items->getItemById($evolutionId);
 
-        $this->evolutionCards->moveCard($card, 'hand', $playerId);
+        $this->evolutionCards->items->moveItem($card, ['hand', $playerId]);
 
         $this->game->notifNewEvolutionCard($playerId, $card);
 

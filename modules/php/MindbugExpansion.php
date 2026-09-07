@@ -260,13 +260,13 @@ class MindbugExpansion {
         $cards = $this->getActivatedPowerCards($playerId, $keyword);
         foreach ($cards as $card) {
             $card->activated = null;
-            $this->game->powerCards->updateCard($card, ['activated']);
+            $this->game->powerCards->items->updateItem($card, ['activated']);
             $this->game->removeCard($playerId, $card);
         }
         $evolutions = $this->getActivatedEvolutionCards($playerId, $keyword);
         foreach ($evolutions as $evolution) {
             $evolution->activated = null;
-            $this->game->powerUpExpansion->evolutionCards->updateCard($evolution, ['activated']);
+            $this->game->powerUpExpansion->evolutionCards->items->updateItem($evolution, ['activated']);
             $this->game->removeEvolution($playerId, $evolution);
         }
     }

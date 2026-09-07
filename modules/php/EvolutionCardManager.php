@@ -3,15 +3,9 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo;
 
-require_once(__DIR__.'/framework-prototype/item/item.php');
-require_once(__DIR__.'/framework-prototype/item/item-field.php');
-require_once(__DIR__.'/framework-prototype/item/item-location.php');
-require_once(__DIR__.'/framework-prototype/item/item-manager.php');
-require_once(__DIR__.'/framework-prototype/item/card-manager.php');
-
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
-use Bga\GameFrameworkPrototype\Item\ItemLocation;
-use \Bga\GameFrameworkPrototype\Item\CardManager;
+use Bga\GameFramework\Components\ItemManager\ItemLocation;
+use Bga\GameFramework\Components\ItemManager\ItemManager;
+use Bga\GameFramework\Helpers\Collection;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -163,15 +157,26 @@ const EVOLUTION_CARD_CLASSES = [
     CHEW_PINCH_CATCH_AND_SMACK_EVOLUTION => 'ChewPinchCatchAndSmack',
 ];
 
-class EvolutionCardManager extends CardManager {
+class EvolutionCardManager {
+    /** @var ItemManager<EvolutionCard> */
+    public ItemManager $items;
 
     function __construct(
         protected Game $game,
     ) {
-        parent::__construct(
+        $this->items = $game->bga->itemManagerFactory->createItemManager(
             EvolutionCard::class,
-            [
+            classNameResolver: [$this, 'getClassName'],
+            locations: [
                 new ItemLocation('deck', autoReshuffleFrom: 'discard'),
+                new ItemLocation('deck*'),
+                new ItemLocation('discard'),
+                new ItemLocation('discard*'),
+                new ItemLocation('monster*'),
+                new ItemLocation('table'),
+                new ItemLocation('hand'),
+                new ItemLocation('mutantdeck'),
+                new ItemLocation('mutant*'),
             ],
         );
     }
@@ -182,10 +187,10 @@ class EvolutionCardManager extends CardManager {
             $location = array_key_exists($monster, $affectedPlayersMonsters) ? 'deck'.$affectedPlayersMonsters[$monster] : 'monster'.$monster;
             for($card=1; $card<=8; $card++) {
                 $type = $monster * 10 + $card;
-                $cards[] = ['location' => $location, 'type' => $type, 'type_arg' => 0, 'nbr' => 1];
+                $cards[] = ['location' => $location, 'type' => $type];
             }
-            $this->createCards($cards);
-            $this->shuffle($location); 
+            $this->items->createItems($cards);
+            $this->items->shuffle($location);
         }
 
         if (count($affectedPlayersMonsters) > 0) {
@@ -194,6 +199,9 @@ class EvolutionCardManager extends CardManager {
     }
 
     public function getClassName(?array $dbItem): ?string {
+        if ($dbItem === null) {
+            return EvolutionCard::class;
+        }
         $cardType = intval($dbItem['card_type']);
         if (!array_key_exists($cardType, EVOLUTION_CARD_CLASSES)) {
             return null;
@@ -210,8 +218,7 @@ class EvolutionCardManager extends CardManager {
      * @return EvolutionCard[]
      */
     function getPlayerRealByLocation(int $playerId, string $location): array {        
-        $evolutions = $this->getCardsInLocation($location, $playerId, true, sortByField: 'location_arg');
-        return $evolutions;
+        return $this->items->getItemsInLocation([$location, $playerId], true, sortByField: 'location_arg')->values();
     }
 
     /**
@@ -240,29 +247,29 @@ class EvolutionCardManager extends CardManager {
      * @return EvolutionCard[]
      */
     function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand, bool $virtualFirst = false): array {
-        $evolutions = $this->getPlayerReal($playerId, $fromTable, $fromHand);
+        $evolutions = new Collection($this->getPlayerReal($playerId, $fromTable, $fromHand));
         if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
-            $evolutions = Arrays::filter($evolutions, fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] != 1);
+            $evolutions = $evolutions->filter(fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] != 1);
         }
 
-        $icyReflectionEvolution = Arrays::find($evolutions, fn($evolution) => $evolution->type === ICY_REFLECTION_EVOLUTION);
+        $icyReflectionEvolution = $evolutions->find(fn($evolution) => $evolution->type === ICY_REFLECTION_EVOLUTION);
         if ($icyReflectionEvolution) {
             $mimickedCardId = $this->game->getMimickedEvolutionId();
             if ($mimickedCardId) {
-                $virtualCard = $this->getCardById($mimickedCardId);
+                $virtualCard = $this->items->getItemById($mimickedCardId);
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingEvolutionId = $icyReflectionEvolution->id;
                     if ($virtualFirst) {
-                        array_unshift($evolutions, $virtualCard);
+                        $evolutions = new Collection([$virtualCard, ...$evolutions->values()]);
                     } else {
-                        $evolutions[] = $virtualCard;
+                        $evolutions = new Collection([...$evolutions->values(), $virtualCard]);
                     }
                 }
             }
         }
 
-        return $evolutions;
+        return $evolutions->values();
     }
 
     /**
@@ -273,8 +280,9 @@ class EvolutionCardManager extends CardManager {
      * @return EvolutionCard[]
      */
     function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand, bool $virtualFirst = false): array {
-        $evolutions = $this->getPlayerVirtual($playerId, $fromTable, $fromHand, $virtualFirst);
-        return Arrays::filter($evolutions, fn($evolution) => $evolution->type === $type);
+        return (new Collection($this->getPlayerVirtual($playerId, $fromTable, $fromHand, $virtualFirst)))
+            ->where('type', $type)
+            ->values();
     }
 
     function countPlayerVirtualByType(int $playerId, int $type, bool $fromTable = true, bool $fromHand = false): int {
@@ -303,17 +311,15 @@ class EvolutionCardManager extends CardManager {
     }
 
     public function onAddSmashes(Context $context): array {
-        $cards = $this->getPlayerVirtual($context->currentPlayerId, true, false);
-        $cards = Arrays::filter($cards, fn($card) => method_exists($card, 'addSmashes'));
+        // Multipliers must happen after additive effects.
+        $cards = (new Collection($this->getPlayerVirtual($context->currentPlayerId, true, false)))
+            ->filter(fn($card) => method_exists($card, 'addSmashes'))
+            ->sort(
+                fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1)
+                    <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
+            );
         $addedByCards = 0;
         $addingCards = [];
-
-        // to make sure antimatter beam multiplication is done after barbs addition
-        /** @var AddSmashesPowerCard[] $cards */
-        usort($cards, 
-            // Sort by the return value of addSmashesOrder, smaller order first
-            fn($a, $b) => (method_exists($a, 'addSmashesOrder') ? $a->addSmashesOrder() : 1) <=> (method_exists($b, 'addSmashesOrder') ? $b->addSmashesOrder() : 1)
-        );
 
         foreach ($cards as $card) {
              /** @disregard */
@@ -330,12 +336,12 @@ class EvolutionCardManager extends CardManager {
 
     public function activateKeyword(EvolutionCard &$card, string $keyword): void {
         $card->activated = new ActivatedConsumableKeyword($keyword);
-        $this->updateCard($card, ['activated']);
+        $this->items->updateItem($card, ['activated']);
     }
 
     public function setActivatedKeywordTarget(EvolutionCard $card, int $targetPlayerId): void {
         $card->activated->targetPlayerId = $targetPlayerId;
-        $this->updateCard($card, ['activated']);
+        $this->items->updateItem($card, ['activated']);
     }
 
 }

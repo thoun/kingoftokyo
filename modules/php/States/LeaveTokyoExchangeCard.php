@@ -74,7 +74,7 @@ class LeaveTokyoExchangeCard extends GameState {
         $unstableDnaCards = Arrays::filter($unstableDnaCards, fn($card) => $card->id < 2000); // to remove mimic tile, as you can't exchange a cand with a tile
         $unstableDnaCard = $unstableDnaCards[0];
 
-        $exchangedCard = $this->game->powerCards->getCardById($exchangedCardId);
+        $exchangedCard = $this->game->powerCards->items->getItemById($exchangedCardId);
         $exchangedCardOwner = $exchangedCard->location_arg;
 
         if ($exchangedCard->type > 300) {
@@ -85,8 +85,8 @@ class LeaveTokyoExchangeCard extends GameState {
         $countRapidHealingBeforeOtherPlayer = $this->game->countCardOfType($exchangedCardOwner, RAPID_HEALING_CARD);
         $countEvenBiggerBeforeOtherPlayer = $this->game->countCardOfType($exchangedCardOwner, EVEN_BIGGER_CARD);
 
-        $this->game->powerCards->moveCard($unstableDnaCard, 'hand', $exchangedCardOwner);
-        $this->game->powerCards->moveCard($exchangedCard, 'hand', $currentPlayerId);
+        $this->game->powerCards->items->moveItem($unstableDnaCard, ['hand', $exchangedCardOwner]);
+        $this->game->powerCards->items->moveItem($exchangedCard, ['hand', $currentPlayerId]);
 
         $this->game->toggleRapidHealing($currentPlayerId, $countRapidHealingBeforeCurrentPlayer);
         $this->game->toggleRapidHealing($exchangedCardOwner, $countRapidHealingBeforeOtherPlayer);
