@@ -135,9 +135,8 @@ trait CardsActionTrait {
 
             if ($card->type >= 100 && $card->type <= 200) {
                 $this->removeCard($playerId, $card, false, true);
-                
-                $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1 WHERE `card_location` = 'deck'");
-                $this->powerCards->items->moveItem($card, ['deck', 0]);
+
+                $this->powerCards->items->moveItem($card, 'deck', 0);
             }
             
         } else if ($from > 0) {
@@ -273,9 +272,12 @@ trait CardsActionTrait {
             return;
         }
         if ($isMyToyReservedCard && $this->powerUpExpansion->isActive()) {
-            $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
+            $myToyEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MY_TOY_EVOLUTION, true, false);
             if (count($myToyEvolutions) > 0) {
-                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->items->countItemsInLocation(['reserved'.$playerId, $myToyEvolution->id]) === 0));
+                $myToyEvolutions = array_values(array_filter($myToyEvolutions, function($myToyEvolution) use ($playerId) {
+                    $evolutionId = $myToyEvolution->mimickingEvolutionId ?? $myToyEvolution->id;
+                    return $this->powerCards->items->countItemsInLocation(['reserved'.$playerId, $evolutionId]) === 0;
+                }));
 
                 if (count($myToyEvolutions) > 0) {
                     $myToyEvolutions[0]->myToyQuestion(new Context($this, $playerId));

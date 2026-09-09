@@ -18,18 +18,18 @@ class MyToy extends EvolutionCard {
     }
 
     public function myToyQuestion(Context $context) {
+        $evolutionId = $this->mimickingEvolutionId ?? $this->id;
         $question = new Question(
             'MyToy',
             clienttranslate('${player_name} must choose a card to reserve'),
             clienttranslate('${you} must choose a card to reserve'),
             [$context->currentPlayerId],
             ST_AFTER_ANSWER_QUESTION,
-            [ 
+            [
                 'playerId' => $context->currentPlayerId,
                 '_args' => [ 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId) ],
-                'card' => $this,
             ],
-            evolutionId: $this->id,
+            evolutionId: $evolutionId,
         );
 
         $context->game->addStackedState();

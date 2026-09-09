@@ -5,6 +5,7 @@ namespace Bga\Games\KingOfTokyo\States;
 
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
+use Bga\GameFramework\VisibleSystemException;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
@@ -25,7 +26,12 @@ class AfterAnswerQuestion extends GameState {
 
         if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'ElectricCarrot') {
             if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts') {
-                $this->game->removeEvolution($question->args->playerId, $question->args->card);
+                $evolutionId = (int)($question->evolutionId ?? $question->args->cardId ?? $question->args->card->id);
+                $evolution = $this->game->powerUpExpansion->evolutionCards->items->getItemById($evolutionId);
+                if ($evolution === null) {
+                    throw new VisibleSystemException('Evolution card not found');
+                }
+                $this->game->removeEvolution($question->args->playerId, $evolution);
             }
 
             $this->game->removeStackedStateAndRedirect();
@@ -44,6 +50,6 @@ class AfterAnswerQuestion extends GameState {
             return;
         }
 
-        throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
+        throw new VisibleSystemException("Question code not handled: ".$question->code);
     }
 }

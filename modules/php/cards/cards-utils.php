@@ -8,9 +8,11 @@ require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
 use Bga\GameFramework\Actions\CheckAction;
+use Bga\GameFramework\VisibleSystemException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
 
@@ -408,6 +410,13 @@ trait CardsUtilTrait {
         if ($card->id >= 2000 || $card->id < 0) {
             // trying to remove mimic tile, but tile isn't removed when mimicked card is removed
             return;
+        }
+
+        if (!($card instanceof PowerCard)) {
+            $card = $this->powerCards->items->getItemById((int)$card->id);
+            if ($card === null) {
+                throw new VisibleSystemException('Power card not found');
+            }
         }
 
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);

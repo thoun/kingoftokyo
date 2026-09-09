@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/question.php');
 
 use Bga\GameFramework\UserException;
+use Bga\GameFramework\VisibleSystemException;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -140,6 +141,13 @@ trait EvolutionCardsUtilTrait {
     }
 
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
+        if (!($card instanceof EvolutionCard)) {
+            $card = $this->powerUpExpansion->evolutionCards->items->getItemById((int)$card->id);
+            if ($card === null) {
+                throw new VisibleSystemException('Evolution card not found');
+            }
+        }
+
         $changeMaxHealth = $card->type == EATER_OF_SOULS_EVOLUTION;
 
         $countMothershipSupportBefore = count($this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, false));
@@ -299,8 +307,9 @@ trait EvolutionCardsUtilTrait {
             $canGiveSymbols[$symbol] = $canGiveSymbol;
         }
 
-        $args = [ 
-            'card' => $card,
+        $args = [
+            'cardId' => $card->id,
+            'cardType' => $card->type,
             'playerId' => $playerId,
             '_args' => [ 
                 'player_name' => $this->getPlayerNameById($playerId),
@@ -317,7 +326,7 @@ trait EvolutionCardsUtilTrait {
             'GiveSymbol',
             clienttranslate('Other monsters must give ${symbolsToGive} to ${player_name}'),
             clienttranslate('${you} must give ${symbolsToGive} to ${player_name}'),
-            [$otherPlayersIds],
+            $otherPlayersIds,
             ST_AFTER_ANSWER_QUESTION,
             $args,
             evolutionId: $card->id,
@@ -338,10 +347,11 @@ trait EvolutionCardsUtilTrait {
             'GiveEnergyOrLoseHearts',
             clienttranslate('Other monsters must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
             clienttranslate('${you} must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
-            [$otherPlayersIds],
+            $otherPlayersIds,
             ST_AFTER_ANSWER_QUESTION,
-            [ 
-                'card' => $card,
+            [
+                'cardId' => $card->id,
+                'cardType' => $card->type,
                 'playerId' => $playerId,
                 '_args' => [ 
                     'player_name' => $this->getPlayerNameById($playerId),

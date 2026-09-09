@@ -173,11 +173,13 @@ class AnswerQuestion extends GameState {
     ) {
         $question = $this->game->getQuestion();
         $evolutionPlayerId = $question->args->playerId;
-        
-        $this->game->applyGiveSymbols([$symbol], $currentPlayerId, $evolutionPlayerId, 3000 + $question->args->card->type);
 
-        if ($question->args->card->type == WORST_NIGHTMARE_EVOLUTION) {
-            $this->game->setUsedCard(3000 + $question->args->card->id);
+        $evolutionType = (int)($question->args->cardType ?? $question->args->card->type);
+        $evolutionId = (int)($question->evolutionId ?? $question->args->cardId ?? $question->args->card->id);
+        $this->game->applyGiveSymbols([$symbol], $currentPlayerId, $evolutionPlayerId, 3000 + $evolutionType);
+
+        if ($evolutionType == WORST_NIGHTMARE_EVOLUTION) {
+            $this->game->setUsedCard(3000 + $evolutionId);
         }
 
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
@@ -273,14 +275,16 @@ class AnswerQuestion extends GameState {
 
         // move other cards to bottom deck
         $question = $this->game->getQuestion();
-        $otherCards = $this->game->powerCards->items
-            ->getItemsByIds(Arrays::map($question->args->cards, fn($card) => $card->id))
-            ->filter(fn($otherCard) => $otherCard->id != $card->id)
-            ->values();
-        $this->game->DbQuery("UPDATE `card` SET `card_location_arg` = card_location_arg + ".count($otherCards)." WHERE `card_location` = 'deck'");
-        foreach($otherCards as $index => $otherCard) {
-            $this->game->powerCards->items->moveItem($otherCard, ['deck', $index]);
+        $otherCards = [];
+        foreach ($question->args->cards as $questionCard) {
+            if ($questionCard->id != $card->id) {
+                $otherCard = $this->game->powerCards->items->getItemById($questionCard->id);
+                if ($otherCard !== null) {
+                    $otherCards[] = $otherCard;
+                }
+            }
         }
+        $this->game->powerCards->items->moveItems($otherCards, 'deck', prepend: true);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -485,13 +489,13 @@ class AnswerQuestion extends GameState {
         $card = $this->game->powerCards->items->getItemById($id);
         $cardLocationArg = $card->location_arg;
         if ($card->location !== 'table') {
-            throw new \BgaUserException("Card is not on table");
+            throw new UserException("Card is not on table");
         }
 
         $question = $this->game->getQuestion();
-        $evolution = $question->args->card;
+        $evolutionId = (int)($question->evolutionId ?? $question->args->card->id);
 
-        $this->game->powerCards->items->moveItem($card, ['reserved'.$currentPlayerId, $evolution->id]);
+        $this->game->powerCards->items->moveItem($card, ['reserved'.$currentPlayerId, $evolutionId]);
 
         $newCard = $this->game->powerCards->pickCardForLocationOldOrder('deck', 'table', $cardLocationArg);
 
@@ -559,15 +563,16 @@ class AnswerQuestion extends GameState {
     #[PossibleAction]
     public function actLoseHearts(int $currentPlayerId) {
         $question = $this->game->getQuestion();
-        $card = $question->args->card;
+        $evolutionType = (int)($question->args->cardType ?? $question->args->card->type);
+        $evolutionId = (int)($question->evolutionId ?? $question->args->cardId ?? $question->args->card->id);
 
-        if ($card->type == TRICK_OR_THREAT_EVOLUTION) {
+        if ($evolutionType == TRICK_OR_THREAT_EVOLUTION) {
             $damage = new Damage($currentPlayerId, 2, 0, 3000 + TRICK_OR_THREAT_EVOLUTION);
             $this->game->applyDamage($damage);
-        } else if ($card->type == WORST_NIGHTMARE_EVOLUTION) {
+        } else if ($evolutionType == WORST_NIGHTMARE_EVOLUTION) {
             $damage = new Damage($currentPlayerId, 1, 0, 3000 + WORST_NIGHTMARE_EVOLUTION);
             $this->game->applyDamage($damage);
-            $this->game->setUsedCard(3000 + $card->id);
+            $this->game->setUsedCard(3000 + $evolutionId);
         }
 
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');

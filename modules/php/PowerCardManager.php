@@ -494,13 +494,11 @@ class PowerCardManager {
     }
 
     /**
-     * Return cards, ordered by location_arg for legacy purposes.
-     * 
      * @return PowerCard[]
      */
     public function getCardsInLocationOldOrder(string $location, ?int $locationArg = null) {
         $from = $locationArg === null ? $location : [$location, $locationArg];
-        return $this->items->getItemsInLocation($from, sortByField: 'location_arg')->values();
+        return $this->items->getItemsInLocation($from)->values();
     }
 
     public function getDeckCount(): int {
@@ -516,13 +514,11 @@ class PowerCardManager {
      * @return PowerCard[]
      */
     public function getCardsOnTopOldOrder(int $number, string $location): array {
-        $cards = $this->getCardsInLocationOldOrder($location);
-        return count($cards) > 0 ? array_slice($cards, -$number) : [];
+        return array_reverse($this->items->getItemsOnTop($number, $location)->values());
     }
 
     public function getCardOnTopOldOrder(string $location): ?PowerCard {
-        $cards = $this->getCardsOnTopOldOrder(1, $location);
-        return count($cards) > 0 ? $cards[0] : null;
+        return $this->items->getItemOnTop($location);
     }
 
     /**
@@ -543,39 +539,22 @@ class PowerCardManager {
         ])->values();
     }
 
-    /**
-     * Keep the legacy card_location_arg ordering when moving a whole pile.
-     */
     public function moveAllCardsPreservingLegacyOrder(string $fromLocation, string $toLocation): void {
-        $cards = $this->items->getItemsInLocation($fromLocation);
-        foreach ($cards as $card) {
-            $card->location = $toLocation;
-        }
-        $this->items->updateItems($cards, 'location');
+        $this->items->moveAllItemsInLocation($fromLocation, $toLocation);
     }
 
     /**
      * @return PowerCard
      */
     public function pickCardForLocationOldOrder(string $fromLocation, string $toLocation, int $toLocationArg = 0) {
-        $item = $this->getCardOnTopOldOrder($fromLocation);
-        if ($item === null && $fromLocation === 'deck') {
-            $this->moveAllCardsPreservingLegacyOrder('discard', 'deck');
-            $this->items->shuffle('deck');
-            $item = $this->getCardOnTopOldOrder($fromLocation);
-        }
-
-        if ($item !== null) {
-            $this->items->moveItem($item, [$toLocation, $toLocationArg]);
-        }
-        return $item;
+        return $this->items->pickItem($fromLocation, [$toLocation, $toLocationArg]);
     }
 
     /**
      * @return PowerCard[]
      */
     public function getTable(): array {
-        return $this->getCardsInLocationOldOrder('table');
+        return $this->items->getItemsInLocation('table', sortByField: 'location_arg')->values();
     }
 
     /**
