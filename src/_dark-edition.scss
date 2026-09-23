@@ -123,10 +123,10 @@ html[data-dark-edition="true"] {
                 margin-top: -5px;
 
                 &.keep {
-                    .outline {
+                    .kot-outline {
                         -webkit-text-stroke: 0;
                     }
-                    .outline::before {
+                    .kot-outline::before {
                         top: -4px;
                         left: -4px;
                         bottom: -4px;
@@ -140,10 +140,10 @@ html[data-dark-edition="true"] {
                 }
 
                 &.discard {
-                    .outline {
+                    .kot-outline {
                         -webkit-text-stroke: 0;
                     }
-                    .outline::before {
+                    .kot-outline::before {
                         top: -6px;
                         left: 0px;
                         bottom: -4px;
@@ -176,7 +176,7 @@ html[data-dark-edition="true"] {
             font-weight: normal;
             letter-spacing: 0.05rem;
 
-            .outline {
+            .kot-outline {
                 -webkit-text-stroke: 0;
                 visibility: none;
             }
@@ -201,7 +201,7 @@ html[data-dark-edition="true"] {
             font-family: 'young-frankenstein-expanded-italic';
             color: #f6d445;
 
-            .outline {
+            .kot-outline {
                 &.wickedness-tile-side0 {
                     -webkit-text-stroke: 4px #231f20;  
                 }

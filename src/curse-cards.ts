@@ -143,7 +143,7 @@ class CurseCardsManager extends CardManager<CurseCard> {
 
         cardDiv.innerHTML = `
         <div class="name-wrapper">
-            <div class="outline curse">${this.getCardName(cardType)}</div>
+            <div class="kot-outline curse">${this.getCardName(cardType)}</div>
             <div class="text">${this.getCardName(cardType)}</div>
         </div>
         

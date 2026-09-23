@@ -33,7 +33,7 @@ class PlayerTable {
         let html = `
         <div id="player-table-${player.id}" class="player-table whiteblock ${eliminated ? 'eliminated' : ''}">
             <div id="player-name-${player.id}" class="kot-player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
-                <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
+                <div class="kot-outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
             </div> 
             <div id="monster-board-wrapper-${player.id}" class="monster-board-wrapper monster${this.monster} ${player.location > 0 ? 'intokyo' : ''}">

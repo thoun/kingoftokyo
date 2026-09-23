@@ -233,7 +233,7 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
         <div class="name-and-description">
             <div>
                 <div class="name-wrapper">
-                    <div class="outline ${cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0'}">${name}</div>
+                    <div class="kot-outline ${cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0'}">${name}</div>
                     <div class="text">${name}</div>
                 </div>
             </div>
@@ -254,13 +254,13 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
         }
         textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
 
-        let nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+        let nameHeight = (cardDiv.getElementsByClassName('kot-outline')[0] as HTMLDivElement).clientHeight;
 
         if (75 - textHeight < nameHeight) {
             (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '8pt';
         }
 
-        nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+        nameHeight = (cardDiv.getElementsByClassName('kot-outline')[0] as HTMLDivElement).clientHeight;
 
         if (75 - textHeight < nameHeight) {
             (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '7pt';

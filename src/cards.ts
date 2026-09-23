@@ -1097,11 +1097,11 @@ class CardsManager extends CardManager<Card> {
 
         cardDiv.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
-            <div class="outline">${this.getCardName(cardType, 'span', side)}</div>
+            <div class="kot-outline">${this.getCardName(cardType, 'span', side)}</div>
             <div class="text">${this.getCardName(cardType, 'text-only', side)}</div>
         </div>
         <div class="type-wrapper ${this.getCardTypeClass(cardType)}">
-            <div class="outline">${type}</div>
+            <div class="kot-outline">${type}</div>
             <div class="text">${type}</div>
         </div>
         

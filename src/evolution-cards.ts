@@ -480,7 +480,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         <div class="name-and-description">
             <div class="name-row">
                 <div class="name-wrapper">
-                    <div class="outline">${this.getCardName(cardType, 'span')}</div>
+                    <div class="kot-outline">${this.getCardName(cardType, 'span')}</div>
                     <div class="text">${this.getCardName(cardType, 'text-only')}</div>
                 </div>
             </div>
@@ -491,7 +491,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         `;
 
         const nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement;
-        const outline = cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement;
+        const outline = cardDiv.getElementsByClassName('kot-outline')[0] as HTMLDivElement;
         const descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement;
 
         let textHeight = descriptionWrapper.clientHeight;

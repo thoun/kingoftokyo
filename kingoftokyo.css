@@ -885,14 +885,14 @@ html[data-theme=light] .player-board {
   width: 95px;
   text-align: center;
 }
-.kot-curse-card .name-wrapper .outline, .kot-tile .name-wrapper .outline, .kot-evolution .name-wrapper .outline, .kot-card .name-wrapper .outline {
+.kot-curse-card .name-wrapper .kot-outline, .kot-tile .name-wrapper .kot-outline, .kot-evolution .name-wrapper .kot-outline, .kot-card .name-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.kot-curse-card .name-wrapper .outline.curse, .kot-tile .name-wrapper .outline.curse, .kot-evolution .name-wrapper .outline.curse, .kot-card .name-wrapper .outline.curse {
+.kot-curse-card .name-wrapper .kot-outline.curse, .kot-tile .name-wrapper .kot-outline.curse, .kot-evolution .name-wrapper .kot-outline.curse, .kot-card .name-wrapper .kot-outline.curse {
   -webkit-text-stroke: 4px #1c484f;
 }
 .kot-curse-card .name-wrapper .text, .kot-tile .name-wrapper .text, .kot-evolution .name-wrapper .text, .kot-card .name-wrapper .text {
@@ -909,25 +909,25 @@ html[data-theme=light] .player-board {
   transform: rotate(-5deg);
   font-family: "goodgirl";
 }
-.kot-curse-card .type-wrapper.keep .outline, .kot-tile .type-wrapper.keep .outline, .kot-evolution .type-wrapper.keep .outline, .kot-card .type-wrapper.keep .outline {
+.kot-curse-card .type-wrapper.keep .kot-outline, .kot-tile .type-wrapper.keep .kot-outline, .kot-evolution .type-wrapper.keep .kot-outline, .kot-card .type-wrapper.keep .kot-outline {
   -webkit-text-stroke: 4px #00aeef;
 }
-.kot-curse-card .type-wrapper.discard .outline, .kot-tile .type-wrapper.discard .outline, .kot-evolution .type-wrapper.discard .outline, .kot-card .type-wrapper.discard .outline {
+.kot-curse-card .type-wrapper.discard .kot-outline, .kot-tile .type-wrapper.discard .kot-outline, .kot-evolution .type-wrapper.discard .kot-outline, .kot-card .type-wrapper.discard .kot-outline {
   -webkit-text-stroke: 4px #ef1923;
 }
-.kot-curse-card .type-wrapper.costume .outline, .kot-tile .type-wrapper.costume .outline, .kot-evolution .type-wrapper.costume .outline, .kot-card .type-wrapper.costume .outline {
+.kot-curse-card .type-wrapper.costume .kot-outline, .kot-tile .type-wrapper.costume .kot-outline, .kot-evolution .type-wrapper.costume .kot-outline, .kot-card .type-wrapper.costume .kot-outline {
   -webkit-text-stroke: 4px #f7941d;
 }
-.kot-curse-card .type-wrapper.transformation .outline, .kot-tile .type-wrapper.transformation .outline, .kot-evolution .type-wrapper.transformation .outline, .kot-card .type-wrapper.transformation .outline {
+.kot-curse-card .type-wrapper.transformation .kot-outline, .kot-tile .type-wrapper.transformation .kot-outline, .kot-evolution .type-wrapper.transformation .kot-outline, .kot-card .type-wrapper.transformation .kot-outline {
   -webkit-text-stroke: 4px #13b48f;
 }
 .kot-curse-card .type-wrapper.consumable, .kot-tile .type-wrapper.consumable, .kot-evolution .type-wrapper.consumable, .kot-card .type-wrapper.consumable {
   top: 126px;
 }
-.kot-curse-card .type-wrapper.consumable .outline, .kot-tile .type-wrapper.consumable .outline, .kot-evolution .type-wrapper.consumable .outline, .kot-card .type-wrapper.consumable .outline {
+.kot-curse-card .type-wrapper.consumable .kot-outline, .kot-tile .type-wrapper.consumable .kot-outline, .kot-evolution .type-wrapper.consumable .kot-outline, .kot-card .type-wrapper.consumable .kot-outline {
   -webkit-text-stroke: 4px #9e3069;
 }
-.kot-curse-card .type-wrapper .outline, .kot-tile .type-wrapper .outline, .kot-evolution .type-wrapper .outline, .kot-card .type-wrapper .outline {
+.kot-curse-card .type-wrapper .kot-outline, .kot-tile .type-wrapper .kot-outline, .kot-evolution .type-wrapper .kot-outline, .kot-card .type-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
@@ -1051,7 +1051,7 @@ html[data-theme=light] .player-board {
   margin: 2px;
   text-align: center;
 }
-.card-keep-text .outline {
+.card-keep-text .kot-outline {
   -webkit-text-stroke: 3px #00aeef;
 }
 .card-keep-text .text {
@@ -1069,7 +1069,7 @@ html[data-theme=light] .player-board {
   margin: 2px;
   text-align: center;
 }
-.card-discard-text .outline {
+.card-discard-text .kot-outline {
   -webkit-text-stroke: 3px #ef1923;
 }
 .card-discard-text .text {
@@ -1087,7 +1087,7 @@ html[data-theme=light] .player-board {
   margin: 2px;
   text-align: center;
 }
-.card-consumable-text .outline {
+.card-consumable-text .kot-outline {
   -webkit-text-stroke: 3px #9e3069;
 }
 .card-consumable-text .text {
@@ -1569,7 +1569,7 @@ body > .card {
   font-family: "goodgirl";
   text-align: center;
 }
-.kot-evolution .name-wrapper .outline {
+.kot-evolution .name-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
@@ -1674,7 +1674,7 @@ body > .card {
   font-family: "goodgirl";
   text-align: center;
 }
-.player-evolution-cards .stockitem .name-wrapper .outline {
+.player-evolution-cards .stockitem .name-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
@@ -1779,14 +1779,14 @@ body > .card {
   width: 95px;
   text-align: center;
 }
-.kot-tile .name-wrapper .outline {
+.kot-tile .name-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.kot-tile .name-wrapper .outline.curse {
+.kot-tile .name-wrapper .kot-outline.curse {
   -webkit-text-stroke: 4px #1c484f;
 }
 .kot-tile .name-wrapper .text {
@@ -1842,15 +1842,15 @@ body > .card {
   text-align: center;
   margin: 3px;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline, .wickedness-tile-stock .kot-tile .name-wrapper .outline {
+.wickedness-tile-stock .stockitem .name-wrapper .kot-outline, .wickedness-tile-stock .kot-tile .name-wrapper .kot-outline {
   position: absolute;
   left: 0;
   top: 0;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0, .wickedness-tile-stock .kot-tile .name-wrapper .outline.wickedness-tile-side0 {
+.wickedness-tile-stock .stockitem .name-wrapper .kot-outline.wickedness-tile-side0, .wickedness-tile-stock .kot-tile .name-wrapper .kot-outline.wickedness-tile-side0 {
   -webkit-text-stroke: 4px #8c1e10;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1, .wickedness-tile-stock .kot-tile .name-wrapper .outline.wickedness-tile-side1 {
+.wickedness-tile-stock .stockitem .name-wrapper .kot-outline.wickedness-tile-side1, .wickedness-tile-stock .kot-tile .name-wrapper .kot-outline.wickedness-tile-side1 {
   -webkit-text-stroke: 4px #364e11;
 }
 .wickedness-tile-stock .stockitem .name-wrapper .text, .wickedness-tile-stock .kot-tile .name-wrapper .text {
@@ -2105,14 +2105,14 @@ body > .card {
   text-overflow: ellipsis;
   z-index: 5;
 }
-#table .player-table .kot-player-name .outline {
+#table .player-table .kot-player-name .kot-outline {
   position: absolute;
   left: 0;
   width: 100%;
   display: block;
   -webkit-text-stroke: 4px black;
 }
-#table .player-table .kot-player-name .outline.white {
+#table .player-table .kot-player-name .kot-outline.white {
   -webkit-text-stroke: 4px white;
 }
 #table .player-table .kot-player-name .text {
@@ -2128,7 +2128,7 @@ body > .card {
   font-family: "goodgirl";
   font-size: 16pt;
 }
-#table .player-table .kot-player-name.goodgirl .outline {
+#table .player-table .kot-player-name.goodgirl .kot-outline {
   top: 2px;
 }
 #table .player-table .kot-player-name.goodgirl .text {
@@ -2907,10 +2907,10 @@ html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .ty
   font-size: 11pt;
   margin-top: -5px;
 }
-html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .kot-outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .kot-outline {
   -webkit-text-stroke: 0;
 }
-html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline::before {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .kot-outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .kot-outline::before {
   top: -4px;
   left: -4px;
   bottom: -4px;
@@ -2921,10 +2921,10 @@ html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .ty
   mask: url("img/dark/keep-mask.png") no-repeat center/contain;
   background-color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .kot-outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .kot-outline {
   -webkit-text-stroke: 0;
 }
-html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline::before {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .kot-outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .kot-outline::before {
   top: -6px;
   left: 0px;
   bottom: -4px;
@@ -2948,7 +2948,7 @@ html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text
   font-weight: normal;
   letter-spacing: 0.05rem;
 }
-html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text .outline, html[data-dark-edition=true] .kot-tile .card-keep-text .outline, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text .outline {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text .kot-outline, html[data-dark-edition=true] .kot-tile .card-keep-text .kot-outline, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text .kot-outline {
   -webkit-text-stroke: 0;
   visibility: none;
 }
@@ -2969,10 +2969,10 @@ html[data-dark-edition=true] .kot-tile .name-wrapper, html[data-dark-edition=tru
   font-family: "young-frankenstein-expanded-italic";
   color: #f6d445;
 }
-html[data-dark-edition=true] .kot-tile .name-wrapper .outline.wickedness-tile-side0, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side0 {
+html[data-dark-edition=true] .kot-tile .name-wrapper .kot-outline.wickedness-tile-side0, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .kot-outline.wickedness-tile-side0 {
   -webkit-text-stroke: 4px #231f20;
 }
-html[data-dark-edition=true] .kot-tile .name-wrapper .outline.wickedness-tile-side1, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side1 {
+html[data-dark-edition=true] .kot-tile .name-wrapper .kot-outline.wickedness-tile-side1, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .kot-outline.wickedness-tile-side1 {
   -webkit-text-stroke: 4px #231f20;
 }
 html[data-dark-edition=true] .kot-tile .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {

@@ -83,9 +83,9 @@ function formatTextIcons(rawText) {
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
         .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
-        .replace(/[\[|<]keep[\]|>]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
-        .replace(/[\[|<]discard[\]|>]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"))
-        .replace(/[\[|<]consumable[\]|>]/ig, "<span class=\"card-consumable-text\"><span class=\"outline\">".concat(_('Consumable'), "</span><span class=\"text\">").concat(_('Consumable'), "</span></span>"))
+        .replace(/[\[|<]keep[\]|>]/ig, "<span class=\"card-keep-text\"><span class=\"kot-outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
+        .replace(/[\[|<]discard[\]|>]/ig, "<span class=\"card-discard-text\"><span class=\"kot-outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"))
+        .replace(/[\[|<]consumable[\]|>]/ig, "<span class=\"card-consumable-text\"><span class=\"kot-outline\">".concat(_('Consumable'), "</span><span class=\"text\">").concat(_('Consumable'), "</span></span>"))
         .replace(/<(HUNTER|SNEAKY|POISON|TOUGH|FRENZY)>/ig, function (a, b, c) { return "<strong>".concat(b, "</strong>"); });
 }
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
@@ -3289,7 +3289,7 @@ var CardsManager = /** @class */ (function (_super) {
         var description = formatTextIcons(this.getCardDescription(cardType, side, true));
         var position = this.getCardNamePosition(cardType, side);
         var consumable = cardType > 400 && cardType < 500;
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper ").concat(consumable ? 'consumable' : '', "\">").concat(description, "</div>");
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"kot-outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"kot-outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper ").concat(consumable ? 'consumable' : '', "\">").concat(description, "</div>");
         if (consumable) {
             return;
         }
@@ -3600,7 +3600,7 @@ var CurseCardsManager = /** @class */ (function (_super) {
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">".concat(this.getCardName(cardType), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType), "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">").concat(permanentEffect, "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div class=\"effect-text\">").concat(ankhEffect, "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div class=\"effect-text\">").concat(snakeEffect, "</div></div>");
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"kot-outline curse\">".concat(this.getCardName(cardType), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType), "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">").concat(permanentEffect, "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div class=\"effect-text\">").concat(ankhEffect, "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div class=\"effect-text\">").concat(snakeEffect, "</div></div>");
         Array.from(cardDiv.getElementsByClassName('effect-wrapper')).forEach(function (wrapperDiv) {
             if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
                 wrapperDiv.style.fontSize = '6pt';
@@ -4073,9 +4073,9 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         cardDiv.classList.add('kot-evolution');
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
-        cardDiv.innerHTML = "\n        <div class=\"evolution-type\">".concat(type, "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">").concat(this.getCardName(cardType, 'span'), "</div>\n                    <div class=\"text\">").concat(this.getCardName(cardType, 'text-only'), "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        </div>      \n        ");
+        cardDiv.innerHTML = "\n        <div class=\"evolution-type\">".concat(type, "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"kot-outline\">").concat(this.getCardName(cardType, 'span'), "</div>\n                    <div class=\"text\">").concat(this.getCardName(cardType, 'text-only'), "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        </div>      \n        ");
         var nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0];
-        var outline = cardDiv.getElementsByClassName('outline')[0];
+        var outline = cardDiv.getElementsByClassName('kot-outline')[0];
         var descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0];
         var textHeight = descriptionWrapper.clientHeight;
         var nameHeight = outline.clientHeight;
@@ -4416,7 +4416,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         cardDiv.classList.add('kot-tile');
         var name = this.getCardName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
-        cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline ".concat(cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0', "\">").concat(name, "</div>\n                    <div class=\"text\">").concat(name, "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        ");
+        cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"kot-outline ".concat(cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0', "\">").concat(name, "</div>\n                    <div class=\"text\">").concat(name, "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        ");
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 50) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.width = '100%';
@@ -4426,11 +4426,11 @@ var WickednessTilesManager = /** @class */ (function (_super) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
         }
         textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
-        var nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        var nameHeight = cardDiv.getElementsByClassName('kot-outline')[0].clientHeight;
         if (75 - textHeight < nameHeight) {
             cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '8pt';
         }
-        nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        nameHeight = cardDiv.getElementsByClassName('kot-outline')[0].clientHeight;
         if (75 - textHeight < nameHeight) {
             cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '7pt';
         }
@@ -4543,7 +4543,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"kot-player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
+        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"kot-player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"kot-outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
         if (game.isPowerUpExpansion()) {
             html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            <div id=\"reserved-cards-").concat(player.id, "\" class=\"reserved card-stock player-cards ").concat(player.cards.length ? '' : 'empty', "\"></div>\n            ");
         }
