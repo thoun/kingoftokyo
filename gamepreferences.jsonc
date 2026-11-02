@@ -1,0 +1,56 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * KingOfTokyo implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * gamepreferences.jsonc
+ *
+ * KingOfTokyo game preferences description
+ *
+ * In this file, you can define your game preferences.
+ *
+ *
+ * !! It is not a good idea to modify this file when a game is running !!
+ *
+ */
+
+{
+    "202": {
+        "name": "Countdown timer when no action is possible",
+        "needReload": false,
+        "values": {"1": {"name": "Enabled"}, "2": {"name": "Disabled"}},
+        "default": 1
+    },
+    "204": {
+        "name": "Background",
+        "needReload": false,
+        "values": {
+            "0": {"name": "Automatic"},
+            "1": {"name": "Base game"},
+            "2": {"name": "Halloween event"},
+            "3": {"name": "Christmas event"},
+            "4": {"name": "Power-Up!"},
+            "5": {"name": "Dark Edition"}
+        },
+        "default": 0
+    },
+    "205": {
+        "name": "Dice",
+        "needReload": false,
+        "values": {
+            "0": {"name": "Automatic"},
+            "1": {"name": "Base game"},
+            "2": {"name": "Halloween event"},
+            "3": {"name": "Christmas event"},
+            "4": {"name": "Power-Up!"},
+            "5": {"name": "Dark Edition"}
+        },
+        "default": 0
+    },
+    "203": {"name": "", "needReload": false, "values": {"1": {"name": "Enabled"}, "2": {"name": "Disabled"}}, "default": 1},
+    "201": {"name": "Font style", "needReload": false, "values": {"1": {"name": "Default font"}, "2": {"name": "King of Tokyo font"}}, "default": 2}
+}

@@ -1,0 +1,294 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * KingOfTokyo implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * stats.jsonc
+ *
+ * KingOfTokyo game statistics description
+ *
+ */
+
+/*
+    In this file, you are describing game statistics, that will be displayed at the end of the
+    game.
+
+    !! After modifying this file, you must use "Reload  statistics configuration" in BGA Studio backoffice ("Your game configuration" section):
+    http://en.studio.boardgamearena.com/admin/studio
+
+    There are 2 types of statistics:
+    _ table statistics, that are not associated to a specific player (ie: 1 value for each game).
+    _ player statistics, that are associated to each players (ie: 1 value for each player in the game).
+
+    Statistics types can be "int" for integer, "float" for floating point values, and "bool" for boolean
+
+    Once you defined your statistics there, you can start using "initStat", "setStat" and "incStat" method
+    in your game logic, using statistics names defined below.
+
+    !! It is not a good idea to modify this file when a game is running !!
+
+    If your game is already public on BGA, please read the following before any change:
+    http://en.doc.boardgamearena.com/Post-release_phase#Changes_that_breaks_the_games_in_progress
+
+    Notes:
+    * Statistic index is the reference used in setStat/incStat/initStat PHP method
+    * Statistic index must contains alphanumerical characters and no space. Example: 'turn_played'
+    * Statistics IDs must be >=10
+    * Two table statistics can't share the same ID, two player statistics can't share the same ID
+    * A table statistic can have the same ID than a player statistics
+    * Statistics ID is the reference used by BGA website. If you change the ID, you lost all historical statistic data. Do NOT re-use an ID of a deleted statistic
+    * Statistic name is the English description of the statistic as shown to players
+
+*/
+
+{
+    // Statistics global to table
+    "table": {
+        "turnsNumber": {"id": 10, "type": "int", "name": "Number of turns"},
+        "pointsWin": {"id": 11, "type": "bool", "name": "Won by points"},
+        "eliminationWin": {"id": 12, "type": "bool", "name": "Won by elimination"},
+        "monster": {"id": 100, "type": "int", "name": "Monster", "display": "limited"},
+        "monsterAutomatic": {"id": 101, "type": "int", "name": "Monster (automatic)"},
+        "monsterPick": {"id": 102, "type": "int", "name": "Monster (chosen)"},
+        "smashesGiven": {"id": 13, "type": "int", "name": "Given smashes"},
+        "survivorRatio": {"id": 20, "type": "float", "name": "Survivors ratio"}
+    },
+    // Statistics existing for each player
+    "player": {
+        "turnsNumber": {"id": 10, "type": "int", "name": "Number of turns"},
+        "pointsWin": {"id": 11, "type": "bool", "name": "Won by points"},
+        "eliminationWin": {"id": 12, "type": "bool", "name": "Won by elimination"},
+        "monster": {"id": 100, "type": "int", "name": "Monster", "display": "limited"},
+        "monsterAutomatic": {"id": 101, "type": "int", "name": "Monster (automatic)"},
+        "monsterPick": {"id": 102, "type": "int", "name": "Monster (chosen)"},
+        "smashesGiven": {"id": 13, "type": "int", "name": "Given smashes"},
+        "smashesReceived": {"id": 29, "type": "int", "name": "Received smashes"},
+        "survived": {"id": 30, "type": "bool", "name": "Survived"},
+        "turnsInTokyo": {"id": 31, "type": "int", "name": "Turns in Tokyo"},
+        "tokyoEnters": {"id": 32, "type": "int", "name": "Tokyo enters"},
+        "tokyoLeaves": {"id": 33, "type": "int", "name": "Tokyo leaves"},
+        "keepBoughtCards": {"id": 34, "type": "int", "name": "Bought cards (Keep)"},
+        "discardBoughtCards": {"id": 35, "type": "int", "name": "Bought cards (Discard)"},
+        "costumeBoughtCards": {"id": 46, "type": "int", "name": "Bought cards (Costume)"},
+        "costumeStolenCards": {"id": 47, "type": "int", "name": "Stolen cards (Costume)"},
+        "damageDealt": {"id": 36, "type": "int", "name": "Damage dealt"},
+        "damage": {"id": 37, "type": "int", "name": "Life loss"},
+        "heal": {"id": 38, "type": "int", "name": "Heal"},
+        "wonEnergyCubes": {"id": 39, "type": "int", "name": "Won energy cubes"},
+        "endScore": {"id": 40, "type": "int", "name": "End score (if game finished to points)"},
+        "endHealth": {"id": 41, "type": "int", "name": "End life (if alive)"},
+        "rethrownDice": {"id": 42, "type": "int", "name": "Rethrown dice"},
+        "pointsWonWith1Dice": {"id": 43, "type": "int", "name": "Points won with 1 dice"},
+        "pointsWonWith2Dice": {"id": 44, "type": "int", "name": "Points won with 2 dice"},
+        "pointsWonWith3Dice": {"id": 45, "type": "int", "name": "Points won with 3 dice"},
+        "gainedCultists": {"id": 48, "type": "int", "name": "Gained cultists"},
+        "cultistReroll": {"id": 49, "type": "int", "name": "Cultist used for reroll"},
+        "cultistHeal": {"id": 50, "type": "int", "name": "Cultist used for healing"},
+        "cultistEnergy": {"id": 51, "type": "int", "name": "Cultist used for energy"},
+        "tokyoTowerLevel1claimed": {"id": 52, "type": "int", "name": "Tokyo Tower level 1 claimed"},
+        "tokyoTowerLevel2claimed": {"id": 53, "type": "int", "name": "Tokyo Tower level 2 claimed"},
+        "tokyoTowerLevel3claimed": {"id": 54, "type": "int", "name": "Tokyo Tower level 3 claimed"},
+        "bonusFromTokyoTowerLevel1applied": {"id": 55, "type": "int", "name": "Bonus for Tokyo Tower level 1 applied"},
+        "bonusFromTokyoTowerLevel2applied": {"id": 56, "type": "int", "name": "Bonus for Tokyo Tower level 2 applied"},
+        "dieOfFateEye": {"id": 57, "type": "int", "name": "Changed card with die of fate"},
+        "dieOfFateRiver": {"id": 58, "type": "int", "name": "No effect with die of fate"},
+        "dieOfFateSnake": {"id": 59, "type": "int", "name": "Snake effect with die of fate"},
+        "dieOfFateAnkh": {"id": 60, "type": "int", "name": "Ankh effect with die of fate"},
+        "berserkActivated": {"id": 61, "type": "int", "name": "Berserk mode activated"},
+        "turnsInBerserk": {"id": 62, "type": "int", "name": "Turns in Berserk mode"},
+        "formChanged": {"id": 63, "type": "int", "name": "Form change (Mutant Evolution)"},
+        "turnsInBipedForm": {"id": 64, "type": "int", "name": "Turns in Biped form"},
+        "turnsInBeastForm": {"id": 65, "type": "int", "name": "Turns in Beast form"},
+        "gainedWickedness": {"id": 66, "type": "int", "name": "Wickedness"},
+        "wickednessTilesTaken": {"id": 67, "type": "int", "name": "Wickedness tiles taken"},
+        "pickedPermanentEvolution": {"id": 68, "type": "int", "name": "Picked Evolution (Permanent)"},
+        "pickedTemporaryEvolution": {"id": 69, "type": "int", "name": "Picked Evolution (Temporary)"},
+        "pickedGiftEvolution": {"id": 70, "type": "int", "name": "Picked Evolution (Gift)"},
+        "playedPermanentEvolution": {"id": 71, "type": "int", "name": "Played Evolution (Permanent)"},
+        "playedTemporaryEvolution": {"id": 72, "type": "int", "name": "Played Evolution (Temporary)"},
+        "playedGiftEvolution": {"id": 73, "type": "int", "name": "Played Evolution (Gift)"}
+    },
+    "value_labels": {
+        "100": {
+            // base game
+            "1": "Space Penguin",
+            "2": "Alienoid",
+            "3": "Cyber Kitty",
+            "4": "The King",
+            "5": "Gigazaur",
+            "6": "Meka Dragon",
+            // halloween
+            "7": "Boogie Woogie",
+            "8": "Pumpkin Jack",
+            // monster packs
+            "9": "Cthulhu",
+            "10": "Anubis",
+            "11": "King Kong",
+            "12": "Cybertooth",
+            // power up
+            "13": "Pandakaï",
+            // 14 cyberbunny
+            // 15 kraken
+            // promo
+            "16": "Kookie",
+            "17": "X-Smash Tree",
+            "18": "Baby Gigazaur",
+            "19": "Lollybot",
+            // KONY
+            "21": "Rob",
+            // World Tour
+            "31": "Quetzalcóatl",
+            "32": "Chupacabras",
+            "33": "Adamastor",
+            "34": "Fenir Fenrisulven",
+            "35": "Golem",
+            "36": "Marhanagy Szürke",
+            "37": "Lutoborshch",
+            "38": "Mech-Armor Ikari-Oh",
+            // KOMI
+            "41": "Purple Reign",
+            "42": "Pagurah",
+            "43": "Rex Florae",
+            "44": "H.A.D.E.S.",
+            "45": "Megamoth",
+            // Origins
+            "51": "Mechamster",
+            "52": "Gigarex",
+            "53": "Cosmic Joe",
+            "54": "Iron back",
+            // Mindbug
+            "61": "Gigasnail Hydra",
+            "62": "MasterMindbug",
+            "63": "Sharky Crab-dog Mummypus-Zilla",
+            // Dark edition
+            "102": "Dark Alienoid",
+            "104": "Dark The King",
+            "105": "Dark Gigazaur",
+            "106": "Dark Meka Dragon",
+            "114": "Dark Cyber Bunny",
+            "115": "Dark Kraken"
+        },
+        "101": {
+            // base game
+            "1": "Space Penguin",
+            "2": "Alienoid",
+            "3": "Cyber Kitty",
+            "4": "The King",
+            "5": "Gigazaur",
+            "6": "Meka Dragon",
+            // halloween
+            "7": "Boogie Woogie",
+            "8": "Pumpkin Jack",
+            // monster packs
+            "9": "Cthulhu",
+            "10": "Anubis",
+            "11": "King Kong",
+            "12": "Cybertooth",
+            // power up
+            "13": "Pandakaï",
+            // 14 cyberbunny
+            // 15 kraken
+            // promo
+            "16": "Kookie",
+            "17": "X-Smash Tree",
+            "18": "Baby Gigazaur",
+            "19": "Lollybot",
+            // KONY
+            "21": "Rob",
+            // World Tour
+            "31": "Quetzalcóatl",
+            "32": "Chupacabras",
+            "33": "Adamastor",
+            "34": "Fenir Fenrisulven",
+            "35": "Golem",
+            "36": "Marhanagy Szürke",
+            "37": "Lutoborshch",
+            "38": "Mech-Armor Ikari-Oh",
+            // KOMI
+            "41": "Purple Reign",
+            "42": "Pagurah",
+            "43": "Rex Florae",
+            "44": "H.A.D.E.S.",
+            "45": "Megamoth",
+            // Origins
+            "51": "Mechamster",
+            "52": "Gigarex",
+            "53": "Cosmic Joe",
+            "54": "Iron back",
+            // Mindbug
+            "61": "Gigasnail Hydra",
+            "62": "MasterMindbug",
+            "63": "Sharky Crab-dog Mummypus-Zilla",
+            // Dark edition
+            "102": "Dark Alienoid",
+            "104": "Dark The King",
+            "105": "Dark Gigazaur",
+            "106": "Dark Meka Dragon",
+            "114": "Dark Cyber Bunny",
+            "115": "Dark Kraken"
+        },
+        "102": {
+            // base game
+            "1": "Space Penguin",
+            "2": "Alienoid",
+            "3": "Cyber Kitty",
+            "4": "The King",
+            "5": "Gigazaur",
+            "6": "Meka Dragon",
+            // halloween
+            "7": "Boogie Woogie",
+            "8": "Pumpkin Jack",
+            // monster packs
+            "9": "Cthulhu",
+            "10": "Anubis",
+            "11": "King Kong",
+            "12": "Cybertooth",
+            // power up
+            "13": "Pandakaï",
+            // 14 cyberbunny
+            // 15 kraken
+            // promo
+            "16": "Kookie",
+            "17": "X-Smash Tree",
+            "18": "Baby Gigazaur",
+            "19": "Lollybot",
+            // KONY
+            "21": "Rob",
+            // World Tour
+            "31": "Quetzalcóatl",
+            "32": "Chupacabras",
+            "33": "Adamastor",
+            "34": "Fenir Fenrisulven",
+            "35": "Golem",
+            "36": "Marhanagy Szürke",
+            "37": "Lutoborshch",
+            "38": "Mech-Armor Ikari-Oh",
+            // KOMI
+            "41": "Purple Reign",
+            "42": "Pagurah",
+            "43": "Rex Florae",
+            "44": "H.A.D.E.S.",
+            "45": "Megamoth",
+            // Origins
+            "51": "Mechamster",
+            "52": "Gigarex",
+            "53": "Cosmic Joe",
+            "54": "Iron back",
+            // Mindbug
+            "61": "Gigasnail Hydra",
+            "62": "MasterMindbug",
+            "63": "Sharky Crab-dog Mummypus-Zilla",
+            // Dark edition
+            "102": "Dark Alienoid",
+            "104": "Dark The King",
+            "105": "Dark Gigazaur",
+            "106": "Dark Meka Dragon",
+            "114": "Dark Cyber Bunny",
+            "115": "Dark Kraken"
+        }
+    }
+}
