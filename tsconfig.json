@@ -48,7 +48,7 @@
         "src/table-center.ts",
         "src/activated-expansions-popin.ts",
         "src/monster-selector.ts",
-        "src/kingoftokyo.ts",
+        "src/Game.ts",
         "src/define.ts"
     ]
 }
