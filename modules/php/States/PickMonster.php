@@ -7,6 +7,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFramework\UserException;
 use Bga\Games\KingOfTokyo\Game;
 
 class PickMonster extends GameState {
@@ -46,6 +47,10 @@ class PickMonster extends GameState {
         #[IntParam(name: 'monster')] int $monsterId,
         bool $automatic = false,
     ) {
+        if (!in_array($monsterId, $this->getAvailableMonsters(), true)) {
+            throw new UserException('This monster is not available.');
+        }
+
         $this->setMonster($currentPlayerId, $monsterId);
         $this->game->saveMonsterStat($currentPlayerId, $monsterId, $automatic);
 
